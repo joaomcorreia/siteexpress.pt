@@ -1,0 +1,921 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Dashboard" %}</title>
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #5f6c84;
+            --line: #d8e0eb;
+            --paper: #f5f7fb;
+            --card: #ffffff;
+            --accent: #8f1f1f;
+            --accent-dark: #6f1717;
+            --soft: #eef3f8;
+            --soft-2: #f8fafc;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: var(--paper);
+            color: var(--ink);
+        }
+        .shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 22px 28px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .page-title { margin: 0 0 8px; }
+        .muted { color: var(--muted); }
+        .logout {
+            background: transparent;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            color: var(--ink);
+        }
+        .app {
+            display: grid;
+            grid-template-columns: 280px minmax(0, 1fr);
+            min-height: 0;
+        }
+        .sidebar {
+            padding: 28px 20px 32px;
+            border-right: 1px solid var(--line);
+            background: #fbfcfe;
+        }
+        .sidebar-stack {
+            display: grid;
+            gap: 18px;
+            position: sticky;
+            top: 96px;
+        }
+        .nav-list {
+            display: grid;
+            gap: 10px;
+        }
+        .nav-link,
+        .style-link,
+        .section-link,
+        .action-link,
+        .cta {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .nav-link,
+        .style-link,
+        .section-link {
+            background: var(--soft-2);
+            color: var(--ink);
+            border: 1px solid var(--line);
+        }
+        .nav-link.active,
+        .style-link.active-control,
+        .action-link.active-control,
+        .cta,
+        .action-link {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .action-link.alt { background: var(--accent-dark); }
+        .main {
+            padding: 28px;
+            min-width: 0;
+        }
+        .main-stack {
+            display: grid;
+            gap: 20px;
+            max-width: 1480px;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.06);
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5fb 100%);
+        }
+        .summary-meta {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+        .summary-meta strong,
+        .selection-chip strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--soft);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+        .stack { display: grid; gap: 20px; }
+        .selection-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .selection-chip {
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: var(--soft-2);
+            border: 1px solid var(--line);
+        }
+        .control-group { margin-top: 18px; }
+        .control-group strong { display: block; margin-bottom: 10px; }
+        .link-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .toolbar-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: end;
+            margin-top: 18px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            background: var(--soft-2);
+            border: 1px solid var(--line);
+        }
+        .toolbar-group {
+            display: grid;
+            gap: 8px;
+        }
+        .toolbar-group strong {
+            font-size: 0.92rem;
+        }
+        .toolbar-group .link-row {
+            margin-top: 0;
+        }
+        .preview-canvas {
+            margin-top: 18px;
+            min-height: 0;
+            padding: 12px 0 0;
+            display: grid;
+            gap: 16px;
+        }
+        .preview-shell {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            transition: width 0.2s ease, max-width 0.2s ease;
+        }
+        .preview-shell.device-desktop {
+            width: 100%;
+            max-width: 100%;
+        }
+        .preview-shell.device-tablet {
+            width: min(768px, 100%);
+            max-width: 768px;
+        }
+        .preview-shell.device-mobile {
+            width: min(390px, 100%);
+            max-width: 390px;
+        }
+        .preview-frame-wrap {
+            width: 100%;
+            min-height: calc(100vh - 260px);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: visible;
+            background: #fff;
+            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
+        }
+        .preview-frame {
+            display: block;
+            width: 100%;
+            height: calc(100vh - 260px);
+            min-height: calc(100vh - 260px);
+            border: 0;
+            background: #fff;
+        }
+        .preview-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: var(--soft-2);
+            border: 1px solid var(--line);
+        }
+        .preview-toolbar .link-row { margin-top: 0; }
+        .workspace-note { margin-top: 10px; }
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+        .field-group {
+            display: grid;
+            gap: 8px;
+        }
+        .field-group.full { grid-column: 1 / -1; }
+        .field-group label { font-weight: 700; }
+        .field-group input,
+        .field-group textarea,
+        .field-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+        }
+        .field-group textarea { resize: vertical; }
+        .form-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .service-editor-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+        .service-editor-row {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: var(--soft-2);
+            padding: 16px;
+        }
+        .service-editor-row h3 {
+            margin: 0 0 10px;
+        }
+        .service-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .service-card-top h3 {
+            margin: 0;
+        }
+        .service-preview-link {
+            font-size: 0.92rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .service-preview-link:hover {
+            text-decoration: underline;
+        }
+        .placeholder-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+        .placeholder-card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            background: var(--soft-2);
+        }
+        .domain-status-card {
+            background: linear-gradient(135deg, #fff7f0 0%, #fff 100%);
+        }
+        .domain-status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+        .domain-status-item {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fff;
+        }
+        .product-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f6f2ed 100%);
+        }
+        .product-layout {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+        .product-panel {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            background: #fff;
+        }
+        .notice {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #d8e4c3;
+            background: #f6fbef;
+        }
+        @media (max-width: 1100px) {
+            .app,
+            .summary-meta,
+            .selection-list,
+            .form-grid,
+            .service-editor-list,
+            .placeholder-grid,
+            .actions,
+            .domain-status-grid,
+            .product-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+                padding-bottom: 20px;
+            }
+            .sidebar-stack {
+                position: static;
+            }
+            .nav-list {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 900px) {
+            .preview-frame,
+            .preview-frame-wrap {
+                min-height: calc(100vh - 220px);
+            }
+            .preview-toolbar,
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        @media (max-width: 720px) {
+            .main,
+            .sidebar,
+            .topbar {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+            .nav-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <div class="topbar">
+            <div>
+                <h1 class="page-title">Dashboard do projeto</h1>
+                <p class="muted">Acompanhe o projeto, atualize os dados principais e reveja o preview do site.</p>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="logout" type="submit">Terminar sessao</button>
+            </form>
+        </div>
+
+        {% if project %}
+            <div class="app">
+                <aside class="sidebar">
+                    <div class="sidebar-stack">
+                        <section class="card summary-card">
+                            <span class="badge">
+                                {% if template_family %}
+                                    {{ template_family }}
+                                {% else %}
+                                    {% trans "general" %}
+                                {% endif %}
+                            </span>
+                            <h2>{{ project.business_profile.business_name }}</h2>
+                            <p class="muted">{{ content.hero_title|default:project.business_profile.business_name }}</p>
+                            <div class="summary-meta">
+                                <div>
+                                    <strong>Tipo de negocio</strong>
+                                    <span class="muted">{{ project.business_profile.business_type }}</span>
+                                </div>
+                                <div>
+                                    <strong>Localizacao</strong>
+                                    <span class="muted">{{ project.business_profile.city }}, {{ project.business_profile.country }}</span>
+                                </div>
+                                <div>
+                                    <strong>Produto</strong>
+                                    <span class="muted">{{ product_summary.title_pt }}</span>
+                                </div>
+                                <div>
+                                    <strong>Estado</strong>
+                                    <span class="muted">{{ product_summary.status_pt }}</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <nav class="card">
+                            <h2>Area de trabalho</h2>
+                            <div class="nav-list">
+                                <a class="nav-link{% if active_section == 'preview' %} active{% endif %}" href="{{ dashboard_control_urls.sections.preview }}">Preview</a>
+                                <a class="nav-link{% if active_section == 'business' %} active{% endif %}" href="{{ dashboard_control_urls.sections.business }}">Dados do negocio</a>
+                                <a class="nav-link{% if active_section == 'services' %} active{% endif %}" href="{{ dashboard_control_urls.sections.services }}">Servicos</a>
+                                <a class="nav-link{% if active_section == 'images' %} active{% endif %}" href="{{ dashboard_control_urls.sections.images }}">Logotipo e imagens</a>
+                                <a class="nav-link{% if active_section == 'contact' %} active{% endif %}" href="{{ dashboard_control_urls.sections.contact }}">Contactos</a>
+                                <a class="nav-link{% if active_section == 'pages' %} active{% endif %}" href="{{ dashboard_control_urls.sections.pages }}">Paginas</a>
+                                <a class="nav-link{% if active_section == 'upgrade' %} active{% endif %}" href="{{ dashboard_control_urls.sections.upgrade }}">Upgrade</a>
+                                {% if request.user.is_staff %}
+                                    <a class="nav-link" href="{% url 'domain-requests' %}">Pedidos de Domínio</a>
+                                    {% if project.partner %}
+                                        <a class="nav-link" href="{% url 'partner-dashboard' project.partner.partner_code %}">Dashboard do Parceiro</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </nav>
+                    </div>
+                </aside>
+
+                <main class="main">
+                    <div class="main-stack">
+                        <section class="card product-card">
+                            <span class="badge">{{ product_summary.price_pt }}</span>
+                            <h2>{{ product_summary.title_pt }}</h2>
+                            <p class="muted">{{ product_summary.description_pt }}</p>
+                            {% if upgrade_requested_flag %}
+                                <div class="notice">
+                                    <strong>Pedido de upgrade enviado.</strong>
+                                    <div class="muted">A equipa SiteExpress vai preparar o proximo passo para o seu Website Completo.</div>
+                                </div>
+                            {% endif %}
+                            <div class="product-layout">
+                                <div class="product-panel">
+                                    <strong>Estado do produto</strong>
+                                    <p class="muted">{{ product_summary.status_pt }}</p>
+                                    <p class="muted">{{ product_summary.review_note_pt }}</p>
+                                    <p class="muted">
+                                        <strong>Faturacao:</strong>
+                                        {{ product_summary.billing_pt }}
+                                    </p>
+                                </div>
+                                <div class="product-panel">
+                                    {% if project.product_type == 'starter_page_monthly' %}
+                                        <strong>Página Express</strong>
+                                        <p class="muted">O preview da sua Página Express esta disponivel no dashboard e pode ser partilhado depois da revisao.</p>
+                                        {% if show_product_preview_action and starter_preview_url %}
+                                            <a class="action-link" href="{{ starter_preview_url }}" target="_blank" rel="noopener">Abrir preview da Página Express</a>
+                                        {% endif %}
+                                    {% else %}
+                                        <strong>Website Completo</strong>
+                                        <p class="muted">O website completo usa o preview total atual enquanto a ponte WordPress real nao estiver ligada.</p>
+                                        {% if show_product_preview_action and full_preview_url %}
+                                            <a class="action-link" href="{{ full_preview_url }}" target="_blank" rel="noopener">Abrir preview do Website Completo</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if product_summary.show_upgrade_card %}
+                                <div class="product-layout">
+                                    <div class="product-panel">
+                                        <strong>Faça upgrade para Website Completo</strong>
+                                        <p class="muted">€235 + IVA</p>
+                                        <p class="muted">Quando pedir upgrade, a equipa prepara o fluxo do website completo sem ativar pagamentos automaticos nesta fase.</p>
+                                        {% if project.upgrade_status == 'requested' or project.product_status == 'upgrade_requested' %}
+                                            <span class="badge">Pedido de upgrade registado</span>
+                                        {% else %}
+                                            <form method="post" action="{{ dashboard_return_url }}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="form_type" value="upgrade-request">
+                                                <button class="cta" type="submit">Pedir upgrade</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </section>
+                        {% if partner_trial_summary.show %}
+                            <section class="card">
+                                <span class="badge">{{ partner_trial_summary.status_pt }}</span>
+                                <h2>Página Express em periodo experimental</h2>
+                                <p class="muted">A sua Página Express foi iniciada atraves de um Parceiro SiteExpress e continua disponivel para revisao durante o periodo experimental.</p>
+                                <div class="product-layout">
+                                    <div class="product-panel">
+                                        <strong>Parceiro</strong>
+                                        <p class="muted">{{ partner_trial_summary.partner_name }}</p>
+                                        <p class="muted">Se quiser continuar para um website mais completo, o upgrade para Website Completo continua disponivel no seu dashboard.</p>
+                                    </div>
+                                    <div class="product-panel">
+                                        <strong>Fim do periodo experimental</strong>
+                                        <p class="muted">
+                                            {% if project.trial_ends_at %}
+                                                O periodo experimental termina em {{ partner_trial_summary.trial_end_label_pt }}.
+                                            {% else %}
+                                                O periodo experimental esta ativo neste momento.
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                        {% endif %}
+                        <section class="card domain-status-card">
+                            <span class="badge">{{ domain_status_badge.label }}</span>
+                            <h2>Estado do domínio</h2>
+                            <p class="muted">{{ domain_status_badge.message_pt }}</p>
+                            <div class="domain-status-grid">
+                                <div class="domain-status-item">
+                                    <strong>Domínio pedido</strong>
+                                    <p class="muted">
+                                        {% if domain_request and domain_request.requested_domain %}
+                                            {{ domain_request.requested_domain }}
+                                        {% elif project.existing_domain %}
+                                            {{ project.existing_domain }}
+                                        {% elif project.preferred_domain %}
+                                            {{ project.preferred_domain }}
+                                        {% else %}
+                                            Ainda nao indicado
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="domain-status-item">
+                                    <strong>Subdomínio de preview</strong>
+                                    <p class="muted">{{ domain_request.preview_subdomain|default:"Ainda por atribuir" }}</p>
+                                </div>
+                                {% if domain_request and domain_request.public_note %}
+                                    <div class="domain-status-item">
+                                        <strong>Nota publica</strong>
+                                        <p class="muted">{{ domain_request.public_note }}</p>
+                                    </div>
+                                {% endif %}
+                                <div class="domain-status-item">
+                                    <strong>Proximos passos</strong>
+                                    <p class="muted">
+                                        {% if domain_request and domain_request.domain_status == 'waiting_customer' %}
+                                            Precisamos da sua confirmacao ou dos dados em falta para continuar.
+                                        {% elif domain_request and domain_request.domain_status == 'dns_connected' %}
+                                            O dominio esta quase pronto. Estamos a finalizar a ligacao ao site.
+                                        {% elif domain_request and domain_request.domain_status == 'live' %}
+                                            O seu dominio ja esta ativo.
+                                        {% else %}
+                                            A equipa SiteExpress atualiza este estado manualmente.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        {% if active_section == 'preview' %}
+                            <section class="card">
+                                <h2>Area de preview</h2>
+                                <p class="muted">Use estes controlos para mudar o tipo de preview, a variacao e o layout sem sair do dashboard.</p>
+                                <div class="selection-list">
+                                    <div class="selection-chip">
+                                        <strong>Tipo de preview</strong>
+                                        <span class="muted">{{ selected_preview }}</span>
+                                    </div>
+                                    <div class="selection-chip">
+                                        <strong>Variacao</strong>
+                                        <span class="muted">{{ selected_variation }}</span>
+                                    </div>
+                                    <div class="selection-chip">
+                                        <strong>Layout</strong>
+                                        <span class="muted">{{ selected_layout }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="toolbar-row">
+                                    <div class="toolbar-group">
+                                        <strong>Tipo de preview</strong>
+                                        <div class="link-row">
+                                            {% if project.starter_page %}
+                                                <a class="style-link{% if selected_preview == 'starter' %} active-control{% endif %}" href="{{ dashboard_control_urls.preview.starter }}">Página Express</a>
+                                            {% endif %}
+                                            <a class="style-link{% if selected_preview == 'full' %} active-control{% endif %}" href="{{ dashboard_control_urls.preview.full }}">Website Completo</a>
+                                        </div>
+                                    </div>
+                                    <div class="toolbar-group">
+                                        <strong>Variacao</strong>
+                                        <div class="link-row">
+                                            <a class="style-link{% if selected_variation == 'classic' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.classic }}">Classico</a>
+                                            <a class="style-link{% if selected_variation == 'modern' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.modern }}">Moderno</a>
+                                        </div>
+                                    </div>
+                                    <div class="toolbar-group">
+                                        <strong>Layout</strong>
+                                        <div class="link-row">
+                                            <a class="style-link{% if selected_layout == 'boxed' %} active-control{% endif %}" href="{{ dashboard_control_urls.layout.boxed }}">Em caixa</a>
+                                            <a class="style-link{% if selected_layout == 'wide' %} active-control{% endif %}" href="{{ dashboard_control_urls.layout.wide }}">Largo</a>
+                                            <a class="style-link{% if selected_layout == 'full' %} active-control{% endif %}" href="{{ dashboard_control_urls.layout.full }}">Completo</a>
+                                        </div>
+                                    </div>
+                                    <div class="toolbar-group">
+                                        <strong>Vista por dispositivo</strong>
+                                        <div class="link-row">
+                                            <a class="style-link{% if selected_device == 'desktop' %} active-control{% endif %}" href="{{ dashboard_control_urls.device.desktop }}">Computador</a>
+                                            <a class="style-link{% if selected_device == 'tablet' %} active-control{% endif %}" href="{{ dashboard_control_urls.device.tablet }}">Tablet</a>
+                                            <a class="style-link{% if selected_device == 'mobile' %} active-control{% endif %}" href="{{ dashboard_control_urls.device.mobile }}">Telemovel</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="toolbar-row">
+                                    <div class="toolbar-group">
+                                        <strong>Link de preview</strong>
+                                        <div class="link-row">
+                                            <a class="section-link" href="{{ iframe_preview_url }}" target="_blank" rel="noopener">Abrir preview num novo separador</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="preview-canvas">
+                                    <div class="preview-shell device-{{ selected_device }}">
+                                        <div class="preview-frame-wrap" data-preview-frame-wrap>
+                                            <iframe class="preview-frame" data-preview-frame src="{{ iframe_preview_url }}" title="{% trans 'Project preview' %}"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        {% elif active_section == 'business' %}
+                            <section class="card">
+                                <h2>Dados do negocio</h2>
+                                <p class="muted">Atualize aqui os dados principais que aparecem nos previews.</p>
+                                <form method="post" action="{{ dashboard_return_url }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="form_type" value="business">
+                                    <div class="form-grid">
+                                        <div class="field-group full">
+                                            <label for="{{ business_form.business_name.id_for_label }}">Nome do negocio</label>
+                                            {{ business_form.business_name }}
+                                            {{ business_form.business_name.errors }}
+                                        </div>
+                                        <div class="field-group">
+                                            <label for="{{ business_form.business_type.id_for_label }}">Tipo de negocio</label>
+                                            {{ business_form.business_type }}
+                                            {{ business_form.business_type.errors }}
+                                        </div>
+                                        <div class="field-group">
+                                            <label for="{{ business_form.city.id_for_label }}">Cidade</label>
+                                            {{ business_form.city }}
+                                            {{ business_form.city.errors }}
+                                        </div>
+                                        <div class="field-group full">
+                                            <label for="{{ business_form.country.id_for_label }}">Pais</label>
+                                            {{ business_form.country }}
+                                            {{ business_form.country.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button class="cta" type="submit">Guardar dados do negocio</button>
+                                    </div>
+                                </form>
+                            </section>
+                        {% elif active_section == 'services' %}
+                            <section class="card">
+                                <h2>Editor de servicos</h2>
+                                <p class="muted">Atualize os primeiros cartoes de servico mostrados na Página Express e no Website Completo.</p>
+                                <div class="preview-toolbar">
+                                    <div>
+                                        <strong>Preview da pagina de servicos</strong>
+                                        <p class="muted workspace-note">Esta area abre por defeito a pagina completa de servicos para facilitar a edicao.</p>
+                                    </div>
+                                    <div class="link-row">
+                                        <a class="section-link" href="{{ services_page_preview_url }}" target="_blank" rel="noopener">Abrir pagina de servicos num novo separador</a>
+                                    </div>
+                                </div>
+                                <div class="preview-canvas">
+                                    <div class="preview-shell device-{{ selected_device }}">
+                                        <div class="preview-frame-wrap" data-preview-frame-wrap>
+                                            <iframe class="preview-frame" data-preview-frame src="{{ iframe_preview_url }}" title="{% trans 'Services page preview' %}"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if services_form %}
+                                    <form method="post" action="{{ dashboard_return_url }}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="services">
+                                        <div class="service-editor-list">
+                                            {% for row in services_editor_rows %}
+                                                <div class="service-editor-row">
+                                                    <div class="service-card-top">
+                                                        <h3>Servico {{ row.number }}</h3>
+                                                        {% if row.detail_url %}
+                                                            <a class="service-preview-link" href="{{ row.detail_url }}" target="_blank" rel="noopener">Abrir pagina de detalhe</a>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="form-grid">
+                                                        <div class="field-group">
+                                                            <label for="{{ row.title_field.id_for_label }}">Titulo</label>
+                                                            {{ row.title_field }}
+                                                            {{ row.title_field.errors }}
+                                                        </div>
+                                                        <div class="field-group">
+                                                            <label for="{{ row.icon_field.id_for_label }}">Icone</label>
+                                                            {{ row.icon_field }}
+                                                            {{ row.icon_field.errors }}
+                                                        </div>
+                                                        <div class="field-group full">
+                                                            <label for="{{ row.short_description_field.id_for_label }}">Descricao curta</label>
+                                                            {{ row.short_description_field }}
+                                                            {{ row.short_description_field.errors }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="form-actions">
+                                            <button class="cta" type="submit">Guardar servicos</button>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <p class="muted">Os servicos ficam disponiveis para edicao depois da geracao inicial de conteudo.</p>
+                                {% endif %}
+                            </section>
+                        {% elif active_section == 'contact' %}
+                            <section class="card">
+                                <h2>Contactos</h2>
+                                <p class="muted">Mantenha os contactos atualizados para que os previews mostrem os dados certos.</p>
+                                <form method="post" action="{{ dashboard_return_url }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="form_type" value="contact">
+                                    <div class="form-grid">
+                                        <div class="field-group full">
+                                            <label for="{{ contact_form.email.id_for_label }}">Email</label>
+                                            {{ contact_form.email }}
+                                            {{ contact_form.email.errors }}
+                                        </div>
+                                        <div class="field-group">
+                                            <label for="{{ contact_form.phone.id_for_label }}">Telefone</label>
+                                            {{ contact_form.phone }}
+                                            {{ contact_form.phone.errors }}
+                                        </div>
+                                        <div class="field-group">
+                                            <label for="{{ contact_form.whatsapp.id_for_label }}">WhatsApp</label>
+                                            {{ contact_form.whatsapp }}
+                                            {{ contact_form.whatsapp.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button class="cta" type="submit">Guardar contactos</button>
+                                    </div>
+                                </form>
+                            </section>
+                        {% elif active_section == 'images' %}
+                            <section class="card">
+                                <h2>Logotipo e imagens</h2>
+                                <p class="muted">O logotipo ja aparece nos previews. A gestao de imagens sera expandida aqui a seguir.</p>
+                                <div class="placeholder-grid">
+                                    <div class="placeholder-card">
+                                        <strong>Logotipo atual</strong>
+                                        <p class="muted">O logotipo carregado ja aparece no preview da Página Express e no Website Completo.</p>
+                                    </div>
+                                    <div class="placeholder-card">
+                                        <strong>Biblioteca de imagens</strong>
+                                        <p class="muted">Esta area vai organizar galerias, imagens por secao e futuros carregamentos do projeto.</p>
+                                    </div>
+                                </div>
+                            </section>
+                        {% elif active_section == 'pages' %}
+                            <section class="card">
+                                <h2>Paginas</h2>
+                                <p class="muted">A estrutura de paginas ja esta ativa no preview. As ferramentas de gestao de paginas ficam para a proxima fase.</p>
+                                <div class="placeholder-grid">
+                                    <div class="placeholder-card">
+                                        <strong>Página Express</strong>
+                                        <p class="muted">As secoes de resumo da homepage continuam visiveis na Página Express.</p>
+                                    </div>
+                                    <div class="placeholder-card">
+                                        <strong>Website Completo</strong>
+                                        <p class="muted">As paginas de servicos, detalhe, sobre e contacto ja estao preparadas no preview alargado.</p>
+                                    </div>
+                                </div>
+                            </section>
+                        {% elif active_section == 'upgrade' %}
+                            <section class="card">
+                                <h2>Upgrade</h2>
+                                <p>Veja aqui a versao alargada do site a partir dos mesmos dados e conteudos do projeto.</p>
+                                <p class="muted">O Website Completo inclui paginas de servicos, pagina sobre, pagina de contacto ou pedido e mais opcoes de layout.</p>
+                                <div class="actions">
+                                    <a class="action-link" href="{{ full_preview_url }}">Ver preview do Website Completo</a>
+                                    <a class="action-link alt" href="{{ dashboard_control_urls.sections.preview }}">Voltar ao preview</a>
+                                </div>
+                            </section>
+                        {% endif %}
+                    </div>
+                </main>
+            </div>
+        {% else %}
+            <div class="main">
+                <div class="card">
+                    <h2>Ainda nao existe nenhum projeto</h2>
+                    <p>Conclua o onboarding para gerar o preview da Página Express e preparar os dados do Website Completo.</p>
+                    <a class="cta" href="{% url 'onboarding' %}">Comecar onboarding</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <script>
+        (function () {
+            function queueSync(frame, delay) {
+                window.setTimeout(function () {
+                    syncFrameHeight(frame);
+                }, delay || 80);
+            }
+
+            function syncFrameHeight(frame) {
+                var doc;
+                var height = 0;
+                var wrap;
+                var minimumHeight;
+
+                if (!frame) {
+                    return;
+                }
+
+                try {
+                    doc = frame.contentDocument;
+                } catch (error) {
+                    return;
+                }
+
+                if (!doc) {
+                    return;
+                }
+
+                minimumHeight = Math.max(window.innerHeight - 260, 760);
+                height = Math.max(
+                    doc.body ? doc.body.scrollHeight : 0,
+                    doc.body ? doc.body.offsetHeight : 0,
+                    doc.documentElement ? doc.documentElement.scrollHeight : 0,
+                    doc.documentElement ? doc.documentElement.offsetHeight : 0,
+                    minimumHeight
+                );
+
+                frame.style.height = height + 'px';
+                wrap = frame.closest('[data-preview-frame-wrap]');
+                if (wrap) {
+                    wrap.style.minHeight = height + 'px';
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var frames = document.querySelectorAll('[data-preview-frame]');
+
+                if (!frames.length) {
+                    return;
+                }
+
+                frames.forEach(function (frame) {
+                    frame.addEventListener('load', function () {
+                        queueSync(frame, 60);
+                        queueSync(frame, 320);
+                        queueSync(frame, 900);
+                    });
+
+                    queueSync(frame, 320);
+                });
+
+                window.addEventListener('resize', function () {
+                    frames.forEach(function (frame) {
+                        queueSync(frame, 100);
+                    });
+                });
+            });
+        }());
+    </script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedidos de Domínio</title>
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #5f6c84;
+            --line: #d8e0eb;
+            --paper: #f4f7fb;
+            --card: #ffffff;
+            --accent: #8f1f1f;
+            --accent-dark: #6f1717;
+            --soft: #eef3f8;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: var(--paper);
+            color: var(--ink);
+        }
+        .wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 24px 14px 48px;
+        }
+        .topbar,
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 16px 36px rgba(22, 32, 51, 0.06);
+        }
+        .topbar {
+            padding: 22px;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+        .topbar h1,
+        .card h2,
+        .card h3,
+        .card h4 {
+            margin-top: 0;
+        }
+        .muted { color: var(--muted); }
+        .link,
+        button {
+            display: inline-block;
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 14px;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 700;
+        }
+        .link.alt,
+        button.alt {
+            background: var(--accent-dark);
+        }
+        .stack {
+            display: grid;
+            gap: 16px;
+        }
+        .card {
+            padding: 20px;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+        .meta-item {
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--soft);
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #fff4e8;
+            border: 1px solid #f2d0ad;
+            color: #935321;
+            font-size: 0.92rem;
+        }
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .status-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .status-actions form,
+        .actions a,
+        .actions button {
+            width: 100%;
+        }
+        .status-actions button,
+        .actions button {
+            width: 100%;
+            text-align: center;
+        }
+        .notes {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .note-box {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fff;
+        }
+        .empty {
+            padding: 28px;
+            text-align: center;
+        }
+        @media (max-width: 720px) {
+            .topbar,
+            .meta-grid,
+            .actions,
+            .status-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="topbar">
+            <div>
+                <h1>Pedidos de Domínio</h1>
+                <p class="muted">Fluxo manual V1 dentro do Django. O WordPress continua fora do processo de dominio nesta fase.</p>
+            </div>
+            <div>
+                <a class="link alt" href="{% url 'dashboard' %}">Dashboard do cliente</a>
+            </div>
+        </div>
+
+        <div class="stack">
+            {% for card in domain_request_cards %}
+                <section class="card">
+                    <span class="badge">{{ card.object.get_domain_status_display }}</span>
+                    <h2>{{ card.business_name|default:"-" }}</h2>
+                    <p class="muted">{{ card.customer_name|default:"-" }}</p>
+
+                    <div class="meta-grid">
+                        <div class="meta-item">
+                            <strong>Email do cliente</strong>
+                            <div class="muted">{{ card.customer_email|default:"-" }}</div>
+                        </div>
+                        <div class="meta-item">
+                            <strong>Telefone / WhatsApp</strong>
+                            <div class="muted">{{ card.customer_phone|default:card.customer_whatsapp|default:"-" }}</div>
+                        </div>
+                        <div class="meta-item">
+                            <strong>Domínio pedido</strong>
+                            <div class="muted">{{ card.object.requested_domain|default:"-" }}</div>
+                        </div>
+                        <div class="meta-item">
+                            <strong>Domínios alternativos</strong>
+                            <div class="muted">{{ card.object.alternative_domain_1|default:"-" }} / {{ card.object.alternative_domain_2|default:"-" }}</div>
+                        </div>
+                        <div class="meta-item">
+                            <strong>Subdomínio de preview</strong>
+                            <div class="muted">{{ card.preview_subdomain|default:"-" }}</div>
+                        </div>
+                        <div class="meta-item">
+                            <strong>Estado do projeto / pagamento</strong>
+                            <div class="muted">{{ card.project_status|default:"-" }}{% if card.wordpress_status %} / {{ card.wordpress_status }}{% endif %}</div>
+                        </div>
+                    </div>
+
+                    <div class="notes">
+                        <div class="note-box">
+                            <strong>Nota publica</strong>
+                            <div class="muted">{{ card.object.public_note|default:"-" }}</div>
+                        </div>
+                        <div class="note-box">
+                            <strong>Nota interna</strong>
+                            <div class="muted">{{ card.object.admin_note|default:"-" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="button" data-copy="{{ card.object.requested_domain|default:''|escapejs }}">Copiar domínio pedido</button>
+                        <button type="button" data-copy="{{ card.copy_customer_details|escapejs }}">Copiar dados do cliente</button>
+                        <button type="button" data-copy="{{ card.copy_dns_records|escapejs }}">Copiar apontamentos DNS</button>
+                        {% if card.customer_whatsapp %}
+                            <a class="link" href="https://wa.me/{{ card.customer_whatsapp|cut:'+' }}" target="_blank" rel="noopener">Abrir WhatsApp</a>
+                        {% elif card.customer_phone %}
+                            <a class="link" href="tel:{{ card.customer_phone }}">Ligar ao cliente</a>
+                        {% else %}
+                            <button type="button" class="alt" disabled>Sem telefone disponivel</button>
+                        {% endif %}
+                        {% if card.customer_email %}
+                            <a class="link alt" href="mailto:{{ card.customer_email }}">Abrir email</a>
+                        {% else %}
+                            <button type="button" class="alt" disabled>Sem email disponivel</button>
+                        {% endif %}
+                    </div>
+
+                    <div class="status-actions">
+                        {% for status in domain_status_actions %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="domain_request_id" value="{{ card.object.id }}">
+                                <input type="hidden" name="domain_status" value="{{ status.value }}">
+                                <button type="submit">{{ status.label }}</button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% empty %}
+                <section class="card empty">
+                    <h2>Ainda nao existem pedidos de domínio</h2>
+                    <p class="muted">Os pedidos vao aparecer aqui quando o onboarding incluir uma opcao de domínio.</p>
+                </section>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        (function () {
+            function copyText(value) {
+                if (!value) {
+                    return;
+                }
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(value);
+                    return;
+                }
+                var area = document.createElement("textarea");
+                area.value = value;
+                document.body.appendChild(area);
+                area.select();
+                document.execCommand("copy");
+                document.body.removeChild(area);
+            }
+
+            document.addEventListener("click", function (event) {
+                var button = event.target.closest("[data-copy]");
+                if (!button) {
+                    return;
+                }
+                copyText(button.getAttribute("data-copy"));
+            });
+        }());
+    </script>
+</body>
+</html>

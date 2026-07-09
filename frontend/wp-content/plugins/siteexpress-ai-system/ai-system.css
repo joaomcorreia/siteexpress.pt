@@ -1,0 +1,41 @@
+#ai_usage_dashboard {
+    max-width: 680px;
+    margin: 24px auto;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #dbe4ea;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+#ai_usage_dashboard h1 {
+    margin-top: 0;
+}
+
+#ai_usage_dashboard button {
+    border: 0;
+    border-radius: 10px;
+    background: #0f766e;
+    color: #fff;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+
+#siteexpress_ai_system_chat {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+#siteexpress_ai_system_messages {
+    max-height: 280px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+}
+
+#siteexpress_ai_system_input {
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+}

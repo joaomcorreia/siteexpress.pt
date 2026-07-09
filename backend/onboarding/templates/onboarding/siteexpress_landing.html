@@ -1,0 +1,304 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SiteExpress.pt | Websites rápidos para negócios locais</title>
+  <meta name="description" content="Websites rápidos, simples e profissionais para negócios locais. Páginas starter, websites WordPress, SEO básico, contactos, Facebook posts, materiais impressos e suporte mensal.">
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    :root{
+      --bg:#f7f8f4;
+      --surface:#fffdf8;
+      --surface-2:#eef4ea;
+      --ink:#172018;
+      --muted:#677166;
+      --primary:#046a38;
+      --primary-2:#b7221a;
+      --green:#046a38;
+      --line:#d8ded4;
+      --soft:#f2f6ef;
+      --radius:14px;
+      --max:1180px;
+      --shadow:0 20px 55px rgba(4,106,56,.12);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 8% 0,rgba(4,106,56,.14),transparent 32rem),radial-gradient(circle at 94% 8%,rgba(183,34,26,.10),transparent 30rem),var(--bg);color:var(--ink);line-height:1.55;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(var(--max),calc(100% - 32px));margin:auto}
+    .topbar{position:sticky;top:0;z-index:20;background:rgba(255,253,248,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:inline-flex;align-items:center;gap:12px;font-weight:950;letter-spacing:-.04em}
+    .brand-logo{display:block;height:52px;width:auto;max-width:min(100%,380px);object-fit:contain}
+    .links{display:flex;gap:20px;color:var(--muted);font-weight:800;font-size:.94rem}
+    .links a:hover{color:var(--primary)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:13px 20px;border-radius:10px;font-weight:900;border:1px solid transparent;transition:.16s ease;white-space:nowrap}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);color:#fff;box-shadow:0 16px 34px rgba(4,106,56,.24)}
+    .btn-primary:hover{background:var(--primary-2)}
+    .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+    .hero{padding:clamp(52px,8vw,104px) 0 52px}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:clamp(32px,6vw,72px);align-items:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;border:1px solid #d4e6cf;background:#f2f8ee;color:var(--primary);font-weight:900;font-size:.9rem;margin-bottom:20px}
+    .eyebrow:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(15,122,95,.12)}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(2.6rem,6vw,5.55rem);line-height:.95;letter-spacing:-.075em;max-width:12ch;margin-bottom:22px}
+    h2{font-size:clamp(2rem,4vw,3.45rem);line-height:1;letter-spacing:-.06em;margin:10px 0 12px}
+    h3{letter-spacing:-.035em}
+    .accent{color:var(--primary)}
+    .lead{color:var(--muted);font-size:clamp(1.08rem,2vw,1.28rem);max-width:64ch;margin-bottom:28px}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px}
+    .pills{display:flex;flex-wrap:wrap;gap:10px}
+    .pill{padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:800;font-size:.92rem}
+    .hero-preview{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#f2f7ef);box-shadow:var(--shadow);border-radius:22px;padding:20px}
+    .browser{overflow:hidden;border-radius:14px;background:#fff;color:#172033;box-shadow:0 14px 36px rgba(4,106,56,.13);border:1px solid #e5ded4}
+    .bar{height:42px;background:#eef4ea;border-bottom:1px solid #d8ded4;display:flex;align-items:center;gap:7px;padding:0 14px}
+    .dot{width:10px;height:10px;border-radius:50%;background:#b9c6b5}
+    .mock{padding:24px}
+    .mock-hero{min-height:174px;border-radius:12px;padding:26px;color:#fff;display:grid;align-content:end;background:linear-gradient(135deg,rgba(23,32,24,.96),rgba(4,106,56,.9)),radial-gradient(circle at 88% 12%,rgba(183,34,26,.72),transparent 16rem)}
+    .mock-hero b{font-size:1.55rem;line-height:1;letter-spacing:-.045em;max-width:13ch}
+    .mock-hero span{color:#e8fff1;margin-top:8px}
+    .mini-grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .mini{height:96px;border-radius:10px;background:#f6f9f3;padding:13px;border:1px solid #dfe7db}
+    .mini b{display:block;font-size:.83rem;margin-bottom:8px}
+    .mini i{display:block;width:72%;height:8px;border-radius:99px;background:#cddac8;margin-bottom:6px}
+    .price{position:absolute;right:10px;bottom:16px;width:min(290px,calc(100% - 20px));padding:18px;border-radius:12px;background:rgba(255,253,248,.94);border:1px solid var(--line);backdrop-filter:blur(16px);box-shadow:0 16px 34px rgba(4,106,56,.13)}
+    .price small{color:var(--muted);font-weight:850}.price strong{display:block;font-size:2rem;letter-spacing:-.05em}.price span{color:var(--muted)}
+    section{padding:clamp(48px,7vw,86px) 0}
+    .head{max-width:790px;margin-bottom:30px}
+    .kicker{color:var(--primary);font-size:.78rem;text-transform:uppercase;letter-spacing:.15em;font-weight:950}
+    .head p{color:var(--muted);font-size:1.08rem}
+    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .card{border:1px solid var(--line);background:rgba(255,253,248,.82);border-radius:var(--radius);padding:24px;min-width:0;box-shadow:0 10px 28px rgba(4,106,56,.05)}
+    .card .num{display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:#f0f8ee;color:var(--primary);font-weight:950;margin-bottom:17px}
+    .card p,.plan p,.plan li,.step span,.addon p,.faq p{color:var(--muted)}
+    .split{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:22px;align-items:stretch}
+    .panel{border:1px solid var(--line);background:linear-gradient(135deg,#fff,#f3f8f0);border-radius:18px;padding:clamp(24px,4vw,38px);box-shadow:var(--shadow)}
+    .panel h3{font-size:clamp(1.65rem,3vw,2.4rem);line-height:1.04;margin-bottom:14px}
+    .feature-list{display:grid;gap:12px;margin-top:22px}
+    .feature{display:grid;grid-template-columns:42px 1fr;gap:14px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff}
+    .icon{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;background:#f0f8ee;color:var(--primary);font-weight:950}
+    .steps{counter-reset:step;display:grid;gap:12px}
+    .step{counter-increment:step;display:grid;grid-template-columns:auto 1fr;gap:14px;padding:18px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+    .step:before{content:counter(step);width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#eaf7f2;color:var(--green);font-weight:950}.step b{display:block}
+    .plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.plan{border:1px solid var(--line);background:#fff;border-radius:var(--radius);padding:24px;display:grid;gap:16px;box-shadow:0 10px 28px rgba(4,106,56,.05)}
+    .plan.featured{background:linear-gradient(180deg,#f7fff5,#fff);border-color:#9bcda7;box-shadow:0 24px 58px rgba(4,106,56,.14);transform:translateY(-7px)}
+    .amount{font-size:2.25rem;font-weight:950;letter-spacing:-.06em;line-height:1}.amount small{font-size:.95rem;color:var(--muted);letter-spacing:0}.plan ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}.plan li{display:grid;grid-template-columns:18px 1fr;gap:9px}.plan li:before{content:"✓";color:var(--green);font-weight:950}
+    .addons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:18px}.addon{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}.addon b{display:block;margin-bottom:6px}
+    .print-section{position:relative;margin:clamp(28px,4vw,54px) 0;padding:clamp(56px,7vw,92px) 0;background:radial-gradient(circle at 12% 12%,rgba(183,34,26,.28),transparent 26rem),radial-gradient(circle at 92% 20%,rgba(4,106,56,.22),transparent 24rem),linear-gradient(135deg,#111811,#19231b 58%,#2b1412);color:#fff}
+    .print-section:before,.print-section:after{content:"";position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent)}
+    .print-section:before{top:0}.print-section:after{bottom:0}
+    .print-section .head{max-width:860px}
+    .print-section .kicker{color:#ffb7b0}
+    .print-section .head p{color:#d4ddd1}
+    .print-grid{display:grid;grid-template-columns:1.18fr .82fr 1fr 1fr;grid-auto-rows:minmax(132px,auto);gap:14px;align-items:stretch}
+    .print-card{position:relative;overflow:hidden;background:#fffaf4;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:20px;box-shadow:0 18px 44px rgba(0,0,0,.18);color:var(--ink)}
+    .print-card:after{content:"";position:absolute;right:-34px;bottom:-44px;width:120px;height:120px;border-radius:28px;background:rgba(23,32,24,.08);transform:rotate(18deg)}
+    .print-card.tall{grid-row:span 2}.print-card.wide{grid-column:span 2}
+    .print-card b{position:relative;z-index:1;display:block;font-size:1.08rem;letter-spacing:-.035em;margin-bottom:7px}
+    .print-card p{position:relative;z-index:1;color:var(--muted);margin-bottom:0}
+    .print-card .tag{position:relative;z-index:1;display:inline-flex;margin-bottom:14px;padding:6px 9px;border-radius:999px;background:#f0f8ee;color:var(--primary);font-size:.76rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+    .print-card-media{display:block;width:100%;margin:0 0 14px;border-radius:10px}
+    .print-card:nth-child(1){background:linear-gradient(135deg,#0f1510,#233226);color:#fff;border-color:rgba(255,255,255,.22)}
+    .print-card:nth-child(1) p{color:#d6e3d4}.print-card:nth-child(1) .tag{background:rgba(255,255,255,.12);color:#fff}.print-card:nth-child(1):after{background:rgba(183,34,26,.34)}
+    .print-card:nth-child(3),.print-card:nth-child(5){background:linear-gradient(135deg,#b7221a,#7d1814);color:#fff;border-color:rgba(255,255,255,.20)}
+    .print-card:nth-child(3) p,.print-card:nth-child(5) p{color:#ffe0dc}.print-card:nth-child(3) .tag,.print-card:nth-child(5) .tag{background:rgba(255,255,255,.16);color:#fff}.print-card:nth-child(3):after,.print-card:nth-child(5):after{background:rgba(0,0,0,.18)}
+    .print-card:nth-child(2),.print-card:nth-child(6){background:#fff7f4;border-color:#e2b7b1}
+    .print-card:nth-child(4),.print-card:nth-child(7){background:#f7fbf3;border-color:#cbdcc6}
+    .faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.faq{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px}
+    .cta{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;border:1px solid #b8d4b4;border-radius:20px;padding:clamp(28px,6vw,52px);background:linear-gradient(135deg,#f7fff5,#fff5f3);box-shadow:var(--shadow)}.cta p{color:var(--muted);max-width:64ch;margin-bottom:0}
+    .notice{margin-top:16px;padding:14px 16px;border-radius:12px;background:#fff5f3;border:1px solid #e5beb9;color:#7d2923}
+    .footer{padding:58px 0 38px;background:#1d1d1d;color:#d7d7d7;border-top:1px solid rgba(255,255,255,.08)}
+    .footer-grid{display:grid;grid-template-columns:1.25fr .85fr 1fr 1fr;gap:clamp(28px,5vw,74px);align-items:start}
+    .footer-brand{display:grid;gap:18px;max-width:330px}
+    .footer .brand-logo{height:44px;max-width:300px;filter:brightness(1.15)}
+    .footer p{color:#c7c7c7;margin:0}
+    .footer-contact{display:grid;gap:6px;font-weight:900;color:#fff}
+    .footer-note{color:#9f9f9f;font-size:.94rem}
+    .footer-col h3{margin:0 0 18px;color:#fff;font-size:.86rem;letter-spacing:.08em;text-transform:uppercase}
+    .footer-col ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    .footer-col a{color:#f2f2f2}
+    .footer-col a:hover{color:#ffb7b0}
+    .footer-col .disabled-link{opacity:.58;cursor:default;pointer-events:none}
+    .footer-col .disabled-link:hover{color:#f2f2f2}
+    .footer-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;color:#b7b7b7;font-size:.94rem}
+    .footer-platform{color:#8f8f8f;font-size:.82rem}
+    @media(max-width:980px){.links{display:none}.hero-grid,.split,.cta{grid-template-columns:1fr}.cards,.plans{grid-template-columns:1fr}.addons{grid-template-columns:repeat(2,minmax(0,1fr))}.print-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto}.print-card.tall,.print-card.wide{grid-column:auto;grid-row:auto}.faq-grid{grid-template-columns:1fr}.plan.featured{transform:none}.price{position:static;width:auto;margin-top:14px}.footer-grid{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1/-1}}
+    @media(max-width:620px){.wrap{width:min(var(--max),calc(100% - 22px))}.nav{min-height:68px}.brand-logo{height:40px;max-width:230px}.actions,.pills{display:grid}.btn{width:100%}.mini-grid,.addons,.print-grid,.footer-grid{grid-template-columns:1fr}.mock{padding:18px}.footer-bottom{display:grid}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="SiteExpress.pt">
+        <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
+      </a>
+      <nav class="links" aria-label="Navegação principal"><a href="#servicos">Serviços</a><a href="#visibilidade">Visibilidade</a><a href="#impressao">Impressão</a><a href="#pacotes">Pacotes</a><a href="#contacto">Contacto</a></nav>
+      <a class="btn btn-primary" href="#contacto">Pedir proposta</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">Websites rápidos para negócios locais</div>
+          <h1>O seu negócio online, <span class="accent">sem perder semanas.</span></h1>
+          <p class="lead">SiteExpress cria páginas starter e websites WordPress para negócios locais. Comece simples, mostre os serviços certos, receba contactos e evolua para catálogo, loja, línguas ou promoção quando fizer sentido.</p>
+          <div class="actions"><a class="btn btn-primary" href="#pacotes">Ver pacotes</a><a class="btn btn-ghost" href="#visibilidade">Ver extras de visibilidade</a></div>
+          <div class="pills"><span class="pill">✓ WordPress</span><span class="pill">✓ SEO local básico</span><span class="pill">✓ WhatsApp e formulário</span><span class="pill">✓ Preparado para crescer</span></div>
+        </div>
+        <div class="hero-preview" aria-label="Pré-visualização de website">
+          <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="mock"><div class="mock-hero"><b>Website para o seu negócio</b><span>Serviços, contactos, localização e pedidos online.</span></div><div class="mini-grid"><div class="mini"><b>Serviços</b><i></i><i></i></div><div class="mini"><b>Contacto</b><i></i><i></i></div><div class="mini"><b>Posts</b><i></i><i></i></div></div></div></div>
+          <aside class="price"><small>Website profissional</small><strong>desde €225</strong><span>+ IVA. Páginas starter disponíveis com mensalidade.</span></aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicos">
+      <div class="wrap">
+        <div class="head"><span class="kicker">O que fazemos</span><h2>Uma base digital limpa para empresas pequenas que precisam aparecer e receber pedidos.</h2><p>Primeiro colocamos a presença online a funcionar. Depois adicionamos páginas, conteúdos e ferramentas quando isso trouxer valor real.</p></div>
+        <div class="cards">
+          <article class="card"><span class="num">01</span><h3>Página Starter</h3><p>Uma página rápida para apresentar o negócio, serviços principais, contacto, WhatsApp, localização e chamada para ação.</p></article>
+          <article class="card"><span class="num">02</span><h3>Website WordPress</h3><p>Website profissional com páginas essenciais, serviços detalhados, galeria ou portfólio, formulário e estrutura SEO básica.</p></article>
+          <article class="card"><span class="num">03</span><h3>Catálogo ou loja</h3><p>Quando o negócio estiver pronto, podemos adicionar produtos, pedidos, catálogo, pagamentos ou funcionalidades mais específicas.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="visibilidade">
+      <div class="wrap split">
+        <article class="panel">
+          <span class="kicker">Depois do website</span>
+          <h3>Publicar o site é só abrir a porta. Agora é preciso mandar pessoas para lá.</h3>
+          <p>Por isso, SiteExpress pode incluir ou preparar extras simples de promoção local: posts para Facebook, botões de WhatsApp, QR codes, SEO básico e estrutura para Google e Bing encontrarem o website.</p>
+          <div class="notice">Sem promessas exageradas: começamos por ações simples e úteis para ajudar mais pessoas a encontrar e contactar o seu negócio.</div>
+        </article>
+        <div class="feature-list">
+          <div class="feature"><span class="icon">FB</span><div><b>Facebook Posts</b><span>Posts prontos para copiar, adaptar e publicar. Bom para lançar o website, anunciar serviços e manter a página ativa.</span></div></div>
+          <div class="feature"><span class="icon">SEO</span><div><b>Google e Bing</b><span>Títulos, descrições, páginas de serviço, sitemap e bases para indexação. Não é promessa de primeiro lugar, é fundação limpa.</span></div></div>
+          <div class="feature"><span class="icon">QR</span><div><b>QR codes e links rápidos</b><span>QR para cartões, montra, carrinha, recibos ou Facebook. Um detalhe pequeno que pode mandar tráfego para o site.</span></div></div>
+          <div class="feature"><span class="icon">PT</span><div><b>Preparado para línguas</b><span>Português primeiro. Depois, inglês, francês, neerlandês ou outras línguas quando o negócio precisar alcançar mais clientes.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="impressao" class="print-section">
+      <div class="wrap">
+        <div class="head"><span class="kicker">Impressão e presença local</span><h2>Materiais simples para ligar o mundo físico ao website.</h2><p>Cartões, flyers, QR codes e outros materiais gráficos ajudam clientes a encontrar o seu website, guardar contactos e pedir informações com menos atrito.</p></div>
+        <div class="print-grid" aria-label="Produtos de impressão SiteExpress">
+          <article class="print-card tall"><span class="tag">Principal</span><img class="print-card-media" src="{% static 'core/img/siteexpress/cartoes-de-visita.jpg' %}" alt="Cartões de visita"><b>Cartões de visita</b><p>Cartões com website, telefone, email, WhatsApp e QR code para entregar a clientes, parceiros e contactos locais.</p></article>
+          <article class="print-card"><span class="tag">Divulgação</span><b>Flyers</b><p>Para divulgar serviços, promoções locais, inaugurações ou campanhas porta a porta.</p></article>
+          <article class="print-card"><span class="tag">QR</span><b>Autocolantes QR</b><p>Para montras, balcões, embalagens, recibos ou viaturas apontarem para o site.</p></article>
+          <article class="print-card"><span class="tag">Restauração</span><b>Menus e brochuras</b><p>Uma ponte simples para cafés, restaurantes, estética, oficinas e serviços locais.</p></article>
+          <article class="print-card wide"><span class="tag">Fidelização</span><b>Cartões de cliente</b><p>Cartões de marcação, fidelização ou lembretes com QR para contactos, avaliações e páginas de serviço.</p></article>
+          <article class="print-card"><span class="tag">Local</span><b>Placas e reclamos</b><p>Materiais para montras, balcões, viaturas ou espaços comerciais, pensados para ligar o mundo físico ao website.</p></article>
+          <article class="print-card"><span class="tag">Promoção</span><b>Lonas e banners</b><p>Material simples para feiras, oficinas, obras, eventos e campanhas de rua.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="processo">
+      <div class="wrap">
+        <div class="head"><span class="kicker">Como funciona</span><h2>Um processo simples, sem labirinto administrativo.</h2><p>O cliente envia a informação principal, nós montamos a estrutura, revemos e publicamos. A partir daí pode pedir suporte ou extras.</p></div>
+        <div class="steps">
+          <div class="step"><div><b>Escolhe o ponto de partida</b><span>Página starter, website profissional ou projeto com extras.</span></div></div>
+          <div class="step"><div><b>Envia dados e serviços</b><span>Nome do negócio, contactos, zona de trabalho, serviços, fotos e preferências.</span></div></div>
+          <div class="step"><div><b>Recebe uma pré-visualização</b><span>A estrutura fica pronta para revisão antes da publicação final.</span></div></div>
+          <div class="step"><div><b>Publicamos e melhoramos</b><span>Website online, links sociais, SEO básico e próximos passos de visibilidade.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pacotes">
+      <div class="wrap">
+        <div class="head"><span class="kicker">Pacotes iniciais</span><h2>Começar pequeno, crescer com estrutura.</h2><p>Opções simples para começar online com uma presença profissional e preparada para crescer.</p></div>
+        <div class="plans">
+          <article class="plan"><h3>Página Starter</h3><div class="amount">€19,95 <small>/ mês</small></div><p>Para negócios que precisam estar online sem construir um site completo logo de início.</p><ul><li>Uma página de apresentação</li><li>Serviços principais e contacto</li><li>WhatsApp e formulário simples</li><li>Boa opção para lançamento rápido</li></ul><a class="btn btn-ghost" href="#contacto">Quero começar</a></article>
+          <article class="plan featured"><h3>Website Profissional</h3><div class="amount">€225 <small>+ IVA</small></div><p>Base completa para negócios locais que querem uma presença mais séria.</p><ul><li>Website WordPress profissional</li><li>Páginas essenciais e serviços</li><li>SEO básico e estrutura local</li><li>Preparado para suporte e extras</li></ul><a class="btn btn-primary" href="#contacto">Pedir website</a></article>
+          <article class="plan"><h3>Manutenção</h3><div class="amount">€29,95 <small>/ mês</small></div><p>Para quem quer ajuda contínua sem mexer em áreas técnicas do website.</p><ul><li>Manutenção básica</li><li>Pequenas alterações combinadas</li><li>Ajuda com conteúdo e páginas</li><li>Extras pagos quando necessário</li></ul><a class="btn btn-ghost" href="#contacto">Falar connosco</a></article>
+        </div>
+        <div class="addons" aria-label="Extras SiteExpress">
+          <div class="addon"><b>Facebook Posts</b><p>Posts prontos para publicar. Ideal para lançar o website e manter a página ativa.</p></div>
+          <div class="addon"><b>Email profissional</b><p>Ajuda com email do domínio, configurações básicas e orientação inicial.</p></div>
+          <div class="addon"><b>Catálogo</b><p>Produtos ou serviços organizados sem obrigar a loja completa logo no início.</p></div>
+          <div class="addon"><b>Loja online</b><p>WooCommerce quando o negócio estiver pronto para receber encomendas ou pagamentos.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <div class="head"><span class="kicker">Perguntas rápidas</span><h2>Sem promessas de agência espacial.</h2><p>SiteExpress é para colocar uma presença online decente a funcionar e depois evoluir com calma.</p></div>
+        <div class="faq-grid">
+          <article class="faq"><h3>Posso começar só com uma página?</h3><p>Sim. Para muitos negócios, uma página bem feita já resolve o primeiro problema: explicar o que fazem e receber contactos.</p></article>
+          <article class="faq"><h3>O website pode crescer depois?</h3><p>Sim. A estrutura deve permitir adicionar páginas, serviços, catálogo, loja, línguas e posts sem refazer tudo do zero.</p></article>
+          <article class="faq"><h3>Inclui redes sociais?</h3><p>O website pode incluir links, botões e preparação. Os posts para Facebook podem entrar como extra simples de visibilidade.</p></article>
+          <article class="faq"><h3>Vão prometer resultados no Google?</h3><p>Não. Fazemos a base correta: conteúdo, páginas, títulos, estrutura e indexação. Resultados dependem de concorrência, tempo e promoção.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto">
+      <div class="wrap">
+        <div class="cta"><div><span class="kicker">Contacto</span><h2>Tem um negócio local? Vamos pôr uma base online decente a funcionar.</h2><p>Envie o nome do negócio, localidade, tipo de serviço e diga se precisa de página starter, website completo, Facebook posts ou materiais gráficos como cartões, flyers ou QR codes.</p></div><a class="btn btn-primary" href="mailto:info@siteexpress.pt?subject=Pedido%20SiteExpress.pt">Enviar pedido</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
+          <p>Websites rápidos, páginas starter e apoio simples para negócios locais que querem começar online com uma presença profissional.</p>
+          <div class="footer-contact">
+            <a href="mailto:info@siteexpress.pt">info@siteexpress.pt</a>
+          </div>
+          <div class="footer-note">Criado para pequenos negócios em Portugal.</div>
+        </div>
+
+        <nav class="footer-col" aria-label="Produto">
+          <h3>Produto</h3>
+          <ul>
+            <li><a href="#pacotes">Página Starter</a></li>
+            <li><a href="#servicos">Websites</a></li>
+            <li><a href="#servicos">Serviços</a></li>
+            <li><a href="#pacotes">Preços</a></li>
+            <li><a href="#contacto">Pedir proposta</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col" aria-label="Planos e serviços">
+          <h3>Planos / Serviços</h3>
+          <ul>
+            <li><a href="#pacotes">Página Starter</a></li>
+            <li><a href="#servicos">Website profissional</a></li>
+            <li><a href="#visibilidade">Google, Bing e visibilidade</a></li>
+            <li><a href="#visibilidade">Facebook Posts</a></li>
+            <li><a href="#pacotes">Catálogo / Loja online</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col" aria-label="Empresa e legal">
+          <h3>Empresa / Legal</h3>
+          <ul>
+            <li><a href="#contacto">Contacto</a></li>
+            <li><a href="#contacto">Parceiros</a></li>
+            <li><span class="disabled-link" aria-disabled="true">Política de Privacidade</span></li>
+            <li><span class="disabled-link" aria-disabled="true">Termos</span></li>
+            <li><span class="disabled-link" aria-disabled="true">Política de Cookies</span></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 SiteExpress.pt. Todos os direitos reservados.</div>
+        <div class="footer-platform">SiteExpress.pt é uma plataforma Just Code Works.</div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

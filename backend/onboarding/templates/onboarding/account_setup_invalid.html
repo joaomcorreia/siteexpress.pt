@@ -1,0 +1,36 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Link invalido</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: #f4f6fb;
+            color: #172033;
+        }
+        .card {
+            max-width: 680px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
+        }
+        a {
+            color: #8f1f1f;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Link invalido ou expirado</h1>
+        <p>Este link para definir a palavra-passe ja nao e valido. Volte a iniciar o onboarding para receber um novo acesso.</p>
+        <p><a href="{% url 'onboarding' %}">Voltar ao onboarding</a></p>
+    </div>
+</body>
+</html>

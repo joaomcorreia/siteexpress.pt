@@ -1,0 +1,45 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedido recebido</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: #f4f6fb;
+            color: #172033;
+        }
+        .card {
+            max-width: 700px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
+        }
+        a {
+            color: #8f1f1f;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Pedido recebido com sucesso</h1>
+        <p>Os dados do onboarding foram guardados e vao ser usados no preview da Página Express e na preparacao do Website Completo.</p>
+        {% if setup_required %}
+            <p>Antes de aceder ao dashboard com <strong>{{ setup_email }}</strong>, precisa de definir uma palavra-passe.</p>
+        {% else %}
+            <p>A conta associada a <strong>{{ setup_email }}</strong> ja existe. Pode iniciar sessao com a palavra-passe atual ou voltar a usar este link, se necessario.</p>
+        {% endif %}
+        {% if debug_mode and setup_link %}
+            <p><strong>Link local para definir a palavra-passe:</strong> <a href="{{ setup_link }}">{{ setup_link }}</a></p>
+        {% endif %}
+        <p>Depois de confirmar a conta e iniciar sessao, o preview da sua Página Express fica disponivel no dashboard.</p>
+        <p><a href="{% url 'login' %}">Ir para o login</a></p>
+    </div>
+</body>
+</html>

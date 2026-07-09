@@ -1,0 +1,317 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Onboarding SiteExpress</title>
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #5f6c84;
+            --line: #d8e0eb;
+            --paper: #f5f7fb;
+            --card: #ffffff;
+            --brand: #b42318;
+            --brand-dark: #7a1f19;
+        }
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #fbfcfe 0%, #eef3f8 100%);
+            color: var(--ink);
+        }
+        .wrap {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 32px 20px 64px;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
+        }
+        h1, h2 {
+            margin-top: 0;
+        }
+        .intro {
+            margin-bottom: 24px;
+        }
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+        .grid.two {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+        .section {
+            padding-top: 8px;
+            border-top: 1px solid var(--line);
+        }
+        .banner {
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #d8e4c3;
+            background: #f6fbef;
+        }
+        .banner strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #c7d2e2;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font: inherit;
+            background: #fff;
+        }
+        .helptext {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+        .errors {
+            margin: 8px 0 0;
+            color: #a61b1b;
+            font-size: 0.95rem;
+        }
+        .actions {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-top: 24px;
+        }
+        button {
+            border: 0;
+            border-radius: 999px;
+            padding: 14px 24px;
+            font: inherit;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+            cursor: pointer;
+        }
+        .hint {
+            color: var(--muted);
+        }
+        .hidden {
+            display: none;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+        .product-option {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            background: #fbfcfe;
+        }
+        .product-option label {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin: 0;
+            cursor: pointer;
+        }
+        .product-option input[type="radio"] {
+            width: auto;
+            margin-top: 3px;
+        }
+        @media (max-width: 720px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="card">
+            <div class="intro">
+                <h1>Criar projeto SiteExpress</h1>
+                <p>Os dados deste onboarding vao ser usados no preview da Página Express e na preparacao do Website Completo.</p>
+            </div>
+            {% if partner_banner %}
+                <div class="banner">
+                    <strong>{{ partner_banner }}</strong>
+                    <div class="hint">O codigo do parceiro ja foi aplicado a este pedido.</div>
+                    {% if locked_partner %}
+                        <div class="hint">{{ locked_partner.company_name }} - {{ locked_partner.partner_code }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if profile_form.non_field_errors or project_form.non_field_errors %}
+                    <div class="errors">
+                        {{ profile_form.non_field_errors }}
+                        {{ project_form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="section">
+                    <h2>Dados do negocio</h2>
+                    <div class="grid two">
+                        {% for field in profile_form %}
+                            {% if field.name == "target_country" or field.name == "target_city" or field.name == "target_region" or field.name == "target_audience" or field.name == "target_language" %}
+                            {% else %}
+                                <div>
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
+                                    {% if field.errors %}<div class="errors">{{ field.errors }}</div>{% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Mercado-alvo</h2>
+                    <div class="grid two">
+                        {% for field in profile_form %}
+                            {% if field.name == "target_country" or field.name == "target_city" or field.name == "target_region" or field.name == "target_audience" or field.name == "target_language" %}
+                                <div>
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
+                                    {% if field.errors %}<div class="errors">{{ field.errors }}</div>{% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Escolha o produto</h2>
+                    {% if project_form.product_type.errors %}<div class="errors">{{ project_form.product_type.errors }}</div>{% endif %}
+                    <div class="product-grid">
+                        <div class="product-option">
+                            <label for="id_product_type_0">
+                                <input
+                                    type="radio"
+                                    name="product_type"
+                                    value="starter_page_monthly"
+                                    id="id_product_type_0"
+                                    {% if project_form.product_type.value == "starter_page_monthly" or not project_form.product_type.value %}checked{% endif %}
+                                >
+                                <span>
+                                    <strong>Página Express</strong><br>
+                                    Uma pagina rapida para comecar, ideal para ter presenca online e partilhar com clientes.<br>
+                                    <span class="hint">€9,95/mês + IVA</span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="product-option">
+                            <label for="id_product_type_1">
+                                <input
+                                    type="radio"
+                                    name="product_type"
+                                    value="full_website_onetime"
+                                    id="id_product_type_1"
+                                    {% if project_form.product_type.value == "full_website_onetime" %}checked{% endif %}
+                                >
+                                <span>
+                                    <strong>Website Completo</strong><br>
+                                    Um website WordPress completo, com mais paginas, melhor estrutura e preparado para crescer.<br>
+                                    <span class="hint">€235 + IVA</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Parceiro SiteExpress ou recomendacao</h2>
+                    <div class="grid two">
+                        <div>
+                            <label for="{{ project_form.partner_code.id_for_label }}">{{ project_form.partner_code.label }}</label>
+                            {{ project_form.partner_code }}
+                            {% if project_form.partner_code.help_text %}<span class="helptext">{{ project_form.partner_code.help_text }}</span>{% endif %}
+                            <span class="helptext">Se nao recebeu nenhum codigo, deixe este campo em branco.</span>
+                            {% if project_form.partner_code.errors %}<div class="errors">{{ project_form.partner_code.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Configuração do domínio</h2>
+                    <div class="grid two">
+                        <div>
+                            <label for="{{ project_form.domain_choice.id_for_label }}">Opção de domínio</label>
+                            {{ project_form.domain_choice }}
+                            {% if project_form.domain_choice.errors %}<div class="errors">{{ project_form.domain_choice.errors }}</div>{% endif %}
+                        </div>
+                        <div id="existing-domain-group">
+                            <label for="{{ project_form.existing_domain.id_for_label }}">Domínio atual</label>
+                            {{ project_form.existing_domain }}
+                            {% if project_form.existing_domain.errors %}<div class="errors">{{ project_form.existing_domain.errors }}</div>{% endif %}
+                        </div>
+                        <div id="preferred-domain-group">
+                            <label for="{{ project_form.preferred_domain.id_for_label }}">Domínio pretendido</label>
+                            {{ project_form.preferred_domain }}
+                            {% if project_form.preferred_domain.errors %}<div class="errors">{{ project_form.preferred_domain.errors }}</div>{% endif %}
+                        </div>
+                        <div id="alternative-domain-1-group">
+                            <label for="{{ project_form.alternative_domain_1.id_for_label }}">Domínio alternativo 1</label>
+                            {{ project_form.alternative_domain_1 }}
+                            {% if project_form.alternative_domain_1.errors %}<div class="errors">{{ project_form.alternative_domain_1.errors }}</div>{% endif %}
+                        </div>
+                        <div id="alternative-domain-2-group">
+                            <label for="{{ project_form.alternative_domain_2.id_for_label }}">Domínio alternativo 2</label>
+                            {{ project_form.alternative_domain_2 }}
+                            {% if project_form.alternative_domain_2.errors %}<div class="errors">{{ project_form.alternative_domain_2.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit">Criar projeto</button>
+                    <span class="hint">O preview da Página Express e criado primeiro. O Website Completo fica preparado para o passo seguinte.</span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var choiceField = document.getElementById("{{ project_form.domain_choice.id_for_label }}");
+            var existingGroup = document.getElementById("existing-domain-group");
+            var preferredGroup = document.getElementById("preferred-domain-group");
+            var altOneGroup = document.getElementById("alternative-domain-1-group");
+            var altTwoGroup = document.getElementById("alternative-domain-2-group");
+
+            function syncDomainFields() {
+                var value = choiceField ? choiceField.value : "";
+                var showExisting = value === "already_have_domain";
+                var showRequested = value === "need_help";
+
+                existingGroup.classList.toggle("hidden", !showExisting);
+                preferredGroup.classList.toggle("hidden", !showRequested);
+                altOneGroup.classList.toggle("hidden", !showRequested);
+                altTwoGroup.classList.toggle("hidden", !showRequested);
+            }
+
+            if (choiceField) {
+                choiceField.addEventListener("change", syncDomainFields);
+                syncDomainFields();
+            }
+        }());
+    </script>
+</body>
+</html>

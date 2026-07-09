@@ -1,0 +1,592 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{% if content and content.language %}{{ content.language }}{% else %}pt{% endif %}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if content %}{{ content.seo_title }}{% else %}{% trans "Preview do Website Completo" %}{% endif %}</title>
+    {% include "onboarding/_preview_styles.html" %}
+</head>
+<body class="{% if is_restaurant_template %}restaurant-variant{% elif is_beauty_template %}beauty-variant{% elif is_services_template %}services-variant{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'boxed' }}">
+    <div class="wrap{% if is_restaurant_template %} restaurant-variant{% elif is_beauty_template %} beauty-variant{% elif is_services_template %} services-variant{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'boxed' }}">
+        {% if not embed_mode %}
+            <a class="back" href="{% url 'dashboard' %}">{% trans "Voltar ao dashboard" %}</a>
+        {% endif %}
+
+        {% if project and content %}
+            <section class="card nav-card">
+                <div class="brand-lockup">
+                    {% if project.business_profile.logo %}
+                        {% blocktrans with business_name=project.business_profile.business_name asvar logo_alt %}Logo for {{ business_name }}{% endblocktrans %}
+                        <div class="brand-logo">
+                            <img src="{{ project.business_profile.logo.url }}" alt="{{ logo_alt }}">
+                        </div>
+                    {% endif %}
+                    <div class="brand-copy">
+                        <div class="brand-mark">{{ project.business_profile.business_name }}</div>
+                    {% if is_restaurant_template %}
+                        <div class="muted">{% blocktrans with city=project.business_profile.city %}Restauração em {{ city }}{% endblocktrans %}</div>
+                    {% elif is_beauty_template %}
+                        <div class="muted">{% blocktrans with city=project.business_profile.city %}Serviços de beleza em {{ city }}{% endblocktrans %}</div>
+                    {% elif is_services_template %}
+                        <div class="muted">{% blocktrans with city=project.business_profile.city %}A atender {{ city }} e zonas próximas{% endblocktrans %}</div>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="nav-links">
+                    <a class="nav-link{% if active_page == 'home' %} active{% endif %}" href="{% url 'upgrade-placeholder' %}?page=home{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Início" %}</a>
+                    <a class="nav-link{% if active_page == 'services' or active_page == 'service' %} active{% endif %}" href="{% url 'upgrade-placeholder' %}?page=services{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "Ementa" %}{% else %}{% trans "Serviços" %}{% endif %}</a>
+                    <a class="nav-link{% if active_page == 'about' %} active{% endif %}" href="{% url 'upgrade-placeholder' %}?page=about{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "História" %}{% else %}{% trans "Sobre" %}{% endif %}</a>
+                    <a class="nav-link{% if active_page == 'contact' %} active{% endif %}" href="{% url 'upgrade-placeholder' %}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "Reservas" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Contacto" %}{% endif %}</a>
+                </div>
+            </section>
+
+            <section class="card section section-soft">
+                <span class="eyebrow">{% trans "Website Completo" %}</span>
+                <h2 class="section-title">{% trans "Preview alargado em preparação no SiteExpress" %}</h2>
+                <p>{% trans "Este preview mostra a estrutura do Website Completo que está a ser preparada para o seu negócio, com mais páginas, mais detalhe e mais espaço para crescer." %}</p>
+                <p class="muted">{% trans "Preço previsto: €235 + IVA. Nesta fase ainda não existe automação de pagamento ou de domínio. Pode pedir o próximo passo à equipa SiteExpress ou aguardar instruções no dashboard." %}</p>
+            </section>
+
+            {% if active_page == 'home' %}
+                <section class="hero section" id="home">
+                    <p class="muted">{{ project.business_profile.business_type }} | {{ project.business_profile.city }}</p>
+                    <h1>{% if is_restaurant_template %}{% blocktrans with business_name=project.business_profile.business_name %}Bem-vindo a {{ business_name }}{% endblocktrans %}{% elif is_beauty_template %}{% blocktrans with city=project.business_profile.city %}Serviços de beleza em {{ city }}{% endblocktrans %}{% elif is_services_template %}{% blocktrans with city=project.business_profile.city %}Serviços de confiança em {{ city }}{% endblocktrans %}{% else %}{{ content.hero_title|default:project.business_profile.business_name }}{% endif %}</h1>
+                    {% if is_restaurant_template %}
+                        <p>{% blocktrans with city=project.business_profile.city %}Sabores tradicionais em {{ city }}, servidos com ambiente, proximidade e uma experiência memorável à mesa.{% endblocktrans %}</p>
+                        <p class="muted">{% trans "Descubra a ementa, conheça a história da casa e faça a sua reserva." %}</p>
+                        {% if demo_images.hero %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar hero_alt %}Restaurant dish at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block hero-image">
+                                <img src="{% static demo_images.hero %}" alt="{{ hero_alt }}">
+                            </div>
+                        {% endif %}
+                    {% elif is_beauty_template %}
+                        <p>{% trans "Unhas, beleza e cuidado pessoal com uma experiência elegante e atenção dedicada em cada atendimento." %}</p>
+                        <p class="muted">{% trans "Veja os serviços de beleza, conheça o estúdio e marque o tratamento que faz mais sentido para si." %}</p>
+                        {% if demo_images.hero %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar hero_alt %}Beauty service at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block hero-image">
+                                <img src="{% static demo_images.hero %}" alt="{{ hero_alt }}">
+                            </div>
+                        {% endif %}
+                    {% elif is_services_template %}
+                        <p>{% trans "Trabalho rápido, claro e profissional para clientes locais que procuram ajuda fiável e comunicação direta." %}</p>
+                        <p class="muted">{% blocktrans with city=project.business_profile.city %}A atender {{ city }} e zonas próximas com apoio prático, visitas agendadas e serviço local de confiança.{% endblocktrans %}</p>
+                        {% if demo_images.hero %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar hero_alt %}Service work by {{ business_name }}{% endblocktrans %}
+                            <div class="image-block hero-image">
+                                <img src="{% static demo_images.hero %}" alt="{{ hero_alt }}">
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p>{{ content.hero_subtitle }}</p>
+                        <p class="muted">{{ content.intro_text }}</p>
+                    {% endif %}
+                </section>
+
+                {% if is_services_template %}
+                    <section class="card section section-soft services-intro-card" id="intro">
+                        <span class="eyebrow">{% trans "Porque é que os clientes nos escolhem" %}</span>
+                        <h2 class="section-title">{% trans "Ajuda clara para trabalhos locais e necessidades de serviço contínuas" %}</h2>
+                        <div class="section-copy">
+                            <p>{% blocktrans with city=project.business_profile.city %}Serviço claro, comunicação fiável e apoio prático para clientes em {{ city }}.{% endblocktrans %}</p>
+                            <p class="muted">{% blocktrans with business_type=project.business_profile.business_type city=project.business_profile.city %}Pensado para negócios de {{ business_type }} em {{ city }}, com ajuda direta, visitas de confiança e um serviço que pode marcar com segurança.{% endblocktrans %}</p>
+                        </div>
+                    </section>
+                {% endif %}
+
+                <section class="card section section-soft" id="featured">
+                    <h2 class="section-title">{% if is_restaurant_template %}{% trans "Pratos em destaque" %}{% elif is_beauty_template %}{% trans "Tratamentos em destaque" %}{% elif is_services_template %}{% trans "Serviços em destaque" %}{% else %}{% trans "Destaques" %}{% endif %}</h2>
+                    <div class="featured-grid{% if is_services_template %} services-featured-grid{% endif %}">
+                        {% if is_services_template %}
+                        {% for item in featured_services %}
+                            <div class="service-item services-feature-card">
+                                {% if item.featured_image_path %}
+                                    {% blocktrans with business_name=project.business_profile.business_name asvar featured_alt %}Service work by {{ business_name }}{% endblocktrans %}
+                                    <div class="image-block">
+                                        <img src="{% static item.featured_image_path %}" alt="{{ featured_alt }}">
+                                    </div>
+                                {% endif %}
+                                <div class="service-copy">
+                                    <span class="tag">{% trans "Serviço em destaque" %}</span>
+                                    <div class="service-header">
+                                        <span class="service-icon service-icon-{{ item.icon }}" aria-label="{{ item.icon_label }}"></span>
+                                        <strong><a class="service-link" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ item.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{{ item.title }}</a></strong>
+                                    </div>
+                                    <p class="muted">{{ item.short_description }}</p>
+                                    <a class="service-link" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ item.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Ver serviço" %}</a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="service-item">{% trans "Os destaques vão aparecer aqui depois da geração de conteúdo." %}</div>
+                        {% endfor %}
+                        {% else %}
+                        {% for item in featured_items %}
+                            <div class="service-item{% if is_services_template %} services-feature-card{% endif %}">
+                                <strong><a class="back" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ item.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{{ item.title }}</a></strong>
+                                <p class="muted">{{ item.short_description }}</p>
+                                {% if is_restaurant_template %}
+                                    {% if item.featured_image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar featured_alt %}Restaurant dish at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static item.featured_image_path %}" alt="{{ featured_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% elif is_beauty_template %}
+                                    {% if item.featured_image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar featured_alt %}Beauty service at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static item.featured_image_path %}" alt="{{ featured_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="service-item">{% trans "Os destaques vão aparecer aqui depois da geração de conteúdo." %}</div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="card section section-soft{% if is_services_template %} services-about-card{% endif %}" id="about">
+                    <h2 class="section-title">{% if is_restaurant_template %}{% trans "A nossa história" %}{% else %}{% trans "Sobre" %}{% endif %}</h2>
+                    {% if is_restaurant_template %}
+                        {% if demo_images.about %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar about_alt %}Restaurant interior at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.about %}" alt="{{ about_alt }}">
+                            </div>
+                        {% endif %}
+                        <p>{% blocktrans with business_name=project.business_profile.business_name %}{{ business_name }} is a place where food, hospitality, and atmosphere come together into a memorable dining experience.{% endblocktrans %}</p>
+                        <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=about{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Ler a história" %}</a></p>
+                    {% elif is_beauty_template %}
+                        {% if demo_images.about %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar about_alt %}Beauty studio at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.about %}" alt="{{ about_alt }}">
+                            </div>
+                        {% endif %}
+                        <p>{% trans "Cuidado pessoal com atenção ao detalhe, ambiente tranquilo e serviços de beleza pensados para cada cliente." %}</p>
+                        <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=about{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Saber mais" %}</a></p>
+                    {% elif is_services_template %}
+                        <div class="section-media-grid">
+                            {% if demo_images.about %}
+                                {% blocktrans with business_name=project.business_profile.business_name asvar about_alt %}Service team at {{ business_name }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static demo_images.about %}" alt="{{ about_alt }}">
+                                </div>
+                            {% endif %}
+                            <div class="section-copy">
+                                <span class="eyebrow">{% trans "Apoio local de confiança" %}</span>
+                                <p>{% trans "Um serviço prático e fiável, construído com comunicação clara, visitas de confiança e trabalho concluído com cuidado." %}</p>
+                                <p class="muted">{% blocktrans with business_type=project.business_profile.business_type city=project.business_profile.city %}Ideal para negócios de {{ business_type }} em {{ city }}, com visitas pontuais, expectativas claras e acompanhamento cuidado.{% endblocktrans %}</p>
+                                <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=about{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Saber mais" %}</a></p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p>{{ content.about_text }}</p>
+                        <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=about">{% trans "Abrir página Sobre completa" %}</a></p>
+                    {% endif %}
+                </section>
+
+                <section class="card section section-plain" id="services">
+                    <h2 class="section-title">{% if is_restaurant_template %}{% trans "Ementa" %}{% elif is_beauty_template %}{% trans "Serviços de beleza" %}{% else %}{% trans "Serviços" %}{% endif %}</h2>
+                    <div class="{% if is_services_template %}services-card-grid{% else %}services-list{% endif %}">
+                        {% if is_services_template %}
+                        {% for service in remaining_home_services %}
+                            <div class="service-item">
+                                {% if service.image_path %}
+                                    {% blocktrans with business_name=project.business_profile.business_name asvar service_alt %}Service work by {{ business_name }}{% endblocktrans %}
+                                    <div class="image-block">
+                                        <img src="{% static service.image_path %}" alt="{{ service_alt }}">
+                                    </div>
+                                {% endif %}
+                                <div class="service-copy">
+                                    <span class="tag">{% trans "Serviço disponível" %}</span>
+                                    <div class="service-header">
+                                        <span class="service-icon service-icon-{{ service.icon }}" aria-label="{{ service.icon_label }}"></span>
+                                        <strong><a class="service-link" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ service.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{{ service.title }}</a></strong>
+                                    </div>
+                                    <p class="muted">{{ service.short_description }}</p>
+                                    <a class="service-link" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ service.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Ver serviço" %}</a>
+                                </div>
+                                {% if is_restaurant_template %}
+                                    {% if service.image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar menu_alt %}Restaurant dish at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static service.image_path %}" alt="{{ menu_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% elif is_beauty_template %}
+                                    {% if service.image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar service_alt %}Beauty service at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static service.image_path %}" alt="{{ service_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="service-item"><span class="muted">{% trans "À medida que o website crescer, podem ser destacados mais serviços aqui." %}</span></div>
+                        {% endfor %}
+                        {% else %}
+                        {% for service in remaining_services %}
+                            <div class="service-item">
+                                <strong><a class="back" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ service.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{{ service.title }}</a></strong>
+                                <p class="muted">{{ service.short_description }}</p>
+                                {% if is_restaurant_template %}
+                                    {% if service.image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar menu_alt %}Restaurant dish at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static service.image_path %}" alt="{{ menu_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% elif is_beauty_template %}
+                                    {% if service.image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar service_alt %}Beauty service at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static service.image_path %}" alt="{{ service_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="service-item">{% trans "Os serviços vão aparecer aqui depois da geração de conteúdo." %}</div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="card cta-card section-emphasis{% if is_services_template %} services-cta-card{% endif %}" id="contact">
+                    <h2 class="section-title">{% if is_restaurant_template %}{% trans "Reservas" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Pedido de contacto" %}{% endif %}</h2>
+                    {% if is_restaurant_template %}
+                        {% if demo_images.cta %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar cta_alt %}Restaurant interior at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.cta %}" alt="{{ cta_alt }}">
+                            </div>
+                        {% endif %}
+                        <p>{% trans "Reserve a table, ask about availability, or request a group dining option." %}</p>
+                        <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Reservar mesa" %}</a></p>
+                    {% elif is_beauty_template %}
+                        {% if demo_images.cta %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar cta_alt %}Beauty appointment at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.cta %}" alt="{{ cta_alt }}">
+                            </div>
+                        {% endif %}
+                        <p>{% trans "Marque por WhatsApp, telefone ou email e ajudamos a encontrar o melhor horário para si." %}</p>
+                        <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Marcar atendimento" %}</a></p>
+                    {% elif is_services_template %}
+                        {% if demo_images.cta %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar cta_alt %}Service work by {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.cta %}" alt="{{ cta_alt }}">
+                            </div>
+                        {% endif %}
+                        <div class="section-copy">
+                            <p>{% trans "Peça um orçamento, confirme disponibilidade ou descreva o trabalho em que precisa de ajuda." %}</p>
+                            <p class="muted">{% trans "Útil para reparações, manutenção, inspeções e deslocações locais." %}</p>
+                        </div>
+                        <div class="cta-actions">
+                            <a class="cta-button" href="{% url 'upgrade-placeholder' %}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Pedir orçamento" %}</a>
+                            {% if project.business_profile.phone %}<a class="cta-button secondary" href="tel:{{ project.business_profile.phone }}">{% trans "Ligar agora" %}</a>{% endif %}
+                            {% if project.business_profile.email %}<a class="cta-button secondary" href="mailto:{{ project.business_profile.email }}">{% trans "Pedir por email" %}</a>{% endif %}
+                        </div>
+                    {% else %}
+                        <p>{{ content.cta_text }}</p>
+                        <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=contact">{% trans "Open contact page" %}</a></p>
+                    {% endif %}
+                </section>
+
+                <section class="card section section-soft{% if is_services_template %} services-location-card{% endif %}" id="location">
+                    <h2 class="section-title">{% if is_restaurant_template %}{% trans "Visite-nos" %}{% elif is_services_template %}{% trans "Zona de serviço" %}{% else %}{% trans "Localização" %}{% endif %}</h2>
+                    <div class="location-box">
+                        {% if is_restaurant_template %}
+                            {% if demo_images.location %}
+                                {% blocktrans with business_name=project.business_profile.business_name city=project.business_profile.city asvar location_alt %}Visit {{ business_name }} in {{ city }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static demo_images.location %}" alt="{{ location_alt }}">
+                                </div>
+                            {% endif %}
+                            <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}Restaurant location: {{ city }}, {{ country }}{% endblocktrans %}</p>
+                        {% elif is_beauty_template %}
+                            {% if demo_images.location %}
+                                {% blocktrans with business_name=project.business_profile.business_name city=project.business_profile.city asvar location_alt %}Visit {{ business_name }} in {{ city }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static demo_images.location %}" alt="{{ location_alt }}">
+                                </div>
+                            {% endif %}
+                            <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}Serviços de beleza em {{ city }}, {{ country }}{% endblocktrans %}</p>
+                        {% elif is_services_template %}
+                            <div class="section-media-grid">
+                                {% if demo_images.location %}
+                                    {% blocktrans with business_name=project.business_profile.business_name city=project.business_profile.city asvar location_alt %}Service area for {{ business_name }} in {{ city }}{% endblocktrans %}
+                                    <div class="image-block">
+                                        <img src="{% static demo_images.location %}" alt="{{ location_alt }}">
+                                    </div>
+                                {% endif %}
+                                <div class="section-copy">
+                                    <span class="eyebrow">{% trans "Onde trabalhamos" %}</span>
+                                    <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}A atender {{ city }}, {{ country }} e zonas próximas{% endblocktrans %}</p>
+                                    <p class="muted">{% trans "Available for planned visits, call-outs, and local quote requests across the surrounding service area." %}</p>
+                                    <div class="services-location-points">
+                                        <span class="tag">{{ project.business_profile.city }}</span>
+                                        {% if project.business_profile.region %}<span class="tag">{{ project.business_profile.region }}</span>{% endif %}
+                                        {% if project.business_profile.country %}<span class="tag">{{ project.business_profile.country }}</span>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}Zona de serviço: {{ city }}, {{ country }}{% endblocktrans %}</p>
+                            <span class="tag">{% trans "Google Maps / service area section" %}</span>
+                        {% endif %}
+                    </div>
+                </section>
+            {% elif active_page == 'services' and full_pages_unlocked %}
+                <section class="card section section-plain">
+                    <h2 class="section-title">{% if is_restaurant_template %}{% trans "Ementa" %}{% elif is_beauty_template %}{% trans "Serviços de beleza" %}{% elif is_services_template %}{% trans "Serviços" %}{% else %}{% trans "Página de serviços" %}{% endif %}</h2>
+                    <div class="{% if is_services_template %}services-card-grid{% else %}services-list{% endif %}">
+                        {% for service in services %}
+                            <div class="service-item">
+                                {% if is_services_template %}
+                                    {% if service.image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar service_list_alt %}Service work by {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static service.image_path %}" alt="{{ service_list_alt }}">
+                                        </div>
+                                    {% endif %}
+                                    <div class="service-copy">
+                                        <span class="tag">{% trans "Serviço disponível" %}</span>
+                                        <div class="service-header">
+                                            <span class="service-icon service-icon-{{ service.icon }}" aria-label="{{ service.icon_label }}"></span>
+                                            <strong><a class="service-link" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ service.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{{ service.title }}</a></strong>
+                                        </div>
+                                        <p class="muted">{{ service.short_description }}</p>
+                                        <a class="service-link" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ service.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Ver serviço" %}</a>
+                                    </div>
+                                {% else %}
+                                    <strong><a class="back" href="{% url 'upgrade-placeholder' %}?page=service&amp;service={{ service.slug }}{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{{ service.title }}</a></strong>
+                                    <p>{{ service.short_description }}</p>
+                                {% endif %}
+                                {% if is_restaurant_template %}
+                                    {% if service.image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar menu_list_alt %}Restaurant dish at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static service.image_path %}" alt="{{ menu_list_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% elif is_beauty_template %}
+                                    {% if service.image_path %}
+                                        {% blocktrans with business_name=project.business_profile.business_name asvar service_list_alt %}Beauty service at {{ business_name }}{% endblocktrans %}
+                                        <div class="image-block">
+                                            <img src="{% static service.image_path %}" alt="{{ service_list_alt }}">
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% elif active_page == 'service' and full_pages_unlocked %}
+                <section class="grid section">
+                    <div class="card">
+                        <h2 class="section-title">{{ active_service.title }}</h2>
+                        <p>{{ active_service.full_description }}</p>
+                        {% if is_restaurant_template %}
+                            {% if active_service.image_path %}
+                                {% blocktrans with business_name=project.business_profile.business_name asvar detail_alt %}Restaurant dish at {{ business_name }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static active_service.image_path %}" alt="{{ detail_alt }}">
+                                </div>
+                            {% endif %}
+                        {% elif is_beauty_template %}
+                            {% if active_service.image_path %}
+                                {% blocktrans with business_name=project.business_profile.business_name asvar detail_alt %}Beauty service at {{ business_name }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static active_service.image_path %}" alt="{{ detail_alt }}">
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="card section-soft">
+                        <h2 class="section-title">{% if is_restaurant_template %}{% trans "Nota do chef" %}{% elif is_beauty_template %}{% trans "Detalhe do tratamento" %}{% elif is_services_template %}{% trans "Detalhe do serviço" %}{% else %}{% trans "Página de detalhe do serviço" %}{% endif %}</h2>
+                        {% if is_restaurant_template %}
+                            <p>{% trans "Pensado para juntar sabor, apresentação e uma experiência memorável à mesa." %}</p>
+                        {% elif is_beauty_template %}
+                            <p>{% trans "Desenhado para combinar cuidado, detalhe e um resultado elegante adaptado ao estilo de cada cliente." %}</p>
+                        {% elif is_services_template %}
+                            <p>{% trans "Focado num âmbito claro, execução fiável e um resultado prático em que os clientes podem confiar." %}</p>
+                        {% else %}
+                            <p><strong>{% trans "Ordem:" %}</strong> {{ active_service.order }}</p>
+                            <p>{{ active_service.image_placeholder }}</p>
+                        {% endif %}
+                    </div>
+                </section>
+            {% elif active_page == 'about' and full_pages_unlocked %}
+                <section class="grid section">
+                    <div class="card">
+                        <h2 class="section-title">{% if is_restaurant_template %}{% trans "A nossa história" %}{% elif is_beauty_template %}{% trans "Sobre o estúdio" %}{% elif is_services_template %}{% trans "Sobre o serviço" %}{% else %}{% trans "Página Sobre" %}{% endif %}</h2>
+                        {% if is_restaurant_template %}
+                            {% if demo_images.about %}
+                                {% blocktrans with business_name=project.business_profile.business_name asvar about_page_alt %}Restaurant interior at {{ business_name }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static demo_images.about %}" alt="{{ about_page_alt }}">
+                                </div>
+                            {% endif %}
+                            <p>{% blocktrans with business_name=project.business_profile.business_name %}This page gives {{ business_name }} room to talk about ingredients, hospitality, dining atmosphere, and the experience guests can expect from arrival to dessert.{% endblocktrans %}</p>
+                        {% elif is_beauty_template %}
+                            {% if demo_images.about %}
+                                {% blocktrans with business_name=project.business_profile.business_name asvar about_page_alt %}Beauty studio at {{ business_name }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static demo_images.about %}" alt="{{ about_page_alt }}">
+                                </div>
+                            {% endif %}
+                            <p>{% blocktrans with business_name=project.business_profile.business_name %}This page gives {{ business_name }} room to talk about approach, beauty philosophy, service quality, and the calm, polished experience clients can expect.{% endblocktrans %}</p>
+                        {% elif is_services_template %}
+                            {% if demo_images.about %}
+                                {% blocktrans with business_name=project.business_profile.business_name asvar about_page_alt %}Service team at {{ business_name }}{% endblocktrans %}
+                                <div class="image-block">
+                                    <img src="{% static demo_images.about %}" alt="{{ about_page_alt }}">
+                                </div>
+                            {% endif %}
+                            <p>{% blocktrans with business_name=project.business_profile.business_name %}This page gives {{ business_name }} room to explain process, reliability, service standards, and how local jobs are handled from first contact to completion.{% endblocktrans %}</p>
+                        {% else %}
+                            <p>{{ content.about_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="card section-soft">
+                        <h2 class="section-title">{% if is_restaurant_template %}{% trans "Experiência à mesa" %}{% elif is_beauty_template %}{% trans "Cuidado pessoal" %}{% elif is_services_template %}{% trans "Forma de trabalhar" %}{% else %}{% trans "Detalhe da página Sobre" %}{% endif %}</h2>
+                        {% if is_restaurant_template %}
+                            <p><strong>{% trans "Estilo:" %}</strong> {{ project.business_profile.business_type }}</p>
+                            <p><strong>{% trans "Público:" %}</strong> {% if project.business_profile.target_audience %}{{ project.business_profile.target_audience }}{% else %}{% trans "Clientes à procura de uma refeição memorável" %}{% endif %}</p>
+                        {% elif is_beauty_template %}
+                            <p><strong>{% trans "Especialidade:" %}</strong> {{ project.business_profile.business_type }}</p>
+                            <p><strong>{% trans "Público:" %}</strong> {% if project.business_profile.target_audience %}{{ project.business_profile.target_audience }}{% else %}{% trans "Clientes à procura de um cuidado de beleza atento" %}{% endif %}</p>
+                        {% elif is_services_template %}
+                            <p><strong>{% trans "Especialidade do serviço:" %}</strong> {{ project.business_profile.business_type }}</p>
+                            <p><strong>{% trans "Público:" %}</strong> {% if project.business_profile.target_audience %}{{ project.business_profile.target_audience }}{% else %}{% trans "Clientes locais que procuram um serviço claro e fiável" %}{% endif %}</p>
+                        {% else %}
+                            <p><strong>{% trans "Público-alvo:" %}</strong> {% if project.business_profile.target_audience %}{{ project.business_profile.target_audience }}{% else %}{% trans "Por definir" %}{% endif %}</p>
+                        {% endif %}
+                    </div>
+                </section>
+            {% elif active_page == 'contact' and full_pages_unlocked %}
+                <section class="grid section">
+                    <div class="card">
+                        <h2 class="section-title">{% if is_restaurant_template %}{% trans "Reservar mesa" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Página de contacto" %}{% endif %}</h2>
+                        {% if is_restaurant_template and demo_images.cta %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar reservation_alt %}Restaurant interior at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.cta %}" alt="{{ reservation_alt }}">
+                            </div>
+                        {% elif is_beauty_template and demo_images.cta %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar reservation_alt %}Beauty appointment at {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.cta %}" alt="{{ reservation_alt }}">
+                            </div>
+                        {% elif is_services_template and demo_images.cta %}
+                            {% blocktrans with business_name=project.business_profile.business_name asvar reservation_alt %}Service work by {{ business_name }}{% endblocktrans %}
+                            <div class="image-block">
+                                <img src="{% static demo_images.cta %}" alt="{{ reservation_alt }}">
+                            </div>
+                        {% endif %}
+                        {% if project.business_profile.email %}<p><strong>{% trans "Email:" %}</strong> {{ project.business_profile.email }}</p>{% endif %}
+                        {% if project.business_profile.phone %}<p><strong>{% trans "Telefone:" %}</strong> {{ project.business_profile.phone }}</p>{% endif %}
+                        {% if is_restaurant_template or is_beauty_template or is_services_template %}{% if project.business_profile.whatsapp %}<p><strong>{% trans "WhatsApp:" %}</strong> {{ project.business_profile.whatsapp }}</p>{% endif %}{% endif %}
+                    </div>
+                    <div class="card section-emphasis">
+                        <h2 class="section-title">{% if is_restaurant_template %}{% trans "Pedido de reserva" %}{% elif is_beauty_template %}{% trans "Pedido de marcação" %}{% elif is_services_template %}{% trans "Pedido de orçamento" %}{% else %}{% trans "Página de pedido" %}{% endif %}</h2>
+                        {% if is_restaurant_template %}
+                            <p>{% trans "Aqui os clientes podem pedir horários, detalhes para grupos ou informações sobre reservas." %}</p>
+                            <form>
+                                <p><input type="text" placeholder="{% trans 'O seu nome' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><input type="text" placeholder="{% trans 'Data e hora pretendidas' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><input type="text" placeholder="{% trans 'Número de pessoas' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><a class="back" href="#">{% trans "Enviar pedido de reserva" %}</a></p>
+                            </form>
+                        {% elif is_beauty_template %}
+                            <p>{% trans "Aqui os clientes podem pedir horários, confirmar disponibilidade ou indicar o tipo de atendimento pretendido." %}</p>
+                            <form>
+                                <p><input type="text" placeholder="{% trans 'O seu nome' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><input type="text" placeholder="{% trans 'Serviço pretendido' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><input type="text" placeholder="{% trans 'Dia e hora pretendidos' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><a class="back" href="#">{% trans "Enviar pedido de marcação" %}</a></p>
+                            </form>
+                        {% elif is_services_template %}
+                            <p>{% trans "Clients can describe the job, request a visit, or ask for a quote here." %}</p>
+                            <form>
+                                <p><input type="text" placeholder="{% trans 'O seu nome' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><input type="text" placeholder="{% trans 'Tipo de serviço necessário' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><input type="text" placeholder="{% trans 'Dia e zona pretendidos' %}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.12);color:#fff;"></p>
+                                <p><a class="back" href="#">{% trans "Enviar pedido de orçamento" %}</a></p>
+                            </form>
+                        {% else %}
+                            <p>{{ content.cta_text }}</p>
+                        {% endif %}
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if hidden_services %}
+                <section class="card cta-card section-soft">
+                    <h2 class="section-title">{% trans "Mais para explorar" %}</h2>
+                    <div class="services-list">
+                        {% for service in hidden_services %}
+                            <div class="service-item">
+                                <strong>{{ service.title }}</strong>
+                                <p class="muted">{% trans "Disponível na versão alargada do website." %}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if not full_pages_unlocked %}
+                <section class="card cta-card section-emphasis">
+                    <h2 class="section-title">{% trans "Páginas alargadas disponíveis" %}</h2>
+                    <p>{% trans "A homepage já está pronta e as páginas alargadas podem ser ativadas quando quiser avançar para a experiência completa do Website Completo." %}</p>
+                </section>
+            {% endif %}
+
+            <footer class="card section footer-shell">
+                <h2 class="section-title">{% trans "Rodapé" %}</h2>
+                <div class="footer-grid">
+                    <div>
+                        <div class="footer-brand">
+                            {% if project.business_profile.logo %}
+                                {% blocktrans with business_name=project.business_profile.business_name asvar footer_logo_alt %}Logo for {{ business_name }}{% endblocktrans %}
+                                <div class="brand-logo">
+                                    <img src="{{ project.business_profile.logo.url }}" alt="{{ footer_logo_alt }}">
+                                </div>
+                            {% endif %}
+                            <div class="brand-copy">
+                                <strong>{{ project.business_profile.business_name }}</strong>
+                                <p class="muted">{{ project.business_profile.business_type }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>{% if is_restaurant_template or is_beauty_template or is_services_template %}{% trans "Explorar" %}{% else %}{% trans "Links alargados" %}{% endif %}</strong>
+                        <p class="muted">{% if is_restaurant_template %}{% trans "Início, Ementa, História, Reservas" %}{% elif is_beauty_template %}{% trans "Início, Serviços, Sobre, Marcação" %}{% elif is_services_template %}{% trans "Início, Serviços, Sobre, Orçamentos" %}{% else %}{% trans "Início, Serviços, Sobre, Contacto" %}{% endif %}</p>
+                    </div>
+                    <div>
+                        <strong>{% if is_restaurant_template %}{% trans "Reservas" %}{% elif is_beauty_template %}{% trans "Marcações" %}{% elif is_services_template %}{% trans "Orçamentos" %}{% else %}{% trans "Contacto" %}{% endif %}</strong>
+                        {% if is_restaurant_template or is_beauty_template or is_services_template %}
+                            {% if project.business_profile.whatsapp %}<p class="muted">{{ project.business_profile.whatsapp }}</p>{% elif project.business_profile.email %}<p class="muted">{{ project.business_profile.email }}</p>{% endif %}
+                        {% elif project.business_profile.email %}
+                            <p class="muted">{{ project.business_profile.email }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </footer>
+        {% else %}
+            <section class="card section">
+                <h1>{% trans "Ainda não existe um projeto de website disponível." %}</h1>
+                <p>{% trans "Conclua primeiro o onboarding para gerar a Página Express e os dados de preview do Website Completo." %}</p>
+            </section>
+        {% endif %}
+    </div>
+</body>
+</html>

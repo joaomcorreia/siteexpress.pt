@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard de Parceiro</title>
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #5f6c84;
+            --line: #d8e0eb;
+            --paper: #f5f7fb;
+            --card: #ffffff;
+            --accent: #8f1f1f;
+            --accent-dark: #6f1717;
+            --soft: #eef3f8;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: var(--paper);
+            color: var(--ink);
+        }
+        .wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 28px 16px 48px;
+        }
+        .stack {
+            display: grid;
+            gap: 18px;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.06);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .stat {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 16px;
+            background: #fff;
+        }
+        .stat strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            margin: 0 0 6px;
+            font-size: 1.8rem;
+            line-height: 1;
+            font-weight: 700;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--soft);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .button,
+        button {
+            display: inline-block;
+            border: 0;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent);
+            cursor: pointer;
+        }
+        .button.alt {
+            background: var(--accent-dark);
+        }
+        .muted { color: var(--muted); }
+        .notice {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #d8e4c3;
+            background: #f6fbef;
+        }
+        .link-box {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--soft);
+            word-break: break-word;
+        }
+        .referral-list {
+            display: grid;
+            gap: 14px;
+            margin-top: 16px;
+        }
+        .referral-card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 16px;
+            background: #fff;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        @media (max-width: 900px) {
+            .stats,
+            .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="stack">
+            <section class="card">
+                <span class="badge">{{ partner.get_status_display }}</span>
+                <h1>{{ partner.company_name }}</h1>
+                <p class="muted">{{ partner.name }} - {{ partner.partner_code }}</p>
+                <div class="link-box">
+                    <strong>Link de onboarding do parceiro</strong>
+                    <div class="muted">{{ onboarding_link }}</div>
+                </div>
+                <div class="actions">
+                    <button type="button" data-copy-text="{{ onboarding_link }}">Copiar link de onboarding</button>
+                    <a class="button alt" href="mailto:joao@siteexpress.pt?subject=Partner%20{{ partner.partner_code }}">Contactar SiteExpress</a>
+                    <a class="button alt" href="https://wa.me/351910000000" target="_blank" rel="noopener">WhatsApp SiteExpress</a>
+                </div>
+                {% if payout_requested_flag %}
+                    <div class="notice">
+                        <strong>Pedido de pagamento registado.</strong>
+                        <div class="muted">A equipa SiteExpress vai rever manualmente as comissoes disponiveis. Nao existe pagamento automatico nesta fase.</div>
+                    </div>
+                {% endif %}
+            </section>
+
+            <section class="card">
+                <h2>Resumo</h2>
+                <div class="stats">
+                    <div class="stat">
+                        <strong>Referencias este mes</strong>
+                        <p class="stat-value">{{ referrals_this_month }}</p>
+                        <p class="muted">Novos pedidos associados a este parceiro no mes atual.</p>
+                    </div>
+                    <div class="stat">
+                        <strong>Trials ativos</strong>
+                        <p class="stat-value">{{ active_trial_pages }}</p>
+                        <p class="muted">Paginas Express em periodo experimental neste momento.</p>
+                    </div>
+                    <div class="stat">
+                        <strong>Pedidos de upgrade</strong>
+                        <p class="stat-value">{{ upgrade_requests }}</p>
+                        <p class="muted">Clientes que pediram passagem para Website Completo.</p>
+                    </div>
+                    <div class="stat">
+                        <strong>Website completo pago</strong>
+                        <p class="stat-value">{{ full_website_paid }}</p>
+                        <p class="muted">Contagem placeholder para confirmacoes pagas do Website Completo.</p>
+                    </div>
+                    <div class="stat">
+                        <strong>Comissao disponivel</strong>
+                        <p class="stat-value">{{ commission_available_total }} {{ partner.commission_currency }}</p>
+                        <p class="muted">{{ commission_available_count }} referencia(s) com comissao pronta para pedido manual.</p>
+                    </div>
+                    <div class="stat">
+                        <strong>Comissoes pedidas/pagas</strong>
+                        <p class="stat-value">{{ commission_requested_count }} / {{ commission_paid_count }}</p>
+                        <p class="muted">Pedidos manuais em analise e pagamentos ja marcados como concluidos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Pagamentos e apoio</h2>
+                <p class="muted">Esta area continua manual e acompanhada pela equipa SiteExpress. O login real de parceiro fica para a fase seguinte.</p>
+                <div class="actions">
+                    {% if commission_available_count %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="request-payout">
+                            <button type="submit">Pedir pagamento manual</button>
+                        </form>
+                    {% else %}
+                        <span class="badge">Sem comissoes disponiveis para pagamento</span>
+                    {% endif %}
+                </div>
+                <p class="muted">Depois do pedido, a equipa valida manualmente os valores e trata do pagamento fora da plataforma.</p>
+            </section>
+
+            <section class="card">
+                <h2>Referencias recentes</h2>
+                <p class="muted">Lista simplificada para consulta rapida no telemovel, sem tabelas largas.</p>
+                <div class="referral-list">
+                    {% for referral in recent_referrals %}
+                        <article class="referral-card">
+                            <strong>{{ referral.business_name }}</strong>
+                            <div class="muted">{{ referral.product_label }}</div>
+                            <div class="meta-grid">
+                                <div>
+                                    <strong>Estado da referencia</strong>
+                                    <div class="muted">{{ referral.object.get_referral_status_display }}</div>
+                                </div>
+                                <div>
+                                    <strong>Estado da comissao</strong>
+                                    <div class="muted">{{ referral.object.get_commission_status_display }}</div>
+                                </div>
+                                <div>
+                                    <strong>Estado do upgrade</strong>
+                                    <div class="muted">{{ referral.upgrade_status }}</div>
+                                </div>
+                                <div>
+                                    <strong>Fim do trial</strong>
+                                    <div class="muted">
+                                        {% if referral.trial_end_date %}
+                                            {{ referral.trial_end_date|date:"d/m/Y" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    {% empty %}
+                        <div class="referral-card">
+                            <strong>Sem referencias ainda</strong>
+                            <div class="muted">Quando este parceiro trouxer novos pedidos, vao aparecer aqui.</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var copyButton = document.querySelector("[data-copy-text]");
+            if (!copyButton || !navigator.clipboard) {
+                return;
+            }
+            copyButton.addEventListener("click", function () {
+                navigator.clipboard.writeText(copyButton.getAttribute("data-copy-text"));
+                copyButton.textContent = "Link copiado";
+            });
+        }());
+    </script>
+</body>
+</html>

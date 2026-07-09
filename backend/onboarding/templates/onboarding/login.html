@@ -1,0 +1,63 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Login" %}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #f6f7fb 0%, #ebf0f6 100%);
+            color: #172033;
+        }
+        .card {
+            max-width: 460px;
+            margin: 80px auto;
+            background: #fff;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
+        }
+        label, input {
+            display: block;
+            width: 100%;
+        }
+        input {
+            margin: 8px 0 16px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #c7d2e2;
+            box-sizing: border-box;
+        }
+        button {
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 18px;
+            color: #fff;
+            background: #8f1f1f;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .errors {
+            color: #a61b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>{% trans "Login" %}</h1>
+        <p>{% blocktrans %}Use your confirmed account to access the starter preview and upgrade path.{% endblocktrans %}</p>
+        {% if form.errors %}
+            <div class="errors">{% trans "Your username or password was not accepted." %}</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">{% trans "Enter dashboard" %}</button>
+        </form>
+    </div>
+</body>
+</html>
