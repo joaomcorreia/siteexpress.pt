@@ -217,6 +217,18 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(en_response, 'href="/pt/"', html=False)
         self.assertContains(es_response, 'href="/pt/"', html=False)
 
+    def test_clarity_snippet_is_limited_to_siteexpress_public_pages(self):
+        landing_response = self.client.get("/pt/")
+        placeholder_response = self.client.get("/en/")
+        login_response = self.client.get("/pt/accounts/login/")
+
+        self.assertContains(landing_response, "https://www.clarity.ms/tag/", html=False)
+        self.assertContains(landing_response, "x9aurmflrt", html=False)
+        self.assertContains(placeholder_response, "https://www.clarity.ms/tag/", html=False)
+        self.assertContains(placeholder_response, "x9aurmflrt", html=False)
+        self.assertNotContains(login_response, "https://www.clarity.ms/tag/", html=False)
+        self.assertNotContains(login_response, "x9aurmflrt", html=False)
+
     def test_anonymous_onboarding_creates_full_project_records(self):
         response = self.client.post(reverse("onboarding"), data=self.onboarding_payload())
 
