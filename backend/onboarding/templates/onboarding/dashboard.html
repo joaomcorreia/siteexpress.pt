@@ -116,6 +116,55 @@
             padding: 24px;
             box-shadow: 0 18px 45px rgba(22, 32, 51, 0.06);
         }
+        .dashboard-accordion {
+            padding: 0;
+            overflow: hidden;
+        }
+        .dashboard-accordion > summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 20px 24px;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        .dashboard-accordion > summary::-webkit-details-marker { display: none; }
+        .dashboard-accordion > summary::after {
+            content: "+";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            background: #fff;
+            color: var(--accent);
+            font-size: 1.35rem;
+            line-height: 1;
+        }
+        .dashboard-accordion[open] > summary::after { content: "−"; }
+        .accordion-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            min-width: 0;
+            flex: 1;
+        }
+        .accordion-heading strong {
+            font-size: 1.2rem;
+        }
+        .accordion-content {
+            padding: 0 24px 24px;
+            border-top: 1px solid var(--line);
+        }
+        .accordion-content > .muted:first-child {
+            margin-top: 20px;
+        }
         .summary-card {
             background: linear-gradient(135deg, #ffffff 0%, #f1f5fb 100%);
         }
@@ -475,9 +524,14 @@
 
                 <main class="main">
                     <div class="main-stack">
-                        <section class="card product-card">
-                            <span class="badge">{{ product_summary.price_pt }}</span>
-                            <h2>{{ product_summary.title_pt }}</h2>
+                        <details class="card dashboard-accordion product-card">
+                            <summary>
+                                <span class="accordion-heading">
+                                    <strong>{{ product_summary.title_pt }}</strong>
+                                    <span class="badge">{{ product_summary.price_pt }}</span>
+                                </span>
+                            </summary>
+                            <div class="accordion-content">
                             <p class="muted">{{ product_summary.description_pt }}</p>
                             {% if upgrade_requested_flag %}
                                 <div class="notice">
@@ -529,7 +583,8 @@
                                     </div>
                                 </div>
                             {% endif %}
-                        </section>
+                            </div>
+                        </details>
                         {% if partner_trial_summary.show %}
                             <section class="card">
                                 <span class="badge">{{ partner_trial_summary.status_pt }}</span>
@@ -554,9 +609,14 @@
                                 </div>
                             </section>
                         {% endif %}
-                        <section class="card domain-status-card">
-                            <span class="badge">{{ domain_status_badge.label }}</span>
-                            <h2>Estado do domínio</h2>
+                        <details class="card dashboard-accordion domain-status-card">
+                            <summary>
+                                <span class="accordion-heading">
+                                    <strong>Estado do domínio</strong>
+                                    <span class="badge">{{ domain_status_badge.label }}</span>
+                                </span>
+                            </summary>
+                            <div class="accordion-content">
                             <p class="muted">{{ domain_status_badge.message_pt }}</p>
                             <div class="domain-status-grid">
                                 <div class="domain-status-item">
@@ -598,10 +658,17 @@
                                     </p>
                                 </div>
                             </div>
-                        </section>
+                            </div>
+                        </details>
                         {% if active_section == 'preview' %}
-                            <section class="card">
-                                <h2>Area de preview</h2>
+                            <details class="card dashboard-accordion" open>
+                                <summary>
+                                    <span class="accordion-heading">
+                                        <strong>Area de preview</strong>
+                                        <span class="muted">{{ selected_preview }} · {{ selected_variation }} · {{ selected_motion }}</span>
+                                    </span>
+                                </summary>
+                                <div class="accordion-content">
                                 <p class="muted">Use estes controlos para mudar o tipo de preview, o estilo, o layout e o movimento sem sair do dashboard.</p>
                                 <div class="selection-list">
                                     <div class="selection-chip">
@@ -681,7 +748,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </section>
+                                </div>
+                            </details>
                         {% elif active_section == 'business' %}
                             <section class="card">
                                 <h2>Dados do negocio</h2>
