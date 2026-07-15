@@ -1098,8 +1098,11 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.context["active_section"], "preview")
         self.assertEqual(response.context["selected_preview"], "full")
         self.assertEqual(response.context["selected_variation"], "modern")
+        self.assertEqual(response.context["selected_variation_label"], "Editorial Full Width")
         self.assertEqual(response.context["selected_layout"], "wide")
         self.assertContains(response, "Area de preview")
+        self.assertContains(response, "Soft Studio")
+        self.assertContains(response, "Editorial Full Width")
 
     def test_dashboard_supports_device_param(self):
         user = get_user_model().objects.create_user(username="dashboard-device", password="secret123")
@@ -1944,6 +1947,7 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(starter_minimal, "se-motion-minimal")
         self.assertContains(full_dynamic, "se-motion-dynamic")
         self.assertContains(full_dynamic, "IntersectionObserver")
+        self.assertContains(full_dynamic, "se-motion-child")
 
     def test_dashboard_exposes_motion_controls_and_preserves_selected_motion(self):
         user = get_user_model().objects.create_user(username="dashboard-motion", password="secret123")
@@ -2104,6 +2108,53 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(starter_response, "Guitarras e equipamento")
         self.assertNotContains(starter_response, "siteexpress/demo/services/classic/")
         self.assertContains(dashboard_response, "Instrumentos e música")
+
+    def test_category_palette_is_default_but_customer_colours_take_priority(self):
+        default_user = get_user_model().objects.create_user(
+            username="instrument-default-colours",
+            password="secret123",
+        )
+        default_project = self.create_project_for_user(
+            default_user,
+            business_name="Default Guitar Colours",
+            business_type="Reparação de guitarras",
+            email="default-guitar-colours@example.com",
+            preferred_colors=[],
+        )
+
+        self.client.force_login(default_user)
+        default_response = self.client.get(
+            f"{reverse('starter-preview', args=[default_project.starter_page.slug])}?variation=modern&layout=full"
+        )
+
+        self.assertEqual(default_response.context["brand_primary"], "#b88a3b")
+        self.assertEqual(default_response.context["brand_secondary"], "#21150f")
+        self.assertEqual(default_response.context["brand_accent"], "#f2e5cb")
+        self.assertFalse(default_response.context["uses_custom_brand_colors"])
+        self.assertContains(default_response, "--font-body:")
+        self.assertContains(default_response, "--font-heading:")
+
+        custom_user = get_user_model().objects.create_user(
+            username="instrument-custom-colours",
+            password="secret123",
+        )
+        custom_project = self.create_project_for_user(
+            custom_user,
+            business_name="Custom Guitar Colours",
+            business_type="Reparação de guitarras",
+            email="custom-guitar-colours@example.com",
+            preferred_colors=["#123456", "#234567", "#345678"],
+        )
+
+        self.client.force_login(custom_user)
+        custom_response = self.client.get(
+            reverse("starter-preview", args=[custom_project.starter_page.slug])
+        )
+
+        self.assertEqual(custom_response.context["brand_primary"], "#123456")
+        self.assertEqual(custom_response.context["brand_secondary"], "#234567")
+        self.assertEqual(custom_response.context["brand_accent"], "#345678")
+        self.assertTrue(custom_response.context["uses_custom_brand_colors"])
 
     def test_services_homepage_splits_featured_and_remaining_services(self):
         user = get_user_model().objects.create_user(username="services-home-split", password="secret123")
