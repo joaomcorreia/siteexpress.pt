@@ -119,6 +119,16 @@ BEAUTY_KEYWORDS = {
     "maquilhagem",
     "makeup",
 }
+INSTRUMENT_SERVICES_KEYWORDS = {
+    "guitar",
+    "guitarra",
+    "guitarras",
+    "instrument repair",
+    "instrumento musical",
+    "instrumentos musicais",
+    "luthier",
+    "lutheria",
+}
 SERVICES_KEYWORDS = {
     "service",
     "services",
@@ -169,6 +179,7 @@ SERVICES_KEYWORDS = {
     "remodelacoes",
     "jardim",
     "jardinagem",
+    *INSTRUMENT_SERVICES_KEYWORDS,
 }
 AUTO_SERVICES_KEYWORDS = {
     "auto",
@@ -274,6 +285,46 @@ def get_services_default_services(project=None):
     business_type = ""
     if project and getattr(project, "business_profile", None):
         business_type = (project.business_profile.business_type or "").casefold()
+
+    if any(keyword in business_type for keyword in INSTRUMENT_SERVICES_KEYWORDS):
+        return [
+            {
+                "title": "Reparação e afinação",
+                "short_description": "Diagnóstico, reparação e afinação de guitarras para recuperar conforto, som e fiabilidade.",
+                "full_description": "Avaliação do instrumento, identificação do problema e execução dos ajustes ou reparações acordados.",
+                "icon": "wrench",
+            },
+            {
+                "title": "Personalização",
+                "short_description": "Alterações visuais e funcionais para adaptar o instrumento ao estilo de cada músico.",
+                "full_description": "Personalização planeada de acordo com o instrumento, o resultado pretendido e a compatibilidade dos componentes.",
+                "icon": "spark",
+            },
+            {
+                "title": "Manutenção preventiva",
+                "short_description": "Limpeza, verificação e pequenos ajustes para manter a guitarra pronta a tocar.",
+                "full_description": "Manutenção regular de peças, afinação e pontos de desgaste para prevenir problemas maiores.",
+                "icon": "check",
+            },
+            {
+                "title": "Eletrónica e componentes",
+                "short_description": "Verificação e substituição de captadores, ligações, potenciómetros e outros componentes.",
+                "full_description": "Intervenções em componentes eletrónicos e acessórios, após confirmação da solução adequada.",
+                "icon": "shield",
+            },
+            {
+                "title": "Guitarras e equipamento",
+                "short_description": "Apoio na escolha de guitarras, acessórios e equipamento disponível.",
+                "full_description": "Informação clara sobre instrumentos e equipamento para ajudar cada cliente a escolher com confiança.",
+                "icon": "home",
+            },
+            {
+                "title": "Avaliação e orçamento",
+                "short_description": "Primeiro contacto para analisar o instrumento e explicar os próximos passos.",
+                "full_description": "Avaliação inicial do trabalho necessário antes de avançar com reparações ou personalizações.",
+                "icon": "clock",
+            },
+        ]
 
     if any(
         keyword in business_type
@@ -1149,6 +1200,9 @@ def get_project_variant_context(project):
         and not is_beauty
         and any(keyword in business_type for keyword in SERVICES_KEYWORDS)
     )
+    is_instrument = is_services and any(
+        keyword in business_type for keyword in INSTRUMENT_SERVICES_KEYWORDS
+    )
     is_carpentry = is_services and any(
         keyword in business_type
         for keyword in (
@@ -1194,7 +1248,16 @@ def get_project_variant_context(project):
     services_intro_text = (
         f"Serviço claro, comunicação fiável e apoio prático para clientes em {service_location}."
     )
-    if is_carpentry:
+    if is_instrument:
+        services_hero_title = f"Reparação e personalização de guitarras em {service_location}"
+        services_hero_subtitle = (
+            "Afinação, manutenção, personalização e equipamento para músicos que querem tirar mais do seu instrumento."
+        )
+        services_intro_title = "Cuidado técnico para cada instrumento"
+        services_intro_text = (
+            "Cada guitarra é avaliada antes do trabalho para identificar o problema e explicar a solução com clareza."
+        )
+    elif is_carpentry:
         services_hero_title = f"Trabalhos de carpintaria em {service_location} e arredores"
         services_hero_subtitle = (
             "Soluções em madeira, montagem, reparações e trabalhos por medida com atenção a cada acabamento."
@@ -1212,17 +1275,31 @@ def get_project_variant_context(project):
         services_intro_text = (
             "O trabalho é avaliado no local para combinar prioridades, materiais e os próximos passos antes de começar."
         )
+    industry_preset_label = "Geral"
+    if is_restaurant:
+        industry_preset_label = "Restauração"
+    elif is_beauty:
+        industry_preset_label = "Beleza e bem-estar"
+    elif is_instrument:
+        industry_preset_label = "Instrumentos e música"
+    elif is_carpentry or is_construction:
+        industry_preset_label = "Serviços locais"
+    elif is_services:
+        industry_preset_label = "Serviços locais"
+
     context = {
         "template_family": template_family,
         "is_restaurant_template": is_restaurant,
         "is_beauty_template": is_beauty,
         "is_services_template": is_services,
+        "is_instrument_template": is_instrument,
         "is_carpentry_template": is_carpentry,
         "is_construction_template": is_construction,
         "services_hero_title": services_hero_title,
         "services_hero_subtitle": services_hero_subtitle,
         "services_intro_title": services_intro_title,
         "services_intro_text": services_intro_text,
+        "industry_preset_label": industry_preset_label,
         "demo_images": demo_images,
     }
     context["restaurant_images"] = demo_images if is_restaurant else {}
@@ -1956,6 +2033,7 @@ def account_setup_view(request, uidb64, token):
         "onboarding/account_setup_form.html",
         {
             "form": form,
+            "account_email": user.email or user.username,
         },
     )
 
