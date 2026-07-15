@@ -7,8 +7,8 @@
     <title>{% if content %}{{ content.seo_title }}{% else %}{% trans "Preview do Website Completo" %}{% endif %}</title>
     {% include "onboarding/_preview_styles.html" %}
 </head>
-<body class="{% if is_restaurant_template %}restaurant-variant{% elif is_beauty_template %}beauty-variant{% elif is_services_template %}services-variant{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'boxed' }}">
-    <div class="wrap{% if is_restaurant_template %} restaurant-variant{% elif is_beauty_template %} beauty-variant{% elif is_services_template %} services-variant{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'boxed' }}">
+<body class="{% if is_restaurant_template %}restaurant-variant{% elif is_beauty_template %}beauty-variant{% elif is_services_template %}services-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }} se-motion-{{ motion_mode|default:'smooth' }}">
+    <div class="wrap{% if is_restaurant_template %} restaurant-variant{% elif is_beauty_template %} beauty-variant{% elif is_services_template %} services-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }}">
         {% if not embed_mode %}
             <a class="back" href="{% url 'dashboard' %}">{% trans "Voltar ao dashboard" %}</a>
         {% endif %}
@@ -41,17 +41,10 @@
                 </div>
             </section>
 
-            <section class="card section section-soft">
-                <span class="eyebrow">{% trans "Website Completo" %}</span>
-                <h2 class="section-title">{% trans "Preview alargado em preparação no SiteExpress" %}</h2>
-                <p>{% trans "Este preview mostra a estrutura do Website Completo que está a ser preparada para o seu negócio, com mais páginas, mais detalhe e mais espaço para crescer." %}</p>
-                <p class="muted">{% trans "Preço previsto: €225 + IVA. Nesta fase ainda não existe automação de pagamento ou de domínio. Pode pedir o próximo passo à equipa SiteExpress ou aguardar instruções no dashboard." %}</p>
-            </section>
-
             {% if active_page == 'home' %}
                 <section class="hero section" id="home">
                     <p class="muted">{{ project.business_profile.business_type }} | {{ project.business_profile.city }}</p>
-                    <h1>{% if is_restaurant_template %}{% blocktrans with business_name=project.business_profile.business_name %}Bem-vindo a {{ business_name }}{% endblocktrans %}{% elif is_beauty_template %}{% blocktrans with city=project.business_profile.city %}Serviços de beleza em {{ city }}{% endblocktrans %}{% elif is_services_template %}{% blocktrans with city=project.business_profile.city %}Serviços de confiança em {{ city }}{% endblocktrans %}{% else %}{{ content.hero_title|default:project.business_profile.business_name }}{% endif %}</h1>
+                    <h1>{% if is_restaurant_template %}{% blocktrans with business_name=project.business_profile.business_name %}Bem-vindo a {{ business_name }}{% endblocktrans %}{% elif is_beauty_template %}{% blocktrans with city=project.business_profile.city %}Serviços de beleza em {{ city }}{% endblocktrans %}{% elif is_services_template %}{{ services_hero_title }}{% else %}{{ content.hero_title|default:project.business_profile.business_name }}{% endif %}</h1>
                     {% if is_restaurant_template %}
                         <p>{% blocktrans with city=project.business_profile.city %}Sabores tradicionais em {{ city }}, servidos com ambiente, proximidade e uma experiência memorável à mesa.{% endblocktrans %}</p>
                         <p class="muted">{% trans "Descubra a ementa, conheça a história da casa e faça a sua reserva." %}</p>
@@ -71,7 +64,7 @@
                             </div>
                         {% endif %}
                     {% elif is_services_template %}
-                        <p>{% trans "Trabalho rápido, claro e profissional para clientes locais que procuram ajuda fiável e comunicação direta." %}</p>
+                        <p>{{ services_hero_subtitle }}</p>
                         <p class="muted">{% blocktrans with city=project.business_profile.city %}A atender {{ city }} e zonas próximas com apoio prático, visitas agendadas e serviço local de confiança.{% endblocktrans %}</p>
                         {% if demo_images.hero %}
                             {% blocktrans with business_name=project.business_profile.business_name asvar hero_alt %}Service work by {{ business_name }}{% endblocktrans %}
@@ -83,14 +76,18 @@
                         <p>{{ content.hero_subtitle }}</p>
                         <p class="muted">{{ content.intro_text }}</p>
                     {% endif %}
+                    <div class="cta-actions hero-actions">
+                        <a class="cta-button" href="{% url 'upgrade-placeholder' %}?page=contact">{% if is_restaurant_template %}{% trans "Reservar" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Contactar" %}{% endif %}</a>
+                        <a class="cta-button secondary" href="{% url 'upgrade-placeholder' %}?page=services">{% trans "Ver serviços" %}</a>
+                    </div>
                 </section>
 
                 {% if is_services_template %}
                     <section class="card section section-soft services-intro-card" id="intro">
                         <span class="eyebrow">{% trans "Porque é que os clientes nos escolhem" %}</span>
-                        <h2 class="section-title">{% trans "Ajuda clara para trabalhos locais e necessidades de serviço contínuas" %}</h2>
+                        <h2 class="section-title">{{ services_intro_title }}</h2>
                         <div class="section-copy">
-                            <p>{% blocktrans with city=project.business_profile.city %}Serviço claro, comunicação fiável e apoio prático para clientes em {{ city }}.{% endblocktrans %}</p>
+                            <p>{{ services_intro_text }}</p>
                             <p class="muted">{% blocktrans with business_type=project.business_profile.business_type city=project.business_profile.city %}Pensado para negócios de {{ business_type }} em {{ city }}, com ajuda direta, visitas de confiança e um serviço que pode marcar com segurança.{% endblocktrans %}</p>
                         </div>
                     </section>
@@ -543,15 +540,7 @@
                 </section>
             {% endif %}
 
-            {% if not full_pages_unlocked %}
-                <section class="card cta-card section-emphasis">
-                    <h2 class="section-title">{% trans "Páginas alargadas disponíveis" %}</h2>
-                    <p>{% trans "A homepage já está pronta e as páginas alargadas podem ser ativadas quando quiser avançar para a experiência completa do Website Completo." %}</p>
-                </section>
-            {% endif %}
-
             <footer class="card section footer-shell">
-                <h2 class="section-title">{% trans "Rodapé" %}</h2>
                 <div class="footer-grid">
                     <div>
                         <div class="footer-brand">
@@ -588,5 +577,6 @@
             </section>
         {% endif %}
     </div>
+    {% include "onboarding/_preview_motion.html" %}
 </body>
 </html>
