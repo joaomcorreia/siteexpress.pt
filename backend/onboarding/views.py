@@ -1174,14 +1174,46 @@ def get_partner_dashboard_cards(partner, request):
 
 
 def get_project_brand_context(project):
+    variant_context = get_project_variant_context(project)
+    if variant_context["is_beauty_template"]:
+        default_primary, default_secondary, default_accent = (
+            "#c45b8d",
+            "#33242d",
+            "#f8e9f1",
+        )
+    elif variant_context["is_instrument_template"]:
+        default_primary, default_secondary, default_accent = (
+            "#b88a3b",
+            "#21150f",
+            "#f2e5cb",
+        )
+    elif variant_context["is_restaurant_template"]:
+        default_primary, default_secondary, default_accent = (
+            "#9b4937",
+            "#251713",
+            "#f3dfcf",
+        )
+    elif variant_context["is_services_template"]:
+        default_primary, default_secondary, default_accent = (
+            "#c95a10",
+            "#172033",
+            "#fff0e5",
+        )
+    else:
+        default_primary, default_secondary, default_accent = (
+            "#8f1f1f",
+            "#172033",
+            "#f3e8d8",
+        )
     colors = project.business_profile.preferred_colors or []
-    primary = colors[0] if len(colors) > 0 else "#8f1f1f"
-    secondary = colors[1] if len(colors) > 1 else "#172033"
-    accent = colors[2] if len(colors) > 2 else "#f3e8d8"
+    primary = colors[0] if len(colors) > 0 else default_primary
+    secondary = colors[1] if len(colors) > 1 else default_secondary
+    accent = colors[2] if len(colors) > 2 else default_accent
     return {
         "brand_primary": primary,
         "brand_secondary": secondary,
         "brand_accent": accent,
+        "uses_custom_brand_colors": bool(colors),
     }
 
 
@@ -2049,6 +2081,10 @@ def dashboard_view(request):
     variant_context = get_project_variant_context(project) if project else {}
     selected_layout = get_layout_mode(request)
     selected_variation = get_variation_mode(request)
+    selected_variation_label = {
+        "classic": "Soft Studio",
+        "modern": "Editorial Full Width",
+    }[selected_variation]
     selected_motion = get_motion_mode(request)
     selected_device = get_device_mode(request)
     active_section = get_dashboard_section(request)
@@ -2261,6 +2297,7 @@ def dashboard_view(request):
             "active_section": active_section,
             "selected_preview": selected_preview,
             "selected_variation": selected_variation,
+            "selected_variation_label": selected_variation_label,
             "selected_layout": selected_layout,
             "selected_motion": selected_motion,
             "selected_device": selected_device,
