@@ -285,12 +285,21 @@ class OnboardingFlowTests(TestCase):
     def test_assistant_redirects_unrelated_requests_to_its_scope(self):
         response = self.client.post(
             reverse("assistant-chat"),
-            data=json.dumps({"message": "Tenho um problema no meu carro"}),
+            data=json.dumps(
+                {
+                    "message": (
+                        "Tenho um problema nos travões do carro e queria saber "
+                        "quanto custa arranjar."
+                    )
+                }
+            ),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn("SiteExpress", response.json()["reply"])
+        self.assertIn("não está disponível", response.json()["reply"])
         self.assertNotIn("oficina", response.json()["reply"].casefold())
+        self.assertNotIn("€", response.json()["reply"])
 
     @override_settings(SITEEXPRESS_ASSISTANT_MODE="openai", OPENAI_API_KEY="test-key")
     @patch("onboarding.views.generate_assistant_reply", side_effect=RuntimeError("API unavailable"))
