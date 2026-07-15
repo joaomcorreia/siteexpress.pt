@@ -9,7 +9,7 @@
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="{% static 'core/css/siteexpress-public.css' %}">
   {% block extra_head %}{% endblock %}
-  {% include "onboarding/_siteexpress_clarity.html" %}
+  {% block analytics %}{% include "onboarding/_siteexpress_clarity.html" %}{% endblock %}
 </head>
 <body>
   {% include "onboarding/_public_header.html" %}
