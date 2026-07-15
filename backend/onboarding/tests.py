@@ -253,6 +253,32 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, "Área de cliente")
         self.assertContains(response, 'class="mobile-nav"', html=False)
 
+    def test_public_top_bar_shows_contact_details_without_duplicate_desktop_login(self):
+        response = self.client.get("/pt/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'href="mailto:info@siteexpress.pt"', html=False)
+        self.assertContains(response, "WhatsApp:")
+        self.assertContains(response, "brevemente")
+        self.assertNotContains(response, ">Entrar<", html=False)
+
+    @override_settings(
+        SITEEXPRESS_WHATSAPP_NUMBER="+351 912 345 678",
+        SITEEXPRESS_FACEBOOK_URL="https://www.facebook.com/siteexpress-test",
+        SITEEXPRESS_INSTAGRAM_URL="https://www.instagram.com/siteexpress-test",
+        SITEEXPRESS_LINKEDIN_URL="https://www.linkedin.com/company/siteexpress-test",
+        SITEEXPRESS_GOOGLE_BUSINESS_URL="https://g.page/siteexpress-test",
+    )
+    def test_public_top_bar_activates_configured_whatsapp_and_social_links(self):
+        response = self.client.get("/pt/contactos/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'href="https://wa.me/351912345678"', html=False)
+        self.assertContains(response, "https://www.facebook.com/siteexpress-test")
+        self.assertContains(response, "https://www.instagram.com/siteexpress-test")
+        self.assertContains(response, "https://www.linkedin.com/company/siteexpress-test")
+        self.assertContains(response, "https://g.page/siteexpress-test")
+
     def test_public_landing_includes_assistant_widget(self):
         response = self.client.get("/pt/")
         self.assertEqual(response.status_code, 200)
