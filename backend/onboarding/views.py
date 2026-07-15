@@ -1,3 +1,4 @@
+import json
 import logging
 from copy import deepcopy
 from datetime import timedelta
@@ -11,8 +12,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Count, Sum
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.text import slugify
@@ -21,7 +24,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_POST
 
+from .assistant import generate_assistant_reply
 from .forms import (
     BusinessProfileForm,
     DashboardBusinessInfoForm,
@@ -31,6 +36,8 @@ from .forms import (
     WebsiteProjectForm,
 )
 from .models import (
+    AssistantConversation,
+    AssistantMessage,
     DomainRequest,
     GeneratedContent,
     Partner,
@@ -60,6 +67,7 @@ DEFAULT_LAYOUT_MODE = "boxed"
 LAYOUT_MODES = {"boxed", "wide", "full"}
 DEFAULT_DEVICE_MODE = "desktop"
 DEVICE_MODES = {"desktop", "tablet", "mobile"}
+ASSISTANT_MAX_TURNS_PER_CONVERSATION = 40
 DEFAULT_DASHBOARD_SECTION = "preview"
 DASHBOARD_SECTIONS = {
     "preview",
@@ -1371,6 +1379,193 @@ def legal_page_view(request, page_key):
             "page": LEGAL_PAGES[page_key],
             "language_code": language_code,
             "language_links": language_links,
+        },
+    )
+
+
+def _assistant_conversation_from_payload(request, payload):
+    public_id = (payload.get("conversation_id") or "").strip()
+    conversation = None
+    if public_id:
+        try:
+            conversation = AssistantConversation.objects.filter(public_id=public_id).first()
+        except (TypeError, ValueError, ValidationError):
+            conversation = None
+
+    if conversation is None:
+        conversation = AssistantConversation.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            page_path=(payload.get("page_path") or "")[:500],
+            page_title=(payload.get("page_title") or "")[:255],
+            model=settings.SITEEXPRESS_ASSISTANT_MODEL,
+        )
+    else:
+        update_fields = []
+        if request.user.is_authenticated and conversation.user_id != request.user.id:
+            conversation.user = request.user
+            update_fields.append("user")
+        page_path = (payload.get("page_path") or "")[:500]
+        page_title = (payload.get("page_title") or "")[:255]
+        if page_path and conversation.page_path != page_path:
+            conversation.page_path = page_path
+            update_fields.append("page_path")
+        if page_title and conversation.page_title != page_title:
+            conversation.page_title = page_title
+            update_fields.append("page_title")
+        if update_fields:
+            update_fields.append("updated_at")
+            conversation.save(update_fields=update_fields)
+    return conversation
+
+
+@require_POST
+def assistant_chat_view(request):
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return JsonResponse({"error": "Pedido inválido."}, status=400)
+    if not isinstance(payload, dict):
+        return JsonResponse({"error": "Pedido inválido."}, status=400)
+
+    message = (payload.get("message") or "").strip()
+    if not message:
+        return JsonResponse({"error": "Escreva uma pergunta antes de enviar."}, status=400)
+    if len(message) > settings.SITEEXPRESS_ASSISTANT_MAX_MESSAGE_LENGTH:
+        return JsonResponse(
+            {"error": f"A mensagem pode ter no máximo {settings.SITEEXPRESS_ASSISTANT_MAX_MESSAGE_LENGTH} caracteres."},
+            status=400,
+        )
+
+    conversation = _assistant_conversation_from_payload(request, payload)
+    if conversation.turn_count >= ASSISTANT_MAX_TURNS_PER_CONVERSATION:
+        return JsonResponse(
+            {"error": "Esta conversa atingiu o limite. Envie novamente para começar uma conversa nova."},
+            status=429,
+        )
+
+    AssistantMessage.objects.create(
+        conversation=conversation,
+        role=AssistantMessage.Role.USER,
+        content=message,
+        mode=conversation.mode,
+        model=conversation.model,
+    )
+
+    recent_messages = list(
+        conversation.messages.order_by("-created_at", "-id")[
+            : settings.SITEEXPRESS_ASSISTANT_MAX_HISTORY_MESSAGES
+        ]
+    )
+    history = [
+        {"role": item.role, "content": item.content}
+        for item in reversed(recent_messages)
+    ]
+
+    try:
+        result = generate_assistant_reply(history)
+    except Exception:
+        logger.exception("SiteExpress assistant request failed")
+        return JsonResponse(
+            {"error": "O assistente está temporariamente indisponível. Tente novamente ou use a página Contactos."},
+            status=503,
+        )
+
+    reply = (result.get("text") or "").strip()
+    if not reply:
+        return JsonResponse(
+            {"error": "O assistente não conseguiu preparar uma resposta. Tente novamente."},
+            status=503,
+        )
+
+    AssistantMessage.objects.create(
+        conversation=conversation,
+        role=AssistantMessage.Role.ASSISTANT,
+        content=reply,
+        response_id=result.get("response_id", ""),
+        model=result.get("model", ""),
+        mode=result.get("mode", AssistantConversation.Mode.DEMO),
+        input_tokens=result.get("input_tokens", 0),
+        cached_input_tokens=result.get("cached_input_tokens", 0),
+        output_tokens=result.get("output_tokens", 0),
+    )
+    conversation.turn_count += 1
+    conversation.mode = result.get("mode", AssistantConversation.Mode.DEMO)
+    conversation.model = result.get("model", "")
+    conversation.input_tokens += result.get("input_tokens", 0)
+    conversation.cached_input_tokens += result.get("cached_input_tokens", 0)
+    conversation.output_tokens += result.get("output_tokens", 0)
+    conversation.last_message_at = timezone.now()
+    conversation.save(
+        update_fields=[
+            "turn_count",
+            "mode",
+            "model",
+            "input_tokens",
+            "cached_input_tokens",
+            "output_tokens",
+            "last_message_at",
+            "updated_at",
+        ]
+    )
+
+    return JsonResponse(
+        {
+            "reply": reply,
+            "conversation_id": str(conversation.public_id),
+            "mode": conversation.mode,
+            "model": conversation.model,
+            "usage": {
+                "input_tokens": result.get("input_tokens", 0),
+                "cached_input_tokens": result.get("cached_input_tokens", 0),
+                "output_tokens": result.get("output_tokens", 0),
+            },
+        }
+    )
+
+
+@staff_member_required
+def assistant_usage_view(request):
+    since = timezone.now() - timedelta(days=30)
+    recent = AssistantConversation.objects.filter(created_at__gte=since)
+    totals = recent.aggregate(
+        conversations=Count("id"),
+        turns=Sum("turn_count"),
+        input_tokens=Sum("input_tokens"),
+        cached_input_tokens=Sum("cached_input_tokens"),
+        output_tokens=Sum("output_tokens"),
+    )
+    input_tokens = totals["input_tokens"] or 0
+    cached_input_tokens = totals["cached_input_tokens"] or 0
+    output_tokens = totals["output_tokens"] or 0
+    uncached_input_tokens = max(input_tokens - cached_input_tokens, 0)
+    estimated_cost = (
+        Decimal(uncached_input_tokens) * Decimal(settings.SITEEXPRESS_ASSISTANT_INPUT_USD_PER_MILLION)
+        + Decimal(cached_input_tokens)
+        * Decimal(settings.SITEEXPRESS_ASSISTANT_CACHED_INPUT_USD_PER_MILLION)
+        + Decimal(output_tokens) * Decimal(settings.SITEEXPRESS_ASSISTANT_OUTPUT_USD_PER_MILLION)
+    ) / Decimal("1000000")
+    configured_mode = settings.SITEEXPRESS_ASSISTANT_MODE
+    effective_mode = (
+        "openai"
+        if configured_mode == "openai" or (configured_mode == "auto" and settings.OPENAI_API_KEY)
+        else "demo"
+    )
+    return render(
+        request,
+        "onboarding/assistant_usage.html",
+        {
+            "totals": {
+                "conversations": totals["conversations"] or 0,
+                "turns": totals["turns"] or 0,
+                "input_tokens": input_tokens,
+                "cached_input_tokens": cached_input_tokens,
+                "output_tokens": output_tokens,
+            },
+            "estimated_cost": estimated_cost.quantize(Decimal("0.0001")),
+            "effective_mode": effective_mode,
+            "configured_model": settings.SITEEXPRESS_ASSISTANT_MODEL,
+            "api_key_configured": bool(settings.OPENAI_API_KEY),
+            "conversations": AssistantConversation.objects.select_related("user")[:50],
         },
     )
 

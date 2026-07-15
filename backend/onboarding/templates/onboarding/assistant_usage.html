@@ -1,0 +1,62 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Utilização do assistente | SiteExpress</title>
+  <link rel="stylesheet" href="{% static 'core/css/siteexpress-public.css' %}">
+  <style>
+    body{background:#f3f6f1}.usage-shell{width:min(1180px,calc(100% - 32px));margin:42px auto 80px}.usage-top{display:flex;align-items:start;justify-content:space-between;gap:24px;margin-bottom:28px}.usage-top h1{font-size:clamp(2.2rem,5vw,4.2rem);margin-bottom:10px}.usage-top p{color:var(--muted)}.usage-back{font-weight:900;color:var(--primary)}
+    .usage-status{padding:18px 20px;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:20px}.usage-status strong{color:var(--primary)}
+    .usage-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:32px}.usage-stat{padding:20px;background:#fff;border:1px solid var(--line);border-radius:14px}.usage-stat span{display:block;color:var(--muted);font-size:.82rem;font-weight:850}.usage-stat strong{display:block;margin-top:7px;font-size:1.75rem;letter-spacing:-.04em}
+    .usage-table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px}.usage-table{width:100%;border-collapse:collapse;min-width:850px}.usage-table th,.usage-table td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);font-size:.9rem}.usage-table th{background:#edf4e9;color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}.usage-table td:last-child,.usage-table th:last-child{text-align:right}.usage-mode{display:inline-flex;padding:4px 8px;border-radius:999px;background:#edf4e9;color:var(--primary);font-size:.75rem;font-weight:900}.usage-mode-demo{background:#fff0dd;color:#8a4d00}.usage-empty{padding:32px;color:var(--muted)}
+    @media(max-width:900px){.usage-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.usage-top{display:grid}}@media(max-width:520px){.usage-grid{grid-template-columns:1fr}.usage-shell{width:min(100% - 22px,1180px)}}
+  </style>
+</head>
+<body>
+  <main class="usage-shell">
+    <div class="usage-top">
+      <div><span class="kicker">Últimos 30 dias</span><h1>Utilização do assistente</h1><p>Conversas, mensagens e consumo registado pela SiteExpress.</p></div>
+      <a class="usage-back" href="{% url 'siteexpress-landing' %}">← Voltar ao website</a>
+    </div>
+
+    <div class="usage-status">
+      Estado: <strong>{% if effective_mode == 'openai' %}OpenAI ativo{% else %}Modo de demonstração{% endif %}</strong>
+      · Modelo configurado: <strong>{{ configured_model }}</strong>
+      · Chave API: <strong>{% if api_key_configured %}configurada{% else %}em falta{% endif %}</strong>
+    </div>
+
+    <section class="usage-grid" aria-label="Resumo de utilização">
+      <article class="usage-stat"><span>Conversas</span><strong>{{ totals.conversations }}</strong></article>
+      <article class="usage-stat"><span>Perguntas</span><strong>{{ totals.turns }}</strong></article>
+      <article class="usage-stat"><span>Tokens de entrada</span><strong>{{ totals.input_tokens }}</strong></article>
+      <article class="usage-stat"><span>Tokens de saída</span><strong>{{ totals.output_tokens }}</strong></article>
+      <article class="usage-stat"><span>Custo estimado USD</span><strong>${{ estimated_cost }}</strong></article>
+    </section>
+
+    <h2>Conversas recentes</h2>
+    <div class="usage-table-wrap">
+      {% if conversations %}
+        <table class="usage-table">
+          <thead><tr><th>Última mensagem</th><th>Página</th><th>Modo</th><th>Modelo</th><th>Perguntas</th><th>Tokens</th></tr></thead>
+          <tbody>
+            {% for conversation in conversations %}
+              <tr>
+                <td>{{ conversation.last_message_at|default:conversation.created_at|date:"d/m/Y H:i" }}</td>
+                <td>{{ conversation.page_path|default:"—" }}</td>
+                <td><span class="usage-mode{% if conversation.mode == 'demo' %} usage-mode-demo{% endif %}">{{ conversation.get_mode_display }}</span></td>
+                <td>{{ conversation.model|default:"—" }}</td>
+                <td>{{ conversation.turn_count }}</td>
+                <td>{{ conversation.input_tokens|add:conversation.output_tokens }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="usage-empty">Ainda não existem conversas registadas.</p>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>

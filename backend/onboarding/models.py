@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
@@ -505,3 +507,78 @@ class PartnerReferral(models.Model):
 
     def __str__(self):
         return self.customer_name or self.customer_email or str(self.partner)
+
+
+class AssistantConversation(models.Model):
+    class Mode(models.TextChoices):
+        DEMO = "demo", _("Demo")
+        OPENAI = "openai", _("OpenAI")
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="assistant_conversations",
+        blank=True,
+        null=True,
+        verbose_name=_("User"),
+    )
+    page_path = models.CharField(max_length=500, blank=True, verbose_name=_("Page path"))
+    page_title = models.CharField(max_length=255, blank=True, verbose_name=_("Page title"))
+    model = models.CharField(max_length=100, blank=True, verbose_name=_("Model"))
+    mode = models.CharField(
+        max_length=16,
+        choices=Mode.choices,
+        default=Mode.DEMO,
+        verbose_name=_("Mode"),
+    )
+    turn_count = models.PositiveIntegerField(default=0, verbose_name=_("Turns"))
+    input_tokens = models.PositiveBigIntegerField(default=0, verbose_name=_("Input tokens"))
+    cached_input_tokens = models.PositiveBigIntegerField(default=0, verbose_name=_("Cached input tokens"))
+    output_tokens = models.PositiveBigIntegerField(default=0, verbose_name=_("Output tokens"))
+    last_message_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Last message at"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-last_message_at", "-created_at"]
+        verbose_name = _("Assistant conversation")
+        verbose_name_plural = _("Assistant conversations")
+
+    def __str__(self):
+        return f"{self.public_id} ({self.turn_count})"
+
+
+class AssistantMessage(models.Model):
+    class Role(models.TextChoices):
+        USER = "user", _("User")
+        ASSISTANT = "assistant", _("Assistant")
+
+    conversation = models.ForeignKey(
+        AssistantConversation,
+        on_delete=models.CASCADE,
+        related_name="messages",
+        verbose_name=_("Conversation"),
+    )
+    role = models.CharField(max_length=16, choices=Role.choices, verbose_name=_("Role"))
+    content = models.TextField(verbose_name=_("Content"))
+    response_id = models.CharField(max_length=255, blank=True, verbose_name=_("Response ID"))
+    model = models.CharField(max_length=100, blank=True, verbose_name=_("Model"))
+    mode = models.CharField(
+        max_length=16,
+        choices=AssistantConversation.Mode.choices,
+        default=AssistantConversation.Mode.DEMO,
+        verbose_name=_("Mode"),
+    )
+    input_tokens = models.PositiveBigIntegerField(default=0, verbose_name=_("Input tokens"))
+    cached_input_tokens = models.PositiveBigIntegerField(default=0, verbose_name=_("Cached input tokens"))
+    output_tokens = models.PositiveBigIntegerField(default=0, verbose_name=_("Output tokens"))
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at", "id"]
+        verbose_name = _("Assistant message")
+        verbose_name_plural = _("Assistant messages")
+
+    def __str__(self):
+        return f"{self.get_role_display()}: {self.content[:60]}"

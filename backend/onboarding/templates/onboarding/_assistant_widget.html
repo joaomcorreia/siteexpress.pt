@@ -1,0 +1,129 @@
+<aside class="assistant-widget" data-assistant-widget>
+  <button class="assistant-launcher" type="button" aria-expanded="false" aria-controls="siteexpress-assistant-panel">
+    <span class="assistant-launcher-mark" aria-hidden="true">SE</span>
+    <span>Precisa de ajuda?</span>
+  </button>
+
+  <section class="assistant-panel" id="siteexpress-assistant-panel" aria-label="Assistente SiteExpress" hidden>
+    <header class="assistant-panel-header">
+      <div>
+        <strong>Assistente SiteExpress</strong>
+        <small data-assistant-mode>Modo de demonstração</small>
+      </div>
+      <button class="assistant-close" type="button" aria-label="Fechar assistente">×</button>
+    </header>
+
+    <div class="assistant-messages" aria-live="polite">
+      <div class="assistant-message assistant-message-bot">
+        Olá! Posso ajudar com websites, preços, Página Express e cartões de visita.
+      </div>
+    </div>
+
+    <div class="assistant-suggestions" aria-label="Perguntas sugeridas">
+      <button type="button" data-assistant-suggestion="Quanto custa um website?">Ver preços</button>
+      <button type="button" data-assistant-suggestion="Qual é a diferença entre Página Express e Website WordPress?">Comparar opções</button>
+    </div>
+
+    <form class="assistant-form" autocomplete="off">
+      {% csrf_token %}
+      <label class="assistant-sr-only" for="siteexpress-assistant-message">Escreva a sua pergunta</label>
+      <textarea id="siteexpress-assistant-message" name="message" rows="2" maxlength="1200" placeholder="Escreva a sua pergunta…" required></textarea>
+      <button type="submit">Enviar</button>
+    </form>
+    <p class="assistant-privacy">Não envie palavras-passe, dados de pagamento ou outros dados sensíveis.</p>
+  </section>
+</aside>
+
+<script>
+(() => {
+  const widget = document.querySelector("[data-assistant-widget]");
+  if (!widget || widget.dataset.ready === "1") return;
+  widget.dataset.ready = "1";
+
+  const launcher = widget.querySelector(".assistant-launcher");
+  const panel = widget.querySelector(".assistant-panel");
+  const closeButton = widget.querySelector(".assistant-close");
+  const form = widget.querySelector(".assistant-form");
+  const textarea = widget.querySelector("textarea");
+  const submitButton = form.querySelector('button[type="submit"]');
+  const messages = widget.querySelector(".assistant-messages");
+  const modeLabel = widget.querySelector("[data-assistant-mode]");
+  const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
+  const storageKey = "siteexpress_assistant_conversation";
+  const getConversationId = () => {
+    try { return localStorage.getItem(storageKey) || ""; }
+    catch (error) { return ""; }
+  };
+  const saveConversationId = (value) => {
+    try { localStorage.setItem(storageKey, value); }
+    catch (error) { /* The chat still works without persistent browser storage. */ }
+  };
+  const clearConversationId = () => {
+    try { localStorage.removeItem(storageKey); }
+    catch (error) { /* Nothing else to clear. */ }
+  };
+
+  const setOpen = (open) => {
+    panel.hidden = !open;
+    launcher.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) textarea.focus();
+  };
+
+  const addMessage = (content, role) => {
+    const item = document.createElement("div");
+    item.className = `assistant-message assistant-message-${role}`;
+    item.textContent = content;
+    messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
+  };
+
+  const sendMessage = async (message) => {
+    addMessage(message, "user");
+    textarea.value = "";
+    textarea.disabled = true;
+    submitButton.disabled = true;
+    submitButton.textContent = "A responder…";
+
+    try {
+      const response = await fetch("{% url 'assistant-chat' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({
+          message,
+          conversation_id: getConversationId(),
+          page_path: window.location.pathname,
+          page_title: document.title,
+        }),
+      });
+      const data = await response.json();
+      if (response.status === 429) clearConversationId();
+      if (!response.ok) throw new Error(data.error || "Não foi possível obter uma resposta.");
+      saveConversationId(data.conversation_id);
+      modeLabel.textContent = data.mode === "openai" ? `Online · ${data.model}` : "Modo de demonstração";
+      addMessage(data.reply, "bot");
+    } catch (error) {
+      addMessage(error.message || "O assistente está temporariamente indisponível.", "error");
+    } finally {
+      textarea.disabled = false;
+      submitButton.disabled = false;
+      submitButton.textContent = "Enviar";
+      textarea.focus();
+    }
+  };
+
+  launcher.addEventListener("click", () => setOpen(panel.hidden));
+  closeButton.addEventListener("click", () => setOpen(false));
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const message = textarea.value.trim();
+    if (message) sendMessage(message);
+  });
+  widget.querySelectorAll("[data-assistant-suggestion]").forEach((button) => {
+    button.addEventListener("click", () => sendMessage(button.dataset.assistantSuggestion));
+  });
+})();
+</script>

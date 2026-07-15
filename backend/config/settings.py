@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import secrets
 from pathlib import Path
 
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 load_dotenv()
 
@@ -24,11 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@o&lbm3$i=_=_^q8v)ux$bgd*_mm*yp6=5zsdxr4oecsp%56bo'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "true").strip().lower() in {"1", "true", "yes", "on"}
+
+# SECURITY WARNING: keep the secret key used in production secret.
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "").strip()
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = secrets.token_urlsafe(50)
+    else:
+        raise ImproperlyConfigured("DJANGO_SECRET_KEY must be configured when DJANGO_DEBUG is false.")
 
 ALLOWED_HOSTS = []
 
@@ -36,6 +43,26 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_SERVICE_SUGGESTION_MODEL = os.getenv(
     "OPENAI_SERVICE_SUGGESTION_MODEL",
     "gpt-4.1-mini",
+)
+SITEEXPRESS_ASSISTANT_MODEL = os.getenv("SITEEXPRESS_ASSISTANT_MODEL", "gpt-5.4-mini")
+SITEEXPRESS_ASSISTANT_MODE = os.getenv("SITEEXPRESS_ASSISTANT_MODE", "auto").strip().lower()
+SITEEXPRESS_ASSISTANT_MAX_MESSAGE_LENGTH = int(
+    os.getenv("SITEEXPRESS_ASSISTANT_MAX_MESSAGE_LENGTH", "1200")
+)
+SITEEXPRESS_ASSISTANT_MAX_HISTORY_MESSAGES = int(
+    os.getenv("SITEEXPRESS_ASSISTANT_MAX_HISTORY_MESSAGES", "10")
+)
+SITEEXPRESS_ASSISTANT_INPUT_USD_PER_MILLION = os.getenv(
+    "SITEEXPRESS_ASSISTANT_INPUT_USD_PER_MILLION",
+    "0.75",
+)
+SITEEXPRESS_ASSISTANT_CACHED_INPUT_USD_PER_MILLION = os.getenv(
+    "SITEEXPRESS_ASSISTANT_CACHED_INPUT_USD_PER_MILLION",
+    "0.075",
+)
+SITEEXPRESS_ASSISTANT_OUTPUT_USD_PER_MILLION = os.getenv(
+    "SITEEXPRESS_ASSISTANT_OUTPUT_USD_PER_MILLION",
+    "4.50",
 )
 
 

@@ -284,6 +284,7 @@ LEGAL_PAGES = {
         "sections": [
             ("Dados recolhidos", "Podemos recolher nome, email, telefone, dados do negócio, conteúdos enviados, informação do projeto e dados técnicos necessários ao funcionamento e segurança do serviço."),
             ("Finalidades", "Os dados são usados para responder a pedidos, preparar pré-visualizações, gerir contas e projetos, prestar suporte, tratar encomendas e cumprir obrigações administrativas ou legais."),
+            ("Assistente digital", "As mensagens enviadas no assistente e a página onde a conversa começou podem ser guardadas para responder, acompanhar utilização e melhorar o serviço. Quando o modo online estiver ativo, o conteúdo necessário à resposta pode ser processado pelo fornecedor de inteligência artificial. Não envie palavras-passe, dados de pagamento ou outros dados sensíveis no chat."),
             ("Partilha e fornecedores", "Os dados apenas devem ser partilhados com fornecedores necessários à prestação do serviço, como alojamento, email, pagamentos, análise técnica ou produção de materiais, dentro do âmbito necessário."),
             ("Conservação e direitos", "Os dados são mantidos pelo período necessário ao pedido, contrato e obrigações aplicáveis. Pode pedir acesso, correção ou eliminação através de info@siteexpress.pt, quando legalmente aplicável."),
             ("Contacto", "Questões relacionadas com privacidade podem ser enviadas para info@siteexpress.pt."),
@@ -308,6 +309,7 @@ LEGAL_PAGES = {
         "intro": "A SiteExpress pode usar cookies necessários ao funcionamento do website e, quando ativados, cookies de análise para compreender utilização e melhorar as páginas.",
         "sections": [
             ("Cookies necessários", "Ajudam a manter sessões, segurança, preferências técnicas e funções essenciais. Sem estes cookies, algumas áreas podem não funcionar corretamente."),
+            ("Armazenamento local", "O assistente pode guardar no navegador um identificador técnico de conversa para manter o contexto entre páginas. Este identificador não contém a mensagem nem dados de pagamento."),
             ("Análise", "Ferramentas de análise podem registar interações técnicas e agregadas para identificar problemas e melhorar a experiência. A utilização deve respeitar as opções de consentimento aplicáveis."),
             ("Gestão no navegador", "Pode bloquear ou eliminar cookies através das definições do navegador. O bloqueio de cookies essenciais pode afetar autenticação, formulários ou outras funcionalidades."),
             ("Contacto", "Questões sobre cookies podem ser enviadas para info@siteexpress.pt."),

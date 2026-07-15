@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.test import TestCase, override_settings
@@ -8,6 +10,8 @@ from django.utils import timezone
 from django.utils.translation import override
 
 from .models import (
+    AssistantConversation,
+    AssistantMessage,
     BusinessProfile,
     DomainRequest,
     GeneratedContent,
@@ -217,6 +221,105 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, 'href="/pt/accounts/login/"', html=False)
         self.assertContains(response, "Área de cliente")
         self.assertContains(response, 'class="mobile-nav"', html=False)
+
+    def test_public_landing_includes_assistant_widget(self):
+        response = self.client.get("/pt/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Assistente SiteExpress")
+        self.assertContains(response, 'fetch("/pt/assistant/chat/"', html=False)
+
+    @override_settings(SITEEXPRESS_ASSISTANT_MODE="demo")
+    def test_assistant_demo_chat_creates_usage_records(self):
+        response = self.client.post(
+            reverse("assistant-chat"),
+            data=json.dumps(
+                {
+                    "message": "Quanto custa um website?",
+                    "page_path": "/pt/precos/",
+                    "page_title": "Preços",
+                }
+            ),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["mode"], "demo")
+        self.assertIn("€225", payload["reply"])
+
+        conversation = AssistantConversation.objects.get(public_id=payload["conversation_id"])
+        self.assertEqual(conversation.turn_count, 1)
+        self.assertEqual(conversation.page_path, "/pt/precos/")
+        self.assertEqual(conversation.messages.count(), 2)
+        self.assertEqual(
+            list(conversation.messages.values_list("role", flat=True)),
+            [AssistantMessage.Role.USER, AssistantMessage.Role.ASSISTANT],
+        )
+
+    @override_settings(SITEEXPRESS_ASSISTANT_MODE="demo")
+    def test_assistant_chat_continues_existing_conversation(self):
+        first = self.client.post(
+            reverse("assistant-chat"),
+            data=json.dumps({"message": "O que é a Página Express?"}),
+            content_type="application/json",
+        ).json()
+        second_response = self.client.post(
+            reverse("assistant-chat"),
+            data=json.dumps(
+                {
+                    "message": "E quanto custa?",
+                    "conversation_id": first["conversation_id"],
+                }
+            ),
+            content_type="application/json",
+        )
+        self.assertEqual(second_response.status_code, 200)
+        conversation = AssistantConversation.objects.get(public_id=first["conversation_id"])
+        self.assertEqual(conversation.turn_count, 2)
+        self.assertEqual(conversation.messages.count(), 4)
+
+    def test_assistant_chat_rejects_empty_or_invalid_payload(self):
+        invalid = self.client.post(
+            reverse("assistant-chat"),
+            data="not-json",
+            content_type="application/json",
+        )
+        empty = self.client.post(
+            reverse("assistant-chat"),
+            data=json.dumps({"message": "   "}),
+            content_type="application/json",
+        )
+        self.assertEqual(invalid.status_code, 400)
+        self.assertEqual(empty.status_code, 400)
+
+    def test_assistant_usage_dashboard_is_staff_only_and_shows_totals(self):
+        conversation = AssistantConversation.objects.create(
+            page_path="/pt/",
+            mode=AssistantConversation.Mode.DEMO,
+            model="siteexpress-demo",
+            turn_count=2,
+            last_message_at=timezone.now(),
+        )
+        AssistantMessage.objects.create(
+            conversation=conversation,
+            role=AssistantMessage.Role.ASSISTANT,
+            content="Resposta de teste",
+            mode=AssistantConversation.Mode.DEMO,
+            model="siteexpress-demo",
+        )
+        anonymous_response = self.client.get(reverse("assistant-usage"))
+        self.assertEqual(anonymous_response.status_code, 302)
+
+        staff = get_user_model().objects.create_user(
+            username="assistant-staff",
+            password="secret123",
+            is_staff=True,
+        )
+        self.client.force_login(staff)
+        response = self.client.get(reverse("assistant-usage"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Utilização do assistente")
+        self.assertContains(response, "Modo de demonstração")
+        self.assertContains(response, "/pt/")
 
     def test_public_product_pages_load_with_unique_content(self):
         expectations = {
