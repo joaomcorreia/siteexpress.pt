@@ -1670,11 +1670,25 @@ def success_view(request):
         request,
         "onboarding/success.html",
         {
-            "setup_email": request.session.pop("onboarding_setup_email", ""),
-            "setup_link": request.session.pop("onboarding_setup_link", ""),
-            "setup_required": request.session.pop("onboarding_setup_required", True),
+            "setup_email": request.session.get("onboarding_setup_email", ""),
+            "setup_link": request.session.get("onboarding_setup_link", ""),
+            "setup_required": request.session.get("onboarding_setup_required", True),
             "debug_mode": settings.DEBUG,
         },
+    )
+
+
+def account_setup_entry_view(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    setup_link = request.session.get("onboarding_setup_link", "")
+    if setup_link:
+        return redirect(setup_link)
+    return render(
+        request,
+        "onboarding/account_setup_invalid.html",
+        {"missing_token": True},
+        status=400,
     )
 
 
