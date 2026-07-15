@@ -58,6 +58,7 @@ SERVICES_HOME_VISIBLE_LIMIT = 12
 RESTAURANT_CLASSIC_STATIC_PREFIX = "siteexpress/demo/restaurant/classic/"
 BEAUTY_CLASSIC_STATIC_PREFIX = "siteexpress/demo/beauty/classic/"
 SERVICES_CLASSIC_STATIC_PREFIX = "siteexpress/demo/services/classic/"
+INSTRUMENT_CLASSIC_STATIC_PREFIX = "siteexpress/demo/instruments/classic/"
 FAMILY_DEFAULT_VARIATIONS = {
     "restaurant": "restaurant-classic",
     "beauty": "beauty-classic",
@@ -73,6 +74,7 @@ DEVICE_MODES = {"desktop", "tablet", "mobile"}
 ASSISTANT_MAX_TURNS_PER_CONVERSATION = 40
 DEFAULT_DASHBOARD_SECTION = "preview"
 DASHBOARD_SECTIONS = {
+    "overview",
     "preview",
     "business",
     "services",
@@ -1268,6 +1270,8 @@ def get_project_variant_context(project):
         demo_images = get_restaurant_classic_image_map()
     elif template_family == "beauty":
         demo_images = get_beauty_classic_image_map()
+    elif template_family == "services" and is_instrument:
+        demo_images = get_instrument_classic_image_map()
     elif template_family == "services" and any(
         keyword in business_type for keyword in AUTO_SERVICES_KEYWORDS
     ):
@@ -1456,6 +1460,81 @@ def get_services_classic_image_map():
         "about": f"{SERVICES_CLASSIC_STATIC_PREFIX}about.jpg",
         "cta": f"{SERVICES_CLASSIC_STATIC_PREFIX}cta.jpg",
         "location": f"{SERVICES_CLASSIC_STATIC_PREFIX}location.jpg",
+    }
+
+
+def get_instrument_classic_image_map():
+    return {
+        "hero": f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}hero-1.webp",
+        "hero_slides": [
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}hero-1.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}hero-2.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}hero-3.webp",
+        ],
+        "featured": [
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-1.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-3.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-2.webp",
+        ],
+        "services": [
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-1.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-3.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-4.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-2.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-5.webp",
+            f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}service-6.webp",
+        ],
+        "about": f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}about.webp",
+        "cta": f"{INSTRUMENT_CLASSIC_STATIC_PREFIX}hero-2.webp",
+    }
+
+
+def build_preview_extras(project, services, variant_context):
+    hero_slides = []
+    slide_images = variant_context.get("demo_images", {}).get("hero_slides", [])
+    if variant_context.get("is_instrument_template") and slide_images:
+        slide_copy = [
+            {
+                "title": variant_context["services_hero_title"],
+                "subtitle": variant_context["services_hero_subtitle"],
+            }
+        ]
+        slide_copy.extend(
+            {
+                "title": service["title"],
+                "subtitle": service["short_description"],
+            }
+            for service in services[:2]
+        )
+        while len(slide_copy) < len(slide_images):
+            slide_copy.append(
+                {
+                    "title": variant_context["services_intro_title"],
+                    "subtitle": variant_context["services_intro_text"],
+                }
+            )
+        hero_slides = [
+            {
+                **slide_copy[index],
+                "image_path": image_path,
+            }
+            for index, image_path in enumerate(slide_images)
+        ]
+
+    profile = project.business_profile
+    location_parts = [
+        profile.address,
+        profile.city,
+        profile.region,
+        profile.country,
+    ]
+    location_query = ", ".join(part.strip() for part in location_parts if part and part.strip())
+    if not location_query:
+        location_query = "Portugal"
+    return {
+        "hero_slides": hero_slides,
+        "google_maps_embed_url": f"https://www.google.com/maps?{urlencode({'q': location_query, 'output': 'embed'})}",
+        "google_maps_link_url": f"https://www.google.com/maps/search/?{urlencode({'api': 1, 'query': location_query})}",
     }
 
 
@@ -2390,6 +2469,7 @@ def starter_page_preview_view(request, slug):
     services = normalize_project_services(project, content)
     plan_context = build_plan_render_context(project, services, is_full_plan=False)
     variant_context = get_project_variant_context(project)
+    preview_extras = build_preview_extras(project, services, variant_context)
     preview_variation, variation_mode = get_preview_variation(request, project)
     if settings.DEBUG and variant_context.get("is_services_template"):
         logger.debug(
@@ -2413,6 +2493,7 @@ def starter_page_preview_view(request, slug):
             "embed_mode": request.GET.get("embed") == "1",
             **plan_context,
             **variant_context,
+            **preview_extras,
             **get_project_brand_context(project),
         },
     )
@@ -2437,6 +2518,7 @@ def upgrade_placeholder_view(request):
         active_page = "services"
     full_pages_unlocked = bool(plan_context.get("is_full_plan")) if project else False
     variant_context = get_project_variant_context(project) if project else {}
+    preview_extras = build_preview_extras(project, services, variant_context) if project else {}
     preview_variation, variation_mode = get_preview_variation(request, project) if project else ("", "classic")
     if active_page != "home" and not full_pages_unlocked:
         active_page = "home"
@@ -2465,6 +2547,7 @@ def upgrade_placeholder_view(request):
             "embed_mode": request.GET.get("embed") == "1",
             **plan_context,
             **variant_context,
+            **preview_extras,
             **(get_project_brand_context(project) if project else {}),
         },
     )

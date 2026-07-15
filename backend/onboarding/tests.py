@@ -868,7 +868,7 @@ class OnboardingFlowTests(TestCase):
         )
 
         self.client.force_login(user)
-        response = self.client.get(reverse("dashboard"))
+        response = self.client.get(f"{reverse('dashboard')}?section=overview")
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Faça upgrade para Website Completo")
@@ -892,7 +892,7 @@ class OnboardingFlowTests(TestCase):
         )
 
         self.client.force_login(user)
-        response = self.client.get(reverse("dashboard"))
+        response = self.client.get(f"{reverse('dashboard')}?section=overview")
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(
@@ -1067,16 +1067,8 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["active_section"], "preview")
         self.assertContains(response, "Area de preview")
-        self.assertContains(
-            response,
-            '<details class="card dashboard-accordion product-card">',
-            html=False,
-        )
-        self.assertContains(
-            response,
-            '<details class="card dashboard-accordion domain-status-card">',
-            html=False,
-        )
+        self.assertNotContains(response, "Estado do projeto")
+        self.assertNotContains(response, "Estado do domínio")
         self.assertContains(
             response,
             '<details class="card dashboard-accordion" open>',
@@ -2053,7 +2045,8 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(starter_response, "service-icon-wrench")
         self.assertContains(starter_response, "siteexpress/demo/services/classic/hero.jpg")
         self.assertContains(full_response, "Zona de serviço")
-        self.assertContains(full_response, "siteexpress/demo/services/classic/location.jpg")
+        self.assertContains(full_response, "google.com/maps?")
+        self.assertContains(full_response, "Abrir no Google Maps")
         self.assertContains(starter_response, "Reparações")
         self.assertContains(starter_response, "Avaliação")
         self.assertNotContains(starter_response, "À medida que o website crescer, podem ser destacados mais serviços aqui.")
@@ -2107,7 +2100,40 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(starter_response, "Eletrónica e componentes")
         self.assertContains(starter_response, "Guitarras e equipamento")
         self.assertNotContains(starter_response, "siteexpress/demo/services/classic/")
+        self.assertEqual(len(starter_response.context["hero_slides"]), 3)
+        self.assertContains(starter_response, "data-hero-slider")
+        self.assertContains(starter_response, "siteexpress/demo/instruments/classic/hero-1.webp")
+        self.assertContains(starter_response, "siteexpress/demo/instruments/classic/hero-2.webp")
+        self.assertContains(starter_response, "siteexpress/demo/instruments/classic/hero-3.webp")
+        self.assertContains(starter_response, "siteexpress/demo/instruments/classic/about.webp")
+        for number in range(1, 7):
+            self.assertContains(
+                starter_response,
+                f"siteexpress/demo/instruments/classic/service-{number}.webp",
+            )
+        self.assertContains(starter_response, "data-quote-form")
+        self.assertContains(starter_response, "google.com/maps?")
+        self.assertContains(starter_response, "Abrir no Google Maps")
         self.assertContains(dashboard_response, "Instrumentos e música")
+
+    def test_dashboard_separates_project_summary_from_preview_controls(self):
+        user = get_user_model().objects.create_user(username="dashboard-separated", password="secret123")
+        self.create_project_for_user(
+            user,
+            business_name="Separated Dashboard",
+            email="separated@example.com",
+        )
+
+        self.client.force_login(user)
+        preview_response = self.client.get(reverse("dashboard"))
+        overview_response = self.client.get(f"{reverse('dashboard')}?section=overview")
+
+        self.assertContains(preview_response, "Ver e personalizar")
+        self.assertContains(preview_response, "Area de preview")
+        self.assertNotContains(preview_response, "Estado do projeto")
+        self.assertContains(overview_response, "Estado do projeto")
+        self.assertContains(overview_response, "Estado do domínio")
+        self.assertNotContains(overview_response, "Area de preview")
 
     def test_category_palette_is_default_but_customer_colours_take_priority(self):
         default_user = get_user_model().objects.create_user(

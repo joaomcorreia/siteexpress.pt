@@ -1,0 +1,17 @@
+{% load i18n %}
+<div class="map-layout">
+    <div class="map-frame">
+        <iframe src="{{ google_maps_embed_url }}" title="{% blocktrans with city=project.business_profile.city %}Mapa da zona de serviço em {{ city }}{% endblocktrans %}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="map-copy">
+        <span class="eyebrow">{% trans "Onde trabalhamos" %}</span>
+        <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}A atender {{ city }}, {{ country }} e zonas próximas.{% endblocktrans %}</p>
+        {% if project.business_profile.address %}<p class="muted">{{ project.business_profile.address }}</p>{% endif %}
+        <div class="services-location-points">
+            <span class="tag">{{ project.business_profile.city }}</span>
+            {% if project.business_profile.region %}<span class="tag">{{ project.business_profile.region }}</span>{% endif %}
+            {% if project.business_profile.country %}<span class="tag">{{ project.business_profile.country }}</span>{% endif %}
+        </div>
+        <a class="map-link" href="{{ google_maps_link_url }}" target="_blank" rel="noopener">{% trans "Abrir no Google Maps" %}</a>
+    </div>
+</div>

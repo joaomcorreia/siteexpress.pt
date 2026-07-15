@@ -16,6 +16,71 @@
     link.href = target.toString();
   });
 
+  const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll("[data-hero-slider]").forEach((slider) => {
+    const slides = Array.from(slider.querySelectorAll("[data-hero-slide]"));
+    const buttons = Array.from(slider.querySelectorAll("[data-hero-slide-button]"));
+    let activeIndex = 0;
+    let timer = null;
+
+    const showSlide = (nextIndex) => {
+      activeIndex = (nextIndex + slides.length) % slides.length;
+      slides.forEach((slide, index) => {
+        const active = index === activeIndex;
+        slide.classList.toggle("is-active", active);
+        slide.setAttribute("aria-hidden", active ? "false" : "true");
+      });
+      buttons.forEach((button, index) => {
+        const active = index === activeIndex;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    };
+    const stop = () => {
+      if (timer) window.clearInterval(timer);
+      timer = null;
+    };
+    const start = () => {
+      stop();
+      if (!prefersReducedMotion && slides.length > 1) {
+        timer = window.setInterval(() => showSlide(activeIndex + 1), 6500);
+      }
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        showSlide(Number(button.dataset.heroSlideButton || 0));
+        start();
+      });
+    });
+    slider.addEventListener("mouseenter", stop);
+    slider.addEventListener("mouseleave", start);
+    slider.addEventListener("focusin", stop);
+    slider.addEventListener("focusout", start);
+    showSlide(0);
+    start();
+  });
+
+  document.querySelectorAll("[data-quote-form]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const recipient = form.dataset.recipient || "";
+      const data = new FormData(form);
+      const feedback = form.querySelector("[data-quote-feedback]");
+      if (feedback) feedback.hidden = false;
+      if (!recipient) return;
+      const subject = `Pedido de orçamento — ${data.get("service") || "Website"}`;
+      const body = [
+        `Nome: ${data.get("name") || ""}`,
+        `Telefone: ${data.get("phone") || ""}`,
+        `Serviço: ${data.get("service") || ""}`,
+        "",
+        String(data.get("message") || "")
+      ].join("\n");
+      window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+  });
+
   if (body.classList.contains("se-motion-minimal")) return;
 
   const targets = document.querySelectorAll(

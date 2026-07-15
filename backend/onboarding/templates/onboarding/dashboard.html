@@ -505,7 +505,8 @@
                         <nav class="card">
                             <h2>Area de trabalho</h2>
                             <div class="nav-list">
-                                <a class="nav-link{% if active_section == 'preview' %} active{% endif %}" href="{{ dashboard_control_urls.sections.preview }}">Preview</a>
+                                <a class="nav-link{% if active_section == 'overview' %} active{% endif %}" href="{{ dashboard_control_urls.sections.overview }}">Resumo</a>
+                                <a class="nav-link{% if active_section == 'preview' %} active{% endif %}" href="{{ dashboard_control_urls.sections.preview }}">Ver e personalizar</a>
                                 <a class="nav-link{% if active_section == 'business' %} active{% endif %}" href="{{ dashboard_control_urls.sections.business }}">Dados do negocio</a>
                                 <a class="nav-link{% if active_section == 'services' %} active{% endif %}" href="{{ dashboard_control_urls.sections.services }}">Servicos</a>
                                 <a class="nav-link{% if active_section == 'images' %} active{% endif %}" href="{{ dashboard_control_urls.sections.images }}">Logotipo e imagens</a>
@@ -525,7 +526,13 @@
 
                 <main class="main">
                     <div class="main-stack">
-                        <details class="card dashboard-accordion product-card">
+                        {% if active_section == 'overview' %}
+                        <section class="card dashboard-section-intro">
+                            <span class="badge">Resumo</span>
+                            <h2>Estado do projeto</h2>
+                            <p class="muted">Produto, domínio e próximos passos ficam reunidos aqui. A edição do site está separada em Ver e personalizar.</p>
+                        </section>
+                        <details class="card dashboard-accordion product-card" open>
                             <summary>
                                 <span class="accordion-heading">
                                     <strong>{{ product_summary.title_pt }}</strong>
@@ -661,6 +668,7 @@
                             </div>
                             </div>
                         </details>
+                        {% endif %}
                         {% if active_section == 'preview' %}
                             <details class="card dashboard-accordion" open>
                                 <summary>
@@ -671,29 +679,6 @@
                                 </summary>
                                 <div class="accordion-content">
                                 <p class="muted">Use estes controlos para mudar o tipo de preview, o estilo, o layout e o movimento sem sair do dashboard.</p>
-                                <div class="selection-list">
-                                    <div class="selection-chip">
-                                        <strong>Template</strong>
-                                        <span class="muted">{{ industry_preset_label }}</span>
-                                    </div>
-                                    <div class="selection-chip">
-                                        <strong>Tipo de preview</strong>
-                                        <span class="muted">{{ selected_preview }}</span>
-                                    </div>
-                                    <div class="selection-chip">
-                                        <strong>Estilo visual</strong>
-                                        <span class="muted">{{ selected_variation_label }}</span>
-                                    </div>
-                                    <div class="selection-chip">
-                                        <strong>Layout</strong>
-                                        <span class="muted">{{ selected_layout }}</span>
-                                    </div>
-                                    <div class="selection-chip">
-                                        <strong>Movimento</strong>
-                                        <span class="muted">{{ selected_motion }}</span>
-                                    </div>
-                                </div>
-
                                 <div class="toolbar-row">
                                     <div class="toolbar-group">
                                         <strong>Tipo de preview</strong>

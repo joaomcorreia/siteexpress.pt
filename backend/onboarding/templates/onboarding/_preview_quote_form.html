@@ -1,0 +1,36 @@
+{% load i18n %}
+<div class="quote-layout">
+    <div class="quote-intro">
+        <span class="eyebrow">{% trans "Resposta simples e direta" %}</span>
+        <p>{% trans "Explique o que precisa e indique a melhor forma de contacto. Receberá uma resposta com os próximos passos." %}</p>
+        <div class="quote-contact-list">
+            {% if project.business_profile.phone %}<a href="tel:{{ project.business_profile.phone }}">{{ project.business_profile.phone }}</a>{% endif %}
+            {% if project.business_profile.email %}<a href="mailto:{{ project.business_profile.email }}">{{ project.business_profile.email }}</a>{% endif %}
+        </div>
+    </div>
+    <form class="quote-form" data-quote-form data-recipient="{{ project.business_profile.email }}">
+        <div class="quote-form-grid">
+            <label>
+                <span>{% trans "Nome" %}</span>
+                <input type="text" name="name" autocomplete="name" required>
+            </label>
+            <label>
+                <span>{% trans "Telefone" %}</span>
+                <input type="tel" name="phone" autocomplete="tel" required>
+            </label>
+            <label class="quote-form-wide">
+                <span>{% trans "Serviço" %}</span>
+                <select name="service">
+                    {% for service in services %}<option value="{{ service.title }}">{{ service.title }}</option>{% endfor %}
+                    <option value="Outro">{% trans "Outro pedido" %}</option>
+                </select>
+            </label>
+            <label class="quote-form-wide">
+                <span>{% trans "O que precisa?" %}</span>
+                <textarea name="message" rows="3" required></textarea>
+            </label>
+        </div>
+        <button class="quote-submit" type="submit">{% trans "Enviar pedido" %}</button>
+        <p class="quote-form-feedback" data-quote-feedback hidden>{% trans "O pedido foi preparado no seu programa de email." %}</p>
+    </form>
+</div>

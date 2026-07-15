@@ -1,0 +1,27 @@
+{% load i18n static %}
+<section class="hero section hero-slideshow" id="home" data-hero-slider>
+    <div class="hero-slides">
+        {% for slide in hero_slides %}
+            <article class="hero-slide{% if forloop.first %} is-active{% endif %}" data-hero-slide aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}">
+                <div class="hero-slide-media">
+                    <img src="{% static slide.image_path %}" alt="{% blocktrans with business_name=project.business_profile.business_name %}Trabalho de oficina de {{ business_name }}{% endblocktrans %}">
+                </div>
+                <div class="hero-slide-shade"></div>
+                <div class="hero-slide-content">
+                    <p class="hero-kicker">{{ project.business_profile.business_type }} · {{ project.business_profile.city }}</p>
+                    <h1>{{ slide.title }}</h1>
+                    <p>{{ slide.subtitle }}</p>
+                    <div class="cta-actions hero-actions">
+                        <a class="cta-button" href="#quote">{% trans "Pedir orçamento" %}</a>
+                        <a class="cta-button secondary" href="#services">{% trans "Ver serviços" %}</a>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+    <div class="hero-slider-controls" aria-label="{% trans 'Controlos do slideshow' %}">
+        {% for slide in hero_slides %}
+            <button type="button" class="hero-slider-dot{% if forloop.first %} is-active{% endif %}" data-hero-slide-button="{{ forloop.counter0 }}" aria-label="{% blocktrans with number=forloop.counter %}Mostrar slide {{ number }}{% endblocktrans %}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"></button>
+        {% endfor %}
+    </div>
+</section>

@@ -42,6 +42,9 @@
             </section>
 
             {% if active_page == 'home' %}
+                {% if is_instrument_template and hero_slides %}
+                    {% include "onboarding/_preview_hero_slideshow.html" %}
+                {% else %}
                 <section class="hero section" id="home">
                     <p class="muted">{{ project.business_profile.business_type }} | {{ project.business_profile.city }}</p>
                     <h1>{% if is_restaurant_template %}{% blocktrans with business_name=project.business_profile.business_name %}Bem-vindo a {{ business_name }}{% endblocktrans %}{% elif is_beauty_template %}{% blocktrans with city=project.business_profile.city %}Serviços de beleza em {{ city }}{% endblocktrans %}{% elif is_services_template %}{{ services_hero_title }}{% else %}{{ content.hero_title|default:project.business_profile.business_name }}{% endif %}</h1>
@@ -81,6 +84,7 @@
                         <a class="cta-button secondary" href="{% url 'upgrade-placeholder' %}?page=services">{% trans "Ver serviços" %}</a>
                     </div>
                 </section>
+                {% endif %}
 
                 {% if is_services_template %}
                     <section class="card section section-soft services-intro-card" id="intro">
@@ -276,21 +280,7 @@
                         <p>{% trans "Marque por WhatsApp, telefone ou email e ajudamos a encontrar o melhor horário para si." %}</p>
                         <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Marcar atendimento" %}</a></p>
                     {% elif is_services_template %}
-                        {% if demo_images.cta %}
-                            {% blocktrans with business_name=project.business_profile.business_name asvar cta_alt %}Service work by {{ business_name }}{% endblocktrans %}
-                            <div class="image-block">
-                                <img src="{% static demo_images.cta %}" alt="{{ cta_alt }}">
-                            </div>
-                        {% endif %}
-                        <div class="section-copy">
-                            <p>{% trans "Peça um orçamento, confirme disponibilidade ou descreva o trabalho em que precisa de ajuda." %}</p>
-                            <p class="muted">{% trans "Útil para reparações, manutenção, inspeções e deslocações locais." %}</p>
-                        </div>
-                        <div class="cta-actions">
-                            <a class="cta-button" href="{% url 'upgrade-placeholder' %}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Pedir orçamento" %}</a>
-                            {% if project.business_profile.phone %}<a class="cta-button secondary" href="tel:{{ project.business_profile.phone }}">{% trans "Ligar agora" %}</a>{% endif %}
-                            {% if project.business_profile.email %}<a class="cta-button secondary" href="mailto:{{ project.business_profile.email }}">{% trans "Pedir por email" %}</a>{% endif %}
-                        </div>
+                        {% include "onboarding/_preview_quote_form.html" %}
                     {% else %}
                         <p>{{ content.cta_text }}</p>
                         <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=contact">{% trans "Open contact page" %}</a></p>
@@ -317,24 +307,7 @@
                             {% endif %}
                             <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}Serviços de beleza em {{ city }}, {{ country }}{% endblocktrans %}</p>
                         {% elif is_services_template %}
-                            <div class="section-media-grid">
-                                {% if demo_images.location %}
-                                    {% blocktrans with business_name=project.business_profile.business_name city=project.business_profile.city asvar location_alt %}Service area for {{ business_name }} in {{ city }}{% endblocktrans %}
-                                    <div class="image-block">
-                                        <img src="{% static demo_images.location %}" alt="{{ location_alt }}">
-                                    </div>
-                                {% endif %}
-                                <div class="section-copy">
-                                    <span class="eyebrow">{% trans "Onde trabalhamos" %}</span>
-                                    <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}A atender {{ city }}, {{ country }} e zonas próximas{% endblocktrans %}</p>
-                                    <p class="muted">{% trans "Available for planned visits, call-outs, and local quote requests across the surrounding service area." %}</p>
-                                    <div class="services-location-points">
-                                        <span class="tag">{{ project.business_profile.city }}</span>
-                                        {% if project.business_profile.region %}<span class="tag">{{ project.business_profile.region }}</span>{% endif %}
-                                        {% if project.business_profile.country %}<span class="tag">{{ project.business_profile.country }}</span>{% endif %}
-                                    </div>
-                                </div>
-                            </div>
+                            {% include "onboarding/_preview_map.html" %}
                         {% else %}
                             <p>{% blocktrans with city=project.business_profile.city country=project.business_profile.country %}Zona de serviço: {{ city }}, {{ country }}{% endblocktrans %}</p>
                             <span class="tag">{% trans "Google Maps / service area section" %}</span>
