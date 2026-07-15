@@ -1,7 +1,29 @@
 <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "x9aurmflrt");
+    (function(window, document){
+        var consentKey = "siteexpress_analytics_consent";
+        var clarityProjectId = "x9aurmflrt";
+
+        function loadClarity(){
+            if (window.__siteexpressClarityLoaded) return;
+            window.__siteexpressClarityLoaded = true;
+            window.clarity = window.clarity || function(){
+                (window.clarity.q = window.clarity.q || []).push(arguments);
+            };
+            var script = document.createElement("script");
+            script.async = true;
+            script.src = "https://www.clarity.ms/tag/" + clarityProjectId;
+            var firstScript = document.getElementsByTagName("script")[0];
+            firstScript.parentNode.insertBefore(script, firstScript);
+        }
+
+        try {
+            if (window.localStorage.getItem(consentKey) === "granted") loadClarity();
+        } catch (error) {
+            /* Browsing can continue when storage is unavailable. */
+        }
+
+        window.addEventListener("siteexpress:analytics-consent", function(event){
+            if (event.detail === "granted") loadClarity();
+        });
+    })(window, document);
 </script>

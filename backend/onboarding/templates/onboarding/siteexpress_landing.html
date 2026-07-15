@@ -136,7 +136,7 @@
       <a class="brand" href="#top" aria-label="SiteExpress.pt">
         <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
       </a>
-      <nav class="links" aria-label="Navegação principal"><a href="#servicos">Serviços</a><a href="#visibilidade">Visibilidade</a><a href="#impressao">Impressão</a><a href="#pacotes">Pacotes</a><a href="#contacto">Contacto</a></nav>
+      <nav class="links" aria-label="Navegação principal"><a href="#servicos">Serviços</a><a href="{% url 'siteexpress-ai-assistant' %}">Assistente IA</a><a href="#visibilidade">Visibilidade</a><a href="#impressao">Impressão</a><a href="#pacotes">Pacotes</a><a href="#contacto">Contacto</a></nav>
       <a class="btn btn-primary" href="#contacto">Pedir proposta</a>
     </div>
   </header>
@@ -279,6 +279,7 @@
             <li><a href="#servicos">Website profissional</a></li>
             <li><a href="#visibilidade">Google, Bing e visibilidade</a></li>
             <li><a href="#visibilidade">Facebook Posts</a></li>
+            <li><a href="{% url 'siteexpress-ai-assistant' %}">Assistente IA</a></li>
             <li><a href="#pacotes">Catálogo / Loja online</a></li>
           </ul>
         </nav>
@@ -288,9 +289,9 @@
           <ul>
             <li><a href="#contacto">Contacto</a></li>
             <li><a href="#contacto">Parceiros</a></li>
-            <li><span class="disabled-link" aria-disabled="true">Política de Privacidade</span></li>
-            <li><span class="disabled-link" aria-disabled="true">Termos</span></li>
-            <li><span class="disabled-link" aria-disabled="true">Política de Cookies</span></li>
+            <li><a href="{% url 'siteexpress-privacy' %}">Política de Privacidade</a></li>
+            <li><a href="{% url 'siteexpress-terms' %}">Termos e Condições</a></li>
+            <li><a href="{% url 'siteexpress-cookies' %}">Política de Cookies</a></li>
           </ul>
         </nav>
       </div>
@@ -301,5 +302,6 @@
       </div>
     </div>
   </footer>
+  {% include "onboarding/_siteexpress_cookie_consent.html" %}
 </body>
 </html>

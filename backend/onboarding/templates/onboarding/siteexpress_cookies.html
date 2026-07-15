@@ -1,0 +1,31 @@
+{% extends "onboarding/siteexpress_public_base.html" %}
+
+{% block title %}Política de Cookies | SiteExpress.pt{% endblock %}
+{% block meta_description %}Informação sobre cookies, armazenamento local e analytics utilizados nas páginas públicas SiteExpress.pt.{% endblock %}
+
+{% block content %}
+<main>
+  <section class="public-hero">
+    <div class="wrap">
+      <span class="eyebrow">Informação legal</span>
+      <h1>Política de Cookies</h1>
+      <p class="lead">Explicamos que tecnologias utilizamos no navegador e como pode controlar as opções não essenciais.</p>
+      <p class="updated">Última atualização: 15 de julho de 2026</p>
+    </div>
+  </section>
+  <div class="wrap legal-content">
+    <section><h2>1. O que são cookies?</h2><p>Cookies e tecnologias semelhantes permitem guardar pequenas informações no navegador. Podem ser necessárias para funções do website, recordar preferências ou medir a utilização das páginas.</p></section>
+    <section>
+      <h2>2. Categorias utilizadas</h2>
+      <ul>
+        <li><strong>Necessárias:</strong> suportam segurança, sessão, idioma, formulários e escolhas de privacidade. Não podem ser desativadas através do nosso controlo quando forem indispensáveis ao serviço pedido.</li>
+        <li><strong>Analytics opcionais:</strong> ajudam a compreender páginas visitadas, navegação e problemas de utilização. Só são ativadas depois de aceitar esta categoria.</li>
+      </ul>
+    </section>
+    <section><h2>3. Microsoft Clarity</h2><p>Utilizamos Microsoft Clarity nas páginas públicas para analisar a utilização e melhorar a experiência. A ferramenta pode recolher dados técnicos e interações com a página. O script só é carregado depois da aceitação de analytics opcionais.</p></section>
+    <section><h2>4. A sua escolha</h2><p>No primeiro acesso pode aceitar analytics opcionais ou continuar apenas com funções necessárias. A escolha fica guardada no armazenamento local do navegador. Pode apagar esse armazenamento nas definições do navegador para voltar a escolher.</p></section>
+    <section><h2>5. Serviços externos e alterações</h2><p>Algumas páginas podem incluir conteúdo ou ligações de terceiros sujeitos às respetivas políticas. Atualizaremos esta página se adicionarmos novas categorias ou alterarmos a forma como estas tecnologias são usadas.</p></section>
+    <section><h2>6. Contacto</h2><p>Para questões sobre cookies ou privacidade, contacte <a href="mailto:info@siteexpress.pt">info@siteexpress.pt</a> ou consulte a nossa <a href="{% url 'siteexpress-privacy' %}">Política de Privacidade</a>.</p></section>
+  </div>
+</main>
+{% endblock %}

@@ -6,6 +6,30 @@ from . import views
 urlpatterns = [
     path("", views.siteexpress_landing_view, name="siteexpress-landing"),
     path("siteexpress/", views.siteexpress_landing_view, name="siteexpress-landing-alias"),
+    path(
+        "assistente-ia/",
+        views.siteexpress_public_page_view,
+        {"template_name": "onboarding/siteexpress_ai_assistant.html"},
+        name="siteexpress-ai-assistant",
+    ),
+    path(
+        "privacidade/",
+        views.siteexpress_public_page_view,
+        {"template_name": "onboarding/siteexpress_privacy.html"},
+        name="siteexpress-privacy",
+    ),
+    path(
+        "termos/",
+        views.siteexpress_public_page_view,
+        {"template_name": "onboarding/siteexpress_terms.html"},
+        name="siteexpress-terms",
+    ),
+    path(
+        "cookies/",
+        views.siteexpress_public_page_view,
+        {"template_name": "onboarding/siteexpress_cookies.html"},
+        name="siteexpress-cookies",
+    ),
     path("onboarding/", views.onboarding_view, name="onboarding"),
     path("onboarding/parceiro/<str:partner_code>/", views.onboarding_view, name="partner-onboarding"),
     path("onboarding/success/", views.success_view, name="success"),
