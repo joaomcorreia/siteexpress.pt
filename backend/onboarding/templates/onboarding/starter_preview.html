@@ -8,8 +8,8 @@
     <meta name="description" content="{{ content.seo_description }}">
     {% include "onboarding/_preview_styles.html" %}
 </head>
-<body class="{% if is_restaurant_template %}restaurant-variant{% elif is_beauty_template %}beauty-variant{% elif is_services_template %}services-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }} se-motion-{{ motion_mode|default:'smooth' }}">
-    <div class="wrap{% if is_restaurant_template %} restaurant-variant{% elif is_beauty_template %} beauty-variant{% elif is_services_template %} services-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }}">
+<body class="{% if is_restaurant_template %}restaurant-variant{% elif is_beauty_template %}beauty-variant{% elif is_services_template %}services-variant{% endif %}{% if is_instrument_template %} instrument-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }} se-motion-{{ motion_mode|default:'smooth' }}">
+    <div class="wrap{% if is_restaurant_template %} restaurant-variant{% elif is_beauty_template %} beauty-variant{% elif is_services_template %} services-variant{% endif %}{% if is_instrument_template %} instrument-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }}">
         {% if not embed_mode %}
             <a class="back" href="{% url 'dashboard' %}">{% trans "Voltar ao dashboard" %}</a>
         {% endif %}
