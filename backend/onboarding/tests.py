@@ -10,6 +10,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils import timezone
 from django.utils.translation import override
 
+from .assistant import ASSISTANT_INSTRUCTIONS
 from .models import (
     AssistantConversation,
     AssistantMessage,
@@ -230,6 +231,13 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, 'fetch("/pt/assistant/chat/"', html=False)
         self.assertContains(response, 'event.key !== "Enter"', html=False)
         self.assertContains(response, "form.requestSubmit()", html=False)
+        self.assertContains(response, "página simples e o website completo")
+
+    def test_assistant_instructions_use_plain_language_and_honest_preview_flow(self):
+        self.assertIn("uma página simples ou um site completo", ASSISTANT_INSTRUCTIONS)
+        self.assertIn("Não comece por termos técnicos como WordPress", ASSISTANT_INSTRUCTIONS)
+        self.assertIn("primeira proposta de páginas, serviços e textos", ASSISTANT_INSTRUCTIONS)
+        self.assertIn("Nunca diga que já criou", ASSISTANT_INSTRUCTIONS)
 
     @override_settings(SITEEXPRESS_ASSISTANT_MODE="demo")
     def test_assistant_demo_chat_creates_usage_records(self):
