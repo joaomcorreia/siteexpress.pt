@@ -480,8 +480,40 @@ class OnboardingFlowTests(TestCase):
         response = self.client.post(reverse("onboarding"), data=self.onboarding_payload(), follow=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Link local para definir a palavra-passe:")
+        self.assertContains(response, "Ambiente local")
+        self.assertContains(response, "Criar palavra-passe")
         self.assertContains(response, "/onboarding/account-setup/")
+
+    def test_simplified_onboarding_accepts_only_essential_business_fields(self):
+        response = self.client.post(
+            reverse("onboarding"),
+            data={
+                "business_name": "Construções Silva",
+                "business_type": "Construção, pinturas e jardins",
+                "city": "Santa Maria da Feira",
+                "email": "silva@example.com",
+                "product_type": WebsiteProject.ProductType.FULL_WEBSITE_ONETIME,
+            },
+        )
+
+        self.assertRedirects(response, reverse("success"))
+        profile = BusinessProfile.objects.get()
+        project = WebsiteProject.objects.get()
+        self.assertEqual(profile.country, "Portugal")
+        self.assertEqual(profile.target_country, "Portugal")
+        self.assertEqual(profile.target_city, "Santa Maria da Feira")
+        self.assertEqual(profile.target_language, "pt")
+        self.assertEqual(profile.address, "")
+        self.assertEqual(project.domain_choice, WebsiteProject.DomainChoice.PREVIEW_ONLY)
+
+    def test_onboarding_page_hides_domain_and_targeting_questions_from_first_step(self):
+        response = self.client.get(reverse("onboarding"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Conte-nos o essencial")
+        self.assertContains(response, "Não precisa de escolher domínio")
+        self.assertNotContains(response, "Domínio alternativo")
+        self.assertNotContains(response, "Público-alvo")
 
     def test_duplicate_email_submissions_reuse_user_and_create_new_project_records(self):
         first = self.client.post(reverse("onboarding"), data=self.onboarding_payload())
@@ -667,7 +699,25 @@ class OnboardingFlowTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Defina a sua palavra-passe")
+        self.assertContains(response, "Crie a sua palavra-passe")
+        self.assertContains(response, "Guardar e ver o meu preview")
+
+    @override_settings(DEBUG=True)
+    def test_bare_account_setup_page_redirects_to_current_private_link(self):
+        self.client.post(reverse("onboarding"), data=self.onboarding_payload())
+
+        response = self.client.get(reverse("account-setup-entry"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/onboarding/account-setup/", response.url)
+        self.assertNotEqual(response.url, reverse("account-setup-entry"))
+
+    def test_bare_account_setup_page_explains_that_onboarding_comes_first(self):
+        response = self.client.get(reverse("account-setup-entry"))
+
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, "Link individual necessário", status_code=400)
+        self.assertContains(response, "Comece pelo formulário", status_code=400)
 
     def test_setting_password_activates_user_and_redirects_to_dashboard(self):
         self.client.post(reverse("onboarding"), data=self.onboarding_payload())
