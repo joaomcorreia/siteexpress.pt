@@ -1101,13 +1101,19 @@
         padding-top: clamp(68px, 8vw, 108px);
         padding-bottom: clamp(68px, 8vw, 108px);
     }
-    .se-variation-modern.se-layout-full #quote.quote-contained,
-    .se-variation-modern.se-layout-full #contact.quote-contained {
-        width: min(1180px, calc(100% - 48px));
+    .quote-section-inner {
+        width: 100%;
         max-width: 1180px;
-        margin: clamp(58px, 7vw, 96px) auto;
-        padding-left: clamp(28px, 5vw, 64px);
-        padding-right: clamp(28px, 5vw, 64px);
+        margin: 0 auto;
+    }
+    .se-variation-modern.se-layout-full #quote.quote-section-ready,
+    .se-variation-modern.se-layout-full #contact.quote-section-ready {
+        display: block;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding-left: 24px;
+        padding-right: 24px;
     }
     .se-variation-modern.se-layout-full .footer-shell {
         margin-top: 0;
@@ -1555,10 +1561,10 @@
             border: 0;
             border-radius: 0;
         }
-        .se-variation-modern.se-layout-full #quote.quote-contained,
-        .se-variation-modern.se-layout-full #contact.quote-contained {
-            width: 100%;
-            margin: 36px 0;
+        .se-variation-modern.se-layout-full #quote.quote-section-ready,
+        .se-variation-modern.se-layout-full #contact.quote-section-ready {
+            width: calc(100% + 32px);
+            margin: 0 -16px;
             padding-left: 22px;
             padding-right: 22px;
         }

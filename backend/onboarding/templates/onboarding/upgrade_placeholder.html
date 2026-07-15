@@ -259,8 +259,12 @@
                     </div>
                 </section>
 
-                <section class="card cta-card section-emphasis{% if is_services_template %} services-cta-card quote-contained{% endif %}" id="contact">
-                    <h2 class="section-title">{% if is_restaurant_template %}{% trans "Reservas" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Pedido de contacto" %}{% endif %}</h2>
+                <section class="card cta-card section-emphasis{% if is_services_template %} services-cta-card quote-section-ready section-ready{% endif %}" id="contact">
+                    {% if is_services_template %}
+                        {% include "onboarding/_preview_quote_section.html" %}
+                    {% else %}
+                        <h2 class="section-title">{% if is_restaurant_template %}{% trans "Reservas" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% else %}{% trans "Pedido de contacto" %}{% endif %}</h2>
+                    {% endif %}
                     {% if is_restaurant_template %}
                         {% if demo_images.cta %}
                             {% blocktrans with business_name=project.business_profile.business_name asvar cta_alt %}Restaurant interior at {{ business_name }}{% endblocktrans %}
@@ -279,9 +283,7 @@
                         {% endif %}
                         <p>{% trans "Marque por WhatsApp, telefone ou email e ajudamos a encontrar o melhor horário para si." %}</p>
                         <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Marcar atendimento" %}</a></p>
-                    {% elif is_services_template %}
-                        {% include "onboarding/_preview_quote_form.html" %}
-                    {% else %}
+                    {% elif not is_services_template %}
                         <p>{{ content.cta_text }}</p>
                         <p><a class="back" href="{% url 'upgrade-placeholder' %}?page=contact">{% trans "Open contact page" %}</a></p>
                     {% endif %}
