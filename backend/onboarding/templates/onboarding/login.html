@@ -1,63 +1,44 @@
-{% load i18n %}
-<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% trans "Login" %}</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Georgia, serif;
-            background: linear-gradient(180deg, #f6f7fb 0%, #ebf0f6 100%);
-            color: #172033;
-        }
-        .card {
-            max-width: 460px;
-            margin: 80px auto;
-            background: #fff;
-            padding: 32px;
-            border-radius: 18px;
-            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
-        }
-        label, input {
-            display: block;
-            width: 100%;
-        }
-        input {
-            margin: 8px 0 16px;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid #c7d2e2;
-            box-sizing: border-box;
-        }
-        button {
-            border: 0;
-            border-radius: 999px;
-            padding: 12px 18px;
-            color: #fff;
-            background: #8f1f1f;
-            font: inherit;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .errors {
-            color: #a61b1b;
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>{% trans "Login" %}</h1>
-        <p>{% blocktrans %}Use your confirmed account to access the starter preview and upgrade path.{% endblocktrans %}</p>
-        {% if form.errors %}
-            <div class="errors">{% trans "Your username or password was not accepted." %}</div>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">{% trans "Enter dashboard" %}</button>
-        </form>
-    </div>
-</body>
-</html>
+{% extends "onboarding/public_base.html" %}
+
+{% block title %}Entrar | SiteExpress.pt{% endblock %}
+{% block meta_description %}Entre com o email usado para criar o seu projeto SiteExpress.{% endblock %}
+{% block analytics %}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .login-page{padding:clamp(54px,9vw,105px) 0;background:radial-gradient(circle at 12% 0,rgba(4,106,56,.14),transparent 30rem),var(--bg)}
+  .login-card{width:min(520px,calc(100% - 28px));margin:auto;padding:clamp(28px,5vw,44px);border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow)}
+  .login-card h1{font-size:clamp(2.2rem,5vw,3.5rem);letter-spacing:-.06em}.login-intro{color:var(--muted);font-size:1.04rem}.login-step{color:var(--primary);font-size:.78rem;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
+  .login-field{margin-top:18px}.login-field label{display:block;margin-bottom:7px;font-weight:900}.login-field input{width:100%;min-height:52px;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}.login-field input:focus{outline:3px solid rgba(4,106,56,.12);border-color:var(--primary)}
+  .login-errors{margin:18px 0 0;padding:13px 15px;border:1px solid #e5b7b2;border-radius:10px;background:#fff0ee;color:#8d241d}.login-submit{width:100%;margin-top:24px;border:0;cursor:pointer;font:inherit}.login-note{margin:16px 0 0;color:var(--muted);font-size:.9rem;text-align:center}.login-note a{color:var(--primary);font-weight:900}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="login-page">
+  <div class="login-card">
+    <span class="login-step">Área de cliente</span>
+    <h1>Entre no seu dashboard.</h1>
+    <p class="login-intro">Use o mesmo email que indicou quando criou o projeto.</p>
+
+    {% if form.errors %}
+      <div class="login-errors">O email ou a palavra-passe não estão corretos.</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      <div class="login-field">
+        <label for="{{ form.username.id_for_label }}">Email</label>
+        {{ form.username }}
+      </div>
+      <div class="login-field">
+        <label for="{{ form.password.id_for_label }}">Palavra-passe</label>
+        {{ form.password }}
+      </div>
+      <button class="btn btn-primary login-submit" type="submit">Entrar no dashboard</button>
+    </form>
+    <p class="login-note">Ainda não tem projeto? <a href="{% url 'onboarding' %}">Começar agora</a></p>
+  </div>
+</section>
+{% endblock %}
