@@ -1,0 +1,46 @@
+<script>
+(() => {
+  const body = document.body;
+  if (!body) return;
+
+  const currentParams = new URLSearchParams(window.location.search);
+  const preservedParams = ["variation", "layout", "motion", "embed"];
+  document.querySelectorAll("a[href]").forEach((link) => {
+    const target = new URL(link.href, window.location.href);
+    if (target.origin !== window.location.origin || target.pathname !== window.location.pathname) return;
+    preservedParams.forEach((name) => {
+      if (currentParams.has(name) && !target.searchParams.has(name)) {
+        target.searchParams.set(name, currentParams.get(name));
+      }
+    });
+    link.href = target.toString();
+  });
+
+  if (body.classList.contains("se-motion-minimal")) return;
+
+  const targets = document.querySelectorAll(
+    ".nav-card, .hero, .section, .footer-shell, .service-item"
+  );
+  targets.forEach((target, index) => {
+    target.classList.add("se-motion-target");
+    target.style.setProperty("--se-motion-order", String(index % 6));
+  });
+
+  if (!("IntersectionObserver" in window)) {
+    targets.forEach((target) => target.classList.add("se-revealed"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("se-revealed");
+        observer.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -5% 0px" }
+  );
+  targets.forEach((target) => observer.observe(target));
+})();
+</script>
