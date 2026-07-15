@@ -1,36 +1,29 @@
-{% load i18n %}
-<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Link invalido</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Georgia, serif;
-            background: #f4f6fb;
-            color: #172033;
-        }
-        .card {
-            max-width: 680px;
-            margin: 60px auto;
-            background: #fff;
-            padding: 32px;
-            border-radius: 18px;
-            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
-        }
-        a {
-            color: #8f1f1f;
-            font-weight: 700;
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>Link invalido ou expirado</h1>
-        <p>Este link para definir a palavra-passe ja nao e valido. Volte a iniciar o onboarding para receber um novo acesso.</p>
-        <p><a href="{% url 'onboarding' %}">Voltar ao onboarding</a></p>
+{% extends "onboarding/public_base.html" %}
+
+{% block title %}Acesso à conta | SiteExpress.pt{% endblock %}
+
+{% block extra_head %}
+<style>
+  .notice-page{padding:clamp(60px,10vw,120px) 0}.notice-card{width:min(650px,calc(100% - 28px));margin:auto;padding:clamp(28px,5vw,48px);border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow);text-align:center}.notice-card h1{font-size:clamp(2.1rem,5vw,3.6rem)}.notice-card p{color:var(--muted)}.notice-card .actions{justify-content:center;margin-top:26px}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="notice-page">
+  <div class="notice-card">
+    {% if missing_token %}
+      <span class="eyebrow">Link individual necessário</span>
+      <h1>Comece pelo formulário do seu negócio.</h1>
+      <p>A página para criar a palavra-passe usa um link privado gerado depois de enviar o onboarding. Não precisa de procurar esta página diretamente.</p>
+    {% else %}
+      <span class="eyebrow">Link terminado</span>
+      <h1>Este link já não é válido.</h1>
+      <p>O link pode ter expirado ou já ter sido utilizado. Pode iniciar novamente o processo ou entrar se já definiu a palavra-passe.</p>
+    {% endif %}
+    <div class="actions">
+      <a class="btn btn-primary" href="{% url 'onboarding' %}">Começar</a>
+      <a class="btn btn-ghost" href="{% url 'login' %}">Área de cliente</a>
     </div>
-</body>
-</html>
+  </div>
+</section>
+{% endblock %}
