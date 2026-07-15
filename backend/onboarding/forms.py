@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 
@@ -15,6 +17,36 @@ SERVICE_ICON_CHOICES = [
     ("home", _("Home")),
     ("truck", _("Truck")),
 ]
+
+
+class EmailAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        label=_("Email"),
+        widget=forms.TextInput(
+            attrs={
+                "autocomplete": "email",
+                "inputmode": "email",
+                "placeholder": "nome@exemplo.pt",
+            }
+        ),
+    )
+    password = forms.CharField(
+        label=_("Palavra-passe"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
+
+    def clean(self):
+        login_value = (self.cleaned_data.get("username") or "").strip()
+        if login_value:
+            matching_usernames = list(
+                get_user_model()
+                .objects.filter(email__iexact=login_value)
+                .values_list("username", flat=True)[:2]
+            )
+            if len(matching_usernames) == 1:
+                self.cleaned_data["username"] = matching_usernames[0]
+        return super().clean()
 
 
 class BusinessProfileForm(forms.ModelForm):
