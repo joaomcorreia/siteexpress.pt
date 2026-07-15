@@ -16,6 +16,11 @@ Informação confirmada:
 Regras de conversa:
 - Se a mensagem for apenas uma saudação ou conversa casual, responda naturalmente numa frase,
   sem listas de produtos, preços, chamadas à ação ou links.
+- O seu âmbito é a SiteExpress, websites, presença online relacionada com estes serviços e
+  materiais impressos. Se o pedido não estiver relacionado, explique brevemente o seu âmbito
+  e não tente atuar como assistente geral. Perante um risco imediato, pode dar apenas um aviso
+  curto de segurança antes de redirecionar a conversa.
+- Se a pessoa disser apenas "ok", agradecer ou encerrar o assunto, responda de forma breve e natural.
 - Só apresente preços quando a pessoa perguntar por preço, custo ou planos.
 - Só compare ou enumere várias opções quando a pessoa pedir uma comparação ou não souber qual escolher.
 - Só indique o botão Começar ou a página Contactos quando a pessoa mostrar intenção de avançar,
@@ -30,9 +35,27 @@ sensíveis dentro do chat.
 
 def _demo_reply(message):
     normalized = message.casefold()
+    cleaned = normalized.strip(" !.,?")
     greetings = ("olá", "ola", "bom dia", "boa tarde", "boa noite", "hey", "hello")
-    if normalized.strip(" !.,?") in greetings:
-        return "Olá! Como posso ajudar?"
+    if cleaned in greetings:
+        salutation = (
+            cleaned.capitalize()
+            if cleaned in ("bom dia", "boa tarde", "boa noite")
+            else "Olá"
+        )
+        return f"{salutation}! Sou o assistente da SiteExpress. Em que posso ajudar?"
+    acknowledgements = (
+        "ok",
+        "okay",
+        "obrigado",
+        "obrigada",
+        "perfeito",
+        "entendido",
+        "está bem",
+        "esta bem",
+    )
+    if cleaned in acknowledgements:
+        return "Combinado. Estou por aqui se precisar."
     if any(term in normalized for term in ("preço", "preco", "custa", "valor", "plano")):
         return (
             "A Página Express custa €19,95/mês + IVA. O Website WordPress completo começa em "
@@ -59,9 +82,21 @@ def _demo_reply(message):
             "sensíveis diretamente neste chat."
         )
     return (
-        "Posso ajudar com a Página Express, websites WordPress, preços, funcionamento e cartões de "
-        "visita. O que gostaria de saber primeiro?"
+        "Sou o assistente da SiteExpress e posso ajudar com websites, Página Express, preços e "
+        "materiais impressos. Tem alguma dúvida sobre estes serviços?"
     )
+
+
+def generate_demo_reply(message, model="siteexpress-demo"):
+    return {
+        "text": _demo_reply(message),
+        "mode": "demo",
+        "model": model,
+        "response_id": "",
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "output_tokens": 0,
+    }
 
 
 def _usage_value(usage, field, default=0):
@@ -77,15 +112,7 @@ def generate_assistant_reply(history):
     )
 
     if not use_openai:
-        return {
-            "text": _demo_reply(history[-1]["content"]),
-            "mode": "demo",
-            "model": "siteexpress-demo",
-            "response_id": "",
-            "input_tokens": 0,
-            "cached_input_tokens": 0,
-            "output_tokens": 0,
-        }
+        return generate_demo_reply(history[-1]["content"])
 
     if not settings.OPENAI_API_KEY:
         raise RuntimeError("OpenAI API key is not configured.")
