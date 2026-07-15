@@ -1298,6 +1298,34 @@ def siteexpress_landing_view(request):
     )
 
 
+def siteexpress_public_page_view(request, template_name):
+    language_code = (translation.get_language() or settings.LANGUAGE_CODE or "pt")[:2]
+    language_links = [
+        {"code": "pt", "label": "PT", "url": "/pt/", "active": language_code == "pt"},
+        {"code": "es", "label": "ES", "url": "/es/", "active": language_code == "es"},
+        {"code": "en", "label": "EN", "url": "/en/", "active": language_code == "en"},
+    ]
+
+    if language_code != "pt":
+        return render(
+            request,
+            "onboarding/siteexpress_language_placeholder.html",
+            {
+                "language_code": language_code,
+                "language_links": language_links,
+            },
+        )
+
+    return render(
+        request,
+        template_name,
+        {
+            "language_code": language_code,
+            "language_links": language_links,
+        },
+    )
+
+
 def build_account_setup_link(request, user):
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)

@@ -1,0 +1,63 @@
+{% extends "onboarding/siteexpress_public_base.html" %}
+
+{% block title %}Política de Privacidade | SiteExpress.pt{% endblock %}
+{% block meta_description %}Política de Privacidade da SiteExpress.pt, incluindo contactos, contas, analytics e interações com o Assistente IA.{% endblock %}
+
+{% block content %}
+<main>
+  <section class="public-hero">
+    <div class="wrap">
+      <span class="eyebrow">Informação legal</span>
+      <h1>Política de Privacidade</h1>
+      <p class="lead">Explicamos que dados podemos tratar, para que são utilizados e quais são os seus direitos.</p>
+      <p class="updated">Última atualização: 15 de julho de 2026</p>
+    </div>
+  </section>
+  <div class="wrap legal-content">
+    <section>
+      <h2>1. Responsável pelo tratamento</h2>
+      <p>A SiteExpress.pt é uma plataforma operada pela Just Code Works. Para questões relacionadas com privacidade ou dados pessoais, contacte <a href="mailto:info@siteexpress.pt">info@siteexpress.pt</a>.</p>
+    </section>
+    <section>
+      <h2>2. Dados que podemos tratar</h2>
+      <ul>
+        <li>Nome, empresa, email, telefone e outros dados fornecidos num pedido de contacto.</li>
+        <li>Informação enviada durante o onboarding, criação de conta ou preparação de um website.</li>
+        <li>Mensagens e dados de contacto facultados através de um assistente com IA.</li>
+        <li>Dados técnicos, como endereço IP, navegador, páginas visitadas e eventos de utilização.</li>
+        <li>Informação necessária para faturação, suporte e gestão do serviço contratado.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>3. Finalidades e fundamentos</h2>
+      <p>Tratamos dados para responder a pedidos, preparar propostas, executar contratos, prestar suporte, proteger os serviços e cumprir obrigações legais. Conforme o caso, o tratamento baseia-se em diligências pré-contratuais, execução de contrato, interesse legítimo, consentimento ou obrigação legal.</p>
+      <p>Comunicações promocionais por email só serão enviadas quando existir uma base legal adequada, incluindo consentimento quando este for necessário.</p>
+    </section>
+    <section>
+      <h2>4. Assistentes com inteligência artificial</h2>
+      <p>Quando um assistente com IA estiver ativo, o utilizador será informado de que está a interagir com um sistema automatizado. O assistente pode processar o conteúdo da conversa para responder, recolher um pedido, encaminhar o contacto e melhorar a qualidade do serviço.</p>
+      <p>As conversas podem ser revistas por pessoas autorizadas para suporte, segurança e correção de respostas. Não utilizamos o assistente para tomar decisões exclusivamente automatizadas que produzam efeitos jurídicos ou semelhantes sobre o utilizador.</p>
+      <p>Não envie palavras-passe, dados bancários, documentos de identificação, informação médica ou outros dados sensíveis através do assistente.</p>
+    </section>
+    <section>
+      <h2>5. Prestadores de serviços</h2>
+      <p>Podemos recorrer a fornecedores de alojamento, email, analytics, suporte, pagamentos e tecnologia de inteligência artificial. Estes fornecedores tratam apenas os dados necessários ao serviço e ficam sujeitos às condições contratuais e medidas de proteção aplicáveis.</p>
+      <p>Quando um fornecedor tratar dados fora do Espaço Económico Europeu, serão aplicadas as salvaguardas legalmente exigidas, quando necessárias.</p>
+    </section>
+    <section>
+      <h2>6. Conservação e segurança</h2>
+      <p>Conservamos os dados apenas durante o período necessário para a finalidade que justificou a recolha, para cumprir obrigações legais ou para resolver possíveis litígios. Os prazos concretos dependem do tipo de pedido, serviço e obrigação aplicável.</p>
+      <p>Utilizamos medidas técnicas e organizativas adequadas ao risco, mas nenhum serviço online pode garantir segurança absoluta.</p>
+    </section>
+    <section>
+      <h2>7. Os seus direitos</h2>
+      <p>Pode pedir acesso, retificação, apagamento, limitação, portabilidade ou oposição ao tratamento, quando esses direitos sejam aplicáveis. Pode ainda retirar o consentimento sem afetar o tratamento realizado anteriormente.</p>
+      <p>Para exercer os seus direitos, escreva para <a href="mailto:info@siteexpress.pt">info@siteexpress.pt</a>. Também pode apresentar uma reclamação à <a href="https://www.cnpd.pt/" rel="noopener noreferrer">Comissão Nacional de Proteção de Dados</a>.</p>
+    </section>
+    <section>
+      <h2>8. Cookies e alterações</h2>
+      <p>Consulte a nossa <a href="{% url 'siteexpress-cookies' %}">Política de Cookies</a> para saber como utilizamos armazenamento local e ferramentas de medição. Esta política pode ser atualizada quando os serviços ou requisitos legais mudarem.</p>
+    </section>
+  </div>
+</main>
+{% endblock %}

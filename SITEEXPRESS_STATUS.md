@@ -14,6 +14,10 @@
 - `/` -> redirects to `/pt/`
 - `/pt/` -> public SiteExpress landing page
 - `/pt/siteexpress/` -> landing page alias
+- `/pt/assistente-ia/` -> Assistente IA service page
+- `/pt/privacidade/` -> privacy policy
+- `/pt/termos/` -> terms and conditions
+- `/pt/cookies/` -> cookie policy
 - `/en/` -> language placeholder page
 - `/es/` -> language placeholder page
 
@@ -81,7 +85,7 @@
 - No domain automation yet
 - Partner dashboard is still staff-only in V1
 - ES and EN are placeholder public language pages only
-- Terms / privacy links are still placeholders
+- Assistente IA pricing and production activation are still pending pilot validation
 - Some seed/generated content may still include English placeholder text depending on test/demo data
 
 ## Current Architecture Notes
@@ -107,8 +111,8 @@
 
 ## Next Recommended Steps
 
-1. Replace placeholder legal/contact pages with real Django public pages.
-2. Add a lightweight public contact / lead capture route if needed for the landing page.
+1. Add a lightweight public contact / lead capture route if needed for the landing page.
+2. Validate the first Assistente IA pilot and approve final pricing before publishing a plan.
 3. Decide the first real WordPress bridge milestone:
    - preview sync only
    - draft handoff only

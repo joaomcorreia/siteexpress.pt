@@ -1,0 +1,126 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SiteExpress.pt{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}SiteExpress ajuda pequenos negócios em Portugal a criar uma presença online profissional.{% endblock %}">
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    :root{
+      --bg:#f7f8f4;
+      --surface:#fffdf8;
+      --ink:#172018;
+      --muted:#677166;
+      --primary:#046a38;
+      --red:#b7221a;
+      --line:#d8ded4;
+      --max:1120px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(var(--max),calc(100% - 32px));margin:auto}
+    .topbar{position:sticky;top:0;z-index:20;background:rgba(255,253,248,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand-logo{display:block;height:50px;width:auto;max-width:min(100%,340px);object-fit:contain}
+    .links{display:flex;align-items:center;gap:18px;color:var(--muted);font-weight:800;font-size:.94rem}
+    .links a:hover,.text-link:hover{color:var(--primary)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:13px 20px;border-radius:10px;background:var(--primary);color:#fff;font-weight:900;border:1px solid var(--primary)}
+    .btn:hover{background:var(--red);border-color:var(--red)}
+    .public-hero{padding:clamp(64px,10vw,118px) 0 clamp(52px,8vw,88px);background:radial-gradient(circle at 10% 0,rgba(4,106,56,.14),transparent 34rem),radial-gradient(circle at 94% 8%,rgba(183,34,26,.10),transparent 28rem),var(--bg)}
+    .eyebrow{color:var(--primary);font-size:.8rem;text-transform:uppercase;letter-spacing:.15em;font-weight:950}
+    h1,h2,h3,p{margin-top:0}
+    h1{max-width:15ch;font-size:clamp(2.65rem,6vw,5.3rem);line-height:.98;letter-spacing:-.07em;margin:14px 0 24px}
+    h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.08;letter-spacing:-.05em;margin-bottom:18px}
+    h3{font-size:1.18rem;letter-spacing:-.025em;margin-bottom:8px}
+    .lead{max-width:760px;color:var(--muted);font-size:clamp(1.08rem,2vw,1.3rem);margin-bottom:28px}
+    .content-section{padding:clamp(48px,7vw,84px) 0;border-top:1px solid var(--line)}
+    .content-section.alt{background:var(--surface)}
+    .section-grid{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.28fr);gap:clamp(34px,7vw,92px);align-items:start}
+    .section-copy{max-width:760px}
+    .section-copy p,.section-copy li{color:var(--muted)}
+    .section-copy p:last-child{margin-bottom:0}
+    .clean-list{margin:22px 0 0;padding-left:1.2rem;display:grid;gap:11px}
+    .feature-rows{display:grid;border-top:1px solid var(--line)}
+    .feature-row{display:grid;grid-template-columns:minmax(160px,.4fr) minmax(0,1fr);gap:28px;padding:24px 0;border-bottom:1px solid var(--line)}
+    .feature-row p{margin:0;color:var(--muted)}
+    .notice{margin-top:28px;padding:18px 0;border-top:2px solid var(--primary);border-bottom:1px solid var(--line);color:var(--ink)}
+    .actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+    .text-link{font-weight:900;color:var(--primary)}
+    .legal-content{max-width:800px}
+    .legal-content section{padding:34px 0;border-bottom:1px solid var(--line)}
+    .legal-content section:last-child{border-bottom:0}
+    .legal-content p,.legal-content li{color:var(--muted)}
+    .legal-content a{color:var(--primary);text-decoration:underline;text-underline-offset:3px}
+    .legal-content ul{display:grid;gap:9px;padding-left:1.2rem}
+    .updated{color:var(--muted);font-weight:750}
+    .footer{padding:52px 0 34px;background:#1d1d1d;color:#d7d7d7}
+    .footer-grid{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:clamp(30px,6vw,80px)}
+    .footer .brand-logo{height:42px;filter:brightness(1.15);margin-bottom:18px}
+    .footer p{color:#bcbcbc;max-width:370px}
+    .footer h3{color:#fff;font-size:.84rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+    .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+    .footer a:hover{color:#ffb7b0}
+    .footer-bottom{margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.13);display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;color:#aaa;font-size:.92rem}
+    @media(max-width:900px){.links{display:none}.section-grid,.feature-row{grid-template-columns:1fr}.feature-row{gap:8px}.footer-grid{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1/-1}}
+    @media(max-width:620px){.wrap{width:min(var(--max),calc(100% - 22px))}.nav{min-height:68px}.brand-logo{height:40px;max-width:225px}.footer-grid{grid-template-columns:1fr}.footer-brand{grid-column:auto}.actions{display:grid}.btn{width:100%}}
+  </style>
+  {% include "onboarding/_siteexpress_clarity.html" %}
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a href="{% url 'siteexpress-landing' %}" aria-label="SiteExpress.pt">
+        <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
+      </a>
+      <nav class="links" aria-label="Navegação principal">
+        <a href="{% url 'siteexpress-landing' %}#servicos">Serviços</a>
+        <a href="{% url 'siteexpress-ai-assistant' %}">Assistente IA</a>
+        <a href="{% url 'siteexpress-landing' %}#pacotes">Pacotes</a>
+        <a href="{% url 'siteexpress-landing' %}#contacto">Contacto</a>
+      </nav>
+      <a class="btn" href="{% url 'siteexpress-landing' %}#contacto">Pedir proposta</a>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
+          <p>Websites rápidos e apoio digital para pequenos negócios em Portugal.</p>
+          <a href="mailto:info@siteexpress.pt">info@siteexpress.pt</a>
+        </div>
+        <nav aria-label="Serviços SiteExpress">
+          <h3>Serviços</h3>
+          <ul>
+            <li><a href="{% url 'siteexpress-landing' %}#pacotes">Página Express</a></li>
+            <li><a href="{% url 'siteexpress-landing' %}#servicos">Website profissional</a></li>
+            <li><a href="{% url 'siteexpress-ai-assistant' %}">Assistente IA</a></li>
+            <li><a href="{% url 'siteexpress-landing' %}#visibilidade">Visibilidade online</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Informação legal">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="{% url 'siteexpress-privacy' %}">Política de Privacidade</a></li>
+            <li><a href="{% url 'siteexpress-terms' %}">Termos e Condições</a></li>
+            <li><a href="{% url 'siteexpress-cookies' %}">Política de Cookies</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 SiteExpress.pt. Todos os direitos reservados.</span>
+        <span>SiteExpress.pt é uma plataforma Just Code Works.</span>
+      </div>
+    </div>
+  </footer>
+  {% include "onboarding/_siteexpress_cookie_consent.html" %}
+</body>
+</html>

@@ -206,6 +206,40 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, 'href="/es/"', html=False)
         self.assertContains(response, 'href="/en/"', html=False)
 
+    def test_ai_assistant_and_legal_pages_load(self):
+        expected_pages = {
+            "/pt/assistente-ia/": "Assistente com inteligência artificial",
+            "/pt/privacidade/": "Política de Privacidade",
+            "/pt/termos/": "Termos e Condições",
+            "/pt/cookies/": "Política de Cookies",
+        }
+
+        for url, expected_text in expected_pages.items():
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, expected_text)
+
+    def test_public_landing_links_to_ai_assistant_and_legal_pages(self):
+        response = self.client.get("/pt/")
+
+        self.assertContains(response, 'href="/pt/assistente-ia/"', html=False)
+        self.assertContains(response, 'href="/pt/privacidade/"', html=False)
+        self.assertContains(response, 'href="/pt/termos/"', html=False)
+        self.assertContains(response, 'href="/pt/cookies/"', html=False)
+
+    def test_public_pages_require_analytics_consent_before_loading_clarity(self):
+        response = self.client.get("/pt/")
+
+        self.assertContains(response, "siteexpress_analytics_consent", html=False)
+        self.assertContains(response, "Continuar sem analytics")
+        self.assertContains(response, "Aceitar analytics")
+        self.assertContains(
+            response,
+            'window.localStorage.getItem(consentKey) === "granted"',
+            html=False,
+        )
+
     def test_non_portuguese_public_routes_show_coming_soon_placeholder(self):
         en_response = self.client.get("/en/")
         es_response = self.client.get("/es/")
