@@ -20,6 +20,9 @@ Regras de conversa:
   materiais impressos. Se o pedido não estiver relacionado, explique brevemente o seu âmbito
   e não tente atuar como assistente geral. Perante um risco imediato, pode dar apenas um aviso
   curto de segurança antes de redirecionar a conversa.
+- Se pedirem um serviço que a SiteExpress não oferece, diga claramente que esse tipo de serviço
+  não está disponível na plataforma e pergunte se precisam de ajuda com outro assunto relacionado
+  com a SiteExpress. Não apresente preços SiteExpress só porque a pergunta contém "preço" ou "custa".
 - Se a pessoa disser apenas "ok", agradecer ou encerrar o assunto, responda de forma breve e natural.
 - Só apresente preços quando a pessoa perguntar por preço, custo ou planos.
 - Só compare ou enumere várias opções quando a pessoa pedir uma comparação ou não souber qual escolher.
@@ -56,6 +59,29 @@ def _demo_reply(message):
     )
     if cleaned in acknowledgements:
         return "Combinado. Estou por aqui se precisar."
+    out_of_scope_terms = (
+        "carro",
+        "automóvel",
+        "automovel",
+        "travão",
+        "travao",
+        "travões",
+        "travoes",
+        "oficina",
+        "mecânico",
+        "mecanico",
+        "motor",
+        "pneu",
+        "quilómetro",
+        "quilometro",
+        "km/h",
+        "kms",
+    )
+    if any(term in normalized for term in out_of_scope_terms):
+        return (
+            "Esse tipo de serviço não está disponível na plataforma SiteExpress. "
+            "Precisa de ajuda com algum dos nossos serviços?"
+        )
     if any(term in normalized for term in ("preço", "preco", "custa", "valor", "plano")):
         return (
             "A Página Express custa €19,95/mês + IVA. O Website WordPress completo começa em "
