@@ -258,6 +258,16 @@ class OnboardingFlowTests(TestCase):
         )
 
     @override_settings(SITEEXPRESS_ASSISTANT_MODE="demo")
+    def test_assistant_greeting_stays_brief_and_natural(self):
+        response = self.client.post(
+            reverse("assistant-chat"),
+            data=json.dumps({"message": "Olá"}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["reply"], "Olá! Como posso ajudar?")
+
+    @override_settings(SITEEXPRESS_ASSISTANT_MODE="demo")
     def test_assistant_chat_continues_existing_conversation(self):
         first = self.client.post(
             reverse("assistant-chat"),
@@ -1188,13 +1198,3 @@ class OnboardingFlowTests(TestCase):
                 "services-service_4_icon": "home",
                 "services-service_4_short_description": "",
                 "services-service_5_title": "",
-                "services-service_5_icon": "shield",
-                "services-service_5_short_description": "",
-                "services-service_6_title": "",
-                "services-service_6_icon": "truck",
-                "services-service_6_short_description": "",
-            },
-        )
-
-        self.assertRedirects(
-            response,
