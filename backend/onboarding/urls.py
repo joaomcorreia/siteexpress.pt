@@ -66,6 +66,7 @@ urlpatterns = [
     path("onboarding/", views.onboarding_view, name="onboarding"),
     path("onboarding/parceiro/<str:partner_code>/", views.onboarding_view, name="partner-onboarding"),
     path("onboarding/success/", views.success_view, name="success"),
+    path("onboarding/account-setup/", views.account_setup_entry_view, name="account-setup-entry"),
     path("onboarding/account-setup/<uidb64>/<token>/", views.account_setup_view, name="account-setup"),
     path("onboarding/dashboard/", views.dashboard_view, name="dashboard"),
     path("onboarding/domain-requests/", views.domain_requests_view, name="domain-requests"),
