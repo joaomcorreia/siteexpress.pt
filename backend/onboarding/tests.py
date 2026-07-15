@@ -260,6 +260,11 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, 'href="mailto:info@siteexpress.pt"', html=False)
         self.assertContains(response, "WhatsApp:")
         self.assertContains(response, "brevemente")
+        self.assertContains(response, 'href="https://www.facebook.com/"', html=False)
+        self.assertContains(response, 'href="https://www.instagram.com/"', html=False)
+        self.assertContains(response, 'href="https://www.linkedin.com/"', html=False)
+        self.assertContains(response, 'href="https://www.google.com/business/"', html=False)
+        self.assertContains(response, "siteexpress-public.css?v=20260715-3")
         self.assertNotContains(response, ">Entrar<", html=False)
 
     @override_settings(
