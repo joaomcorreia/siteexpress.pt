@@ -64,6 +64,11 @@ SITEEXPRESS_ASSISTANT_OUTPUT_USD_PER_MILLION = os.getenv(
     "SITEEXPRESS_ASSISTANT_OUTPUT_USD_PER_MILLION",
     "4.50",
 )
+SITEEXPRESS_WHATSAPP_NUMBER = os.getenv("SITEEXPRESS_WHATSAPP_NUMBER", "").strip()
+SITEEXPRESS_FACEBOOK_URL = os.getenv("SITEEXPRESS_FACEBOOK_URL", "").strip()
+SITEEXPRESS_INSTAGRAM_URL = os.getenv("SITEEXPRESS_INSTAGRAM_URL", "").strip()
+SITEEXPRESS_LINKEDIN_URL = os.getenv("SITEEXPRESS_LINKEDIN_URL", "").strip()
+SITEEXPRESS_GOOGLE_BUSINESS_URL = os.getenv("SITEEXPRESS_GOOGLE_BUSINESS_URL", "").strip()
 
 
 # Application definition
@@ -101,6 +106,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'onboarding.context_processors.public_site_contact',
             ],
         },
     },
