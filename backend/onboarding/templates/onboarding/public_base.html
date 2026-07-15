@@ -8,6 +8,7 @@
   <meta name="description" content="{% block meta_description %}Websites e apoio digital para pequenos negócios em Portugal.{% endblock %}">
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="{% static 'core/css/siteexpress-public.css' %}">
+  {% block extra_head %}{% endblock %}
   {% include "onboarding/_siteexpress_clarity.html" %}
 </head>
 <body>
