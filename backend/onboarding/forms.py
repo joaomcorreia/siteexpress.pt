@@ -61,11 +61,22 @@ class BusinessProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        for field_name in (
+            "address",
+            "country",
+            "target_country",
+            "target_city",
+            "target_region",
+            "target_audience",
+            "target_language",
+        ):
+            self.fields[field_name].required = False
+
         labels = {
             "business_name": _("Nome do negocio"),
-            "business_type": _("Tipo de negocio"),
+            "business_type": _("O que faz a sua empresa?"),
             "address": _("Morada"),
-            "city": _("Cidade"),
+            "city": _("Cidade ou zona principal"),
             "region": _("Regiao"),
             "country": _("Pais"),
             "email": _("Email"),
@@ -80,6 +91,66 @@ class BusinessProfileForm(forms.ModelForm):
         }
         for field_name, label in labels.items():
             self.fields[field_name].label = label
+
+        self.fields["business_name"].widget.attrs.update(
+            {
+                "placeholder": _("Ex.: Construções Silva"),
+                "autocomplete": "organization",
+            }
+        )
+        self.fields["business_type"].widget.attrs.update(
+            {
+                "placeholder": _("Ex.: construção, pinturas e manutenção de jardins"),
+            }
+        )
+        self.fields["city"].widget.attrs.update(
+            {
+                "placeholder": _("Ex.: Santa Maria da Feira"),
+                "autocomplete": "address-level2",
+            }
+        )
+        self.fields["email"].widget.attrs.update(
+            {
+                "placeholder": _("nome@empresa.pt"),
+                "autocomplete": "email",
+            }
+        )
+        self.fields["phone"].widget.attrs.update(
+            {
+                "placeholder": _("Ex.: 912 345 678"),
+                "autocomplete": "tel",
+            }
+        )
+        self.fields["whatsapp"].widget.attrs.update(
+            {
+                "placeholder": _("Se for diferente do telefone"),
+                "autocomplete": "tel",
+            }
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        city = (cleaned_data.get("city") or "").strip()
+        country = (cleaned_data.get("country") or "Portugal").strip()
+        region = (cleaned_data.get("region") or "").strip()
+        cleaned_data["address"] = (cleaned_data.get("address") or "").strip()
+        cleaned_data["country"] = country
+        cleaned_data["target_country"] = (
+            cleaned_data.get("target_country") or country
+        ).strip()
+        cleaned_data["target_city"] = (
+            cleaned_data.get("target_city") or city
+        ).strip()
+        cleaned_data["target_region"] = (
+            cleaned_data.get("target_region") or region
+        ).strip()
+        cleaned_data["target_audience"] = (
+            cleaned_data.get("target_audience") or ""
+        ).strip()
+        cleaned_data["target_language"] = (
+            cleaned_data.get("target_language") or "pt"
+        ).strip()
+        return cleaned_data
 
 
 class WebsiteProjectForm(forms.ModelForm):
