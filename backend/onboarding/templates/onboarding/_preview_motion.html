@@ -19,11 +19,25 @@
   if (body.classList.contains("se-motion-minimal")) return;
 
   const targets = document.querySelectorAll(
-    ".nav-card, .hero, .section, .footer-shell, .service-item"
+    ".nav-card, .hero, .section, .footer-shell"
   );
-  targets.forEach((target, index) => {
+  const childSelector = [
+    ".section-title",
+    ".section-media-grid > *",
+    ".featured-grid > .service-item",
+    ".services-list > .service-item",
+    ".services-card-grid > .service-item",
+    ".cta-actions > *",
+    ".hero > :not(.hero-image)",
+    ".footer-grid > *"
+  ].join(", ");
+
+  targets.forEach((target) => {
     target.classList.add("se-motion-target");
-    target.style.setProperty("--se-motion-order", String(index % 6));
+    target.querySelectorAll(childSelector).forEach((child, index) => {
+      child.classList.add("se-motion-child");
+      child.style.setProperty("--se-child-order", String(Math.min(index, 5)));
+    });
   });
 
   if (!("IntersectionObserver" in window)) {
