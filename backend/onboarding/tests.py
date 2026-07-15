@@ -1940,6 +1940,8 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(full_dynamic, "se-motion-dynamic")
         self.assertContains(full_dynamic, "IntersectionObserver")
         self.assertContains(full_dynamic, "se-motion-child")
+        self.assertContains(full_dynamic, "se-motion-from-left")
+        self.assertContains(full_dynamic, "se-motion-from-right")
 
     def test_dashboard_exposes_motion_controls_and_preserves_selected_motion(self):
         user = get_user_model().objects.create_user(username="dashboard-motion", password="secret123")

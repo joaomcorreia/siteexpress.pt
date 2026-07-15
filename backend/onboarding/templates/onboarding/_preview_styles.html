@@ -21,6 +21,7 @@
     }
     body {
         margin: 0;
+        overflow-x: clip;
         font-family: var(--font-body);
         background: linear-gradient(180deg, #fcfcfd 0%, #f4f6fa 100%);
         color: var(--ink);
@@ -1164,6 +1165,9 @@
         color: #ffffff;
         background: var(--ink);
     }
+    .se-variation-modern.se-layout-full:not(.no-demo-images) .hero-slideshow::after {
+        content: none;
+    }
     .hero-slideshow > .hero-slides,
     .se-variation-modern.se-layout-full:not(.no-demo-images) .hero-slideshow > .hero-slides {
         position: absolute;
@@ -1202,7 +1206,7 @@
         transform: scale(1);
     }
     .hero-slide-shade {
-        background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 92%, transparent) 0%, color-mix(in srgb, var(--ink) 72%, transparent) 46%, color-mix(in srgb, var(--ink) 18%, transparent) 100%);
+        background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 74%, transparent) 0%, color-mix(in srgb, var(--ink) 48%, transparent) 46%, color-mix(in srgb, var(--ink) 10%, transparent) 100%);
     }
     .hero-slide-content {
         position: relative;
@@ -1369,16 +1373,16 @@
         will-change: opacity, transform;
     }
     .se-motion-smooth .se-motion-target {
-        transform: translateY(18px);
+        transform: translateY(24px);
         transition:
-            opacity 680ms cubic-bezier(.22, 1, .36, 1),
-            transform 680ms cubic-bezier(.22, 1, .36, 1);
+            opacity 760ms cubic-bezier(.22, 1, .36, 1),
+            transform 760ms cubic-bezier(.22, 1, .36, 1);
     }
     .se-motion-dynamic .se-motion-target {
-        transform: translateY(34px) scale(.985);
+        transform: translateY(42px) scale(.98);
         transition:
-            opacity 820ms cubic-bezier(.16, 1, .3, 1),
-            transform 820ms cubic-bezier(.16, 1, .3, 1);
+            opacity 920ms cubic-bezier(.16, 1, .3, 1),
+            transform 920ms cubic-bezier(.16, 1, .3, 1);
     }
     .se-motion-target.se-revealed {
         opacity: 1;
@@ -1389,27 +1393,39 @@
     }
     .se-motion-smooth .se-motion-target:not(.se-revealed) .se-motion-child {
         opacity: 0;
-        transform: translateY(14px);
+        transform: translateY(20px);
     }
     .se-motion-dynamic .se-motion-target:not(.se-revealed) .se-motion-child {
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateY(34px);
+    }
+    .se-motion-smooth .se-motion-target:not(.se-revealed) .se-motion-child.se-motion-from-left {
+        transform: translateX(-58px);
+    }
+    .se-motion-smooth .se-motion-target:not(.se-revealed) .se-motion-child.se-motion-from-right {
+        transform: translateX(58px);
+    }
+    .se-motion-dynamic .se-motion-target:not(.se-revealed) .se-motion-child.se-motion-from-left {
+        transform: translateX(-88px) scale(.97);
+    }
+    .se-motion-dynamic .se-motion-target:not(.se-revealed) .se-motion-child.se-motion-from-right {
+        transform: translateX(88px) scale(.97);
     }
     .se-motion-smooth .se-motion-target.se-revealed .se-motion-child {
         opacity: 1;
         transform: none;
         transition:
-            opacity 620ms cubic-bezier(.22, 1, .36, 1),
-            transform 620ms cubic-bezier(.22, 1, .36, 1);
-        transition-delay: calc(var(--se-child-order, 0) * 65ms);
+            opacity 760ms cubic-bezier(.22, 1, .36, 1),
+            transform 760ms cubic-bezier(.22, 1, .36, 1);
+        transition-delay: calc(var(--se-child-order, 0) * 85ms);
     }
     .se-motion-dynamic .se-motion-target.se-revealed .se-motion-child {
         opacity: 1;
         transform: none;
         transition:
-            opacity 760ms cubic-bezier(.16, 1, .3, 1),
-            transform 760ms cubic-bezier(.16, 1, .3, 1);
-        transition-delay: calc(var(--se-child-order, 0) * 90ms);
+            opacity 900ms cubic-bezier(.16, 1, .3, 1),
+            transform 900ms cubic-bezier(.16, 1, .3, 1);
+        transition-delay: calc(var(--se-child-order, 0) * 110ms);
     }
     @media (prefers-reduced-motion: reduce) {
         .se-motion-target,
@@ -1556,7 +1572,7 @@
             font-size: clamp(2.7rem, 13vw, 4.5rem);
         }
         .hero-slide-shade {
-            background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 48%, transparent) 0%, color-mix(in srgb, var(--ink) 86%, transparent) 78%, var(--ink) 100%);
+            background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 34%, transparent) 0%, color-mix(in srgb, var(--ink) 70%, transparent) 76%, color-mix(in srgb, var(--ink) 86%, transparent) 100%);
         }
         .hero-slider-controls,
         .se-variation-modern.se-layout-full:not(.no-demo-images) .hero-slideshow > .hero-slider-controls {
