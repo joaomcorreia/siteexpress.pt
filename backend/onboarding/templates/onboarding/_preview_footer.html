@@ -1,0 +1,93 @@
+{% load i18n static %}
+{% url 'upgrade-placeholder' as upgrade_url %}
+<footer class="card section footer-shell footer-v1 section-ready" data-section="footer-v1">
+    <div class="footer-v1-inner">
+        <div class="footer-grid footer-grid-v1">
+            <div class="footer-company">
+                {% if project.business_profile.logo %}
+                    {% blocktrans with business_name=project.business_profile.business_name asvar footer_logo_alt %}Logo for {{ business_name }}{% endblocktrans %}
+                    <div class="brand-logo footer-logo">
+                        <img src="{{ project.business_profile.logo.url }}" alt="{{ footer_logo_alt }}">
+                    </div>
+                {% else %}
+                    <strong class="footer-wordmark">{{ project.business_profile.business_name }}</strong>
+                {% endif %}
+                {% if content.about_text %}
+                    <p class="muted footer-description">{{ content.about_text|truncatewords:28 }}</p>
+                {% else %}
+                    <p class="muted footer-description">{{ project.business_profile.business_type }} em {{ project.business_profile.city }}.</p>
+                {% endif %}
+            </div>
+
+            <div class="footer-column">
+                <h3 class="footer-column-title">{% trans "Explorar" %}</h3>
+                <nav class="footer-nav-list" aria-label="{% trans 'Navegação do rodapé' %}">
+                    {% if footer_mode == "expanded" %}
+                        <a href="{{ upgrade_url }}?page=home{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Início" %}</a>
+                        <a href="{{ upgrade_url }}?page=services{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "Ementa" %}{% else %}{% trans "Serviços" %}{% endif %}</a>
+                        <a href="{{ upgrade_url }}?page=about{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "História" %}{% else %}{% trans "Sobre" %}{% endif %}</a>
+                        <a href="{{ upgrade_url }}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "Reservar" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Contacto" %}{% endif %}</a>
+                        <a href="{{ upgrade_url }}?page=home{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}#location">{% if is_restaurant_template %}{% trans "Visite-nos" %}{% elif is_services_template %}{% trans "Zona de serviço" %}{% else %}{% trans "Localização" %}{% endif %}</a>
+                    {% else %}
+                        <a href="#home">{% trans "Início" %}</a>
+                        <a href="#services">{% if is_restaurant_template %}{% trans "Ementa" %}{% else %}{% trans "Serviços" %}{% endif %}</a>
+                        <a href="#about">{% if is_restaurant_template %}{% trans "História" %}{% else %}{% trans "Sobre" %}{% endif %}</a>
+                        <a href="#quote">{% if is_restaurant_template %}{% trans "Reservar" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Contacto" %}{% endif %}</a>
+                        <a href="#area">{% if is_restaurant_template %}{% trans "Visite-nos" %}{% elif is_services_template %}{% trans "Zona de serviço" %}{% else %}{% trans "Localização" %}{% endif %}</a>
+                    {% endif %}
+                </nav>
+            </div>
+
+            <div class="footer-column">
+                <h3 class="footer-column-title">{% trans "Contactos" %}</h3>
+                <div class="footer-contact-list">
+                    {% if project.business_profile.phone %}
+                        <a href="tel:{{ project.business_profile.phone }}"><span>{% trans "Telefone" %}</span>{{ project.business_profile.phone }}</a>
+                    {% endif %}
+                    {% if project.business_profile.whatsapp and whatsapp_link_url %}
+                        <a href="{{ whatsapp_link_url }}" target="_blank" rel="noopener"><span>WhatsApp</span>{{ project.business_profile.whatsapp }}</a>
+                    {% endif %}
+                    {% if project.business_profile.email %}
+                        <a href="mailto:{{ project.business_profile.email }}"><span>{% trans "Email" %}</span>{{ project.business_profile.email }}</a>
+                    {% endif %}
+                    {% if project.business_profile.city %}
+                        <p class="muted footer-address"><span>{% trans "Localização" %}</span>{{ project.business_profile.city }}{% if project.business_profile.country %}, {{ project.business_profile.country }}{% endif %}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="footer-column footer-portfolio">
+                <h3 class="footer-column-title">{% trans "Trabalhos recentes" %}</h3>
+                <div class="footer-gallery">
+                    {% if demo_images.services %}
+                        {% for image_path in demo_images.services|slice:":3" %}
+                            <a href="{% if footer_mode == 'expanded' %}{{ upgrade_url }}?page=services{% else %}#services{% endif %}" aria-label="{% trans 'Ver portefólio' %}"><img src="{% static image_path %}" alt="{% trans 'Trabalho recente' %}" loading="lazy"></a>
+                        {% endfor %}
+                    {% elif demo_images.gallery %}
+                        {% for image_path in demo_images.gallery|slice:":3" %}
+                            <a href="{% if footer_mode == 'expanded' %}{{ upgrade_url }}?page=services{% else %}#services{% endif %}" aria-label="{% trans 'Ver portefólio' %}"><img src="{% static image_path %}" alt="{% trans 'Trabalho recente' %}" loading="lazy"></a>
+                        {% endfor %}
+                    {% elif demo_images.featured %}
+                        {% for image_path in demo_images.featured|slice:":3" %}
+                            <a href="{% if footer_mode == 'expanded' %}{{ upgrade_url }}?page=services{% else %}#services{% endif %}" aria-label="{% trans 'Ver portefólio' %}"><img src="{% static image_path %}" alt="{% trans 'Trabalho recente' %}" loading="lazy"></a>
+                        {% endfor %}
+                    {% else %}
+                        <a class="footer-portfolio-link" href="{% if footer_mode == 'expanded' %}{{ upgrade_url }}?page=services{% else %}#services{% endif %}">{% trans "Ver serviços e projetos" %}</a>
+                    {% endif %}
+                </div>
+                {% if facebook_url or instagram_url or linkedin_url %}
+                    <div class="footer-socials" aria-label="{% trans 'Redes sociais' %}">
+                        {% if facebook_url %}<a href="{{ facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">f</a>{% endif %}
+                        {% if instagram_url %}<a href="{{ instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">ig</a>{% endif %}
+                        {% if linkedin_url %}<a href="{{ linkedin_url }}" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>{% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>&copy; {% now "Y" %} {{ project.business_profile.business_name }}. {% trans "Todos os direitos reservados." %}</span>
+            <span class="footer-bottom-links"><a href="{% url 'privacy-policy' %}">{% trans "Privacidade" %}</a><a href="{% url 'cookie-policy' %}">{% trans "Cookies" %}</a></span>
+        </div>
+    </div>
+</footer>

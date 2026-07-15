@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from copy import deepcopy
 from datetime import timedelta
 from decimal import Decimal
@@ -1531,10 +1532,12 @@ def build_preview_extras(project, services, variant_context):
     location_query = ", ".join(part.strip() for part in location_parts if part and part.strip())
     if not location_query:
         location_query = "Portugal"
+    whatsapp_digits = re.sub(r"\D", "", profile.whatsapp or "")
     return {
         "hero_slides": hero_slides,
         "google_maps_embed_url": f"https://www.google.com/maps?{urlencode({'q': location_query, 'output': 'embed'})}",
         "google_maps_link_url": f"https://www.google.com/maps/search/?{urlencode({'api': 1, 'query': location_query})}",
+        "whatsapp_link_url": f"https://wa.me/{whatsapp_digits}" if whatsapp_digits else "",
     }
 
 

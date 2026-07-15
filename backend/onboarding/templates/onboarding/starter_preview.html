@@ -337,32 +337,7 @@
             </div>
         </section>
 
-        <footer class="card section footer-shell">
-            <div class="footer-grid">
-                <div>
-                    <div class="footer-brand">
-                        {% if project.business_profile.logo %}
-                            {% blocktrans with business_name=project.business_profile.business_name asvar footer_logo_alt %}Logo for {{ business_name }}{% endblocktrans %}
-                            <div class="brand-logo">
-                                <img src="{{ project.business_profile.logo.url }}" alt="{{ footer_logo_alt }}">
-                            </div>
-                        {% endif %}
-                        <div class="brand-copy">
-                            <strong>{{ project.business_profile.business_name }}</strong>
-                            <p class="muted">{{ project.business_profile.business_type }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <strong>{% if is_restaurant_template %}{% trans "Reservas" %}{% elif is_beauty_template %}{% trans "Marcações" %}{% elif is_services_template %}{% trans "Orçamentos" %}{% else %}{% trans "Contacto" %}{% endif %}</strong>
-                    {% if is_restaurant_template or is_beauty_template or is_services_template %}
-                        {% if project.business_profile.whatsapp %}<p class="muted">{{ project.business_profile.whatsapp }}</p>{% elif project.business_profile.email %}<p class="muted">{{ project.business_profile.email }}</p>{% endif %}
-                    {% elif project.business_profile.email %}
-                        <p class="muted">{{ project.business_profile.email }}</p>
-                    {% endif %}
-                </div>
-            </div>
-        </footer>
+        {% include "onboarding/_preview_footer.html" with footer_mode="starter" %}
     </div>
     {% include "onboarding/_preview_motion.html" %}
 </body>

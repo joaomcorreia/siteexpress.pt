@@ -1557,6 +1557,9 @@ class OnboardingFlowTests(TestCase):
             html=False,
         )
         self.assertContains(response, 'data-section="quote-v1"', html=False)
+        self.assertContains(response, 'data-section="footer-v1"', html=False)
+        self.assertContains(response, "Trabalhos recentes")
+        self.assertContains(response, 'href="https://wa.me/351911111111"', html=False)
         self.assertContains(response, 'id="area"', html=False)
 
     def test_starter_preview_uses_restaurant_anchor_menu_labels(self):

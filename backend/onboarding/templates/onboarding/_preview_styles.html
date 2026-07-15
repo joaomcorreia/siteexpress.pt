@@ -384,6 +384,125 @@
         max-width: 100px;
         max-height: 40px;
     }
+    .footer-v1-inner {
+        width: 100%;
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+    .footer-grid.footer-grid-v1 {
+        grid-template-columns: minmax(210px, 1.2fr) minmax(150px, .72fr) minmax(210px, .92fr) minmax(230px, 1.08fr);
+        gap: clamp(28px, 4vw, 58px);
+        align-items: start;
+    }
+    .footer-v1 .footer-logo {
+        margin-bottom: 20px;
+        border-radius: 0;
+    }
+    .footer-wordmark {
+        display: block;
+        margin-bottom: 18px;
+        font-family: var(--font-heading);
+        font-size: 1.3rem;
+    }
+    .footer-description {
+        max-width: 32ch;
+        margin: 0;
+        line-height: 1.7;
+    }
+    .footer-column-title {
+        margin: 0 0 20px;
+        font-size: .92rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+    .footer-nav-list,
+    .footer-contact-list {
+        display: grid;
+        gap: 12px;
+    }
+    .footer-v1 a {
+        color: inherit;
+        opacity: .78;
+        text-decoration: none;
+        transition: opacity 180ms ease;
+    }
+    .footer-v1 a:hover {
+        opacity: 1;
+    }
+    .footer-contact-list a,
+    .footer-contact-list p {
+        margin: 0;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+    .footer-contact-list span {
+        display: block;
+        margin-bottom: 2px;
+        color: inherit;
+        opacity: .5;
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+    .footer-gallery {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+    .footer-gallery a {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        background: color-mix(in srgb, currentColor 8%, transparent);
+    }
+    .footer-gallery img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        transition: transform 280ms ease, opacity 280ms ease;
+    }
+    .footer-gallery a:hover img {
+        opacity: .84;
+        transform: scale(1.06);
+    }
+    .footer-portfolio-link {
+        display: inline-block;
+        padding-bottom: 4px;
+        border-bottom: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+    }
+    .footer-socials {
+        display: flex;
+        gap: 9px;
+        margin-top: 18px;
+    }
+    .footer-socials a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+        border-radius: 50%;
+        font-size: .72rem;
+        font-weight: 850;
+        text-transform: uppercase;
+    }
+    .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        margin-top: 46px;
+        padding-top: 22px;
+        border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+        opacity: .58;
+        font-size: .78rem;
+    }
+    .footer-bottom-links {
+        display: flex;
+        gap: 18px;
+    }
     .se-layout-wide .hero,
     .se-layout-wide .card.nav-card,
     .se-layout-wide .card.section,
@@ -1453,6 +1572,11 @@
             transition: none;
         }
     }
+    @media (max-width: 1100px) {
+        .footer-grid.footer-grid-v1 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
     @media (max-width: 800px) {
         .wrap {
             padding: 22px 16px 72px;
@@ -1508,6 +1632,20 @@
         .brand-logo img {
             max-width: 88px;
             max-height: 36px;
+        }
+        .footer-grid.footer-grid-v1 {
+            grid-template-columns: 1fr;
+            gap: 34px;
+        }
+        .footer-description {
+            max-width: 48ch;
+        }
+        .footer-gallery {
+            max-width: 330px;
+        }
+        .footer-bottom {
+            flex-direction: column;
+            margin-top: 38px;
         }
         .hero h1 {
             font-size: clamp(2rem, 9vw, 3rem);
