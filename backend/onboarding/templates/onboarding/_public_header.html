@@ -4,13 +4,52 @@
     <a class="brand" href="{% url 'siteexpress-landing' %}" aria-label="SiteExpress.pt — início">
       <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
     </a>
-    <nav class="links" aria-label="Navegação principal">
-      <a href="{% url 'website-wordpress' %}">Websites</a>
+
+    <nav class="desktop-nav" aria-label="Navegação principal">
+      <a href="{% url 'siteexpress-landing' %}">Início</a>
+      <div class="nav-dropdown">
+        <a class="nav-dropdown-trigger" href="{% url 'website-wordpress' %}">Sites <span aria-hidden="true">⌄</span></a>
+        <div class="nav-submenu">
+          <a href="{% url 'starter-page' %}"><strong>Página Express</strong><small>Uma presença online simples e rápida.</small></a>
+          <a href="{% url 'website-wordpress' %}"><strong>Website WordPress</strong><small>Um website completo preparado para crescer.</small></a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <a class="nav-dropdown-trigger" href="{% url 'printing' %}">Impressão <span aria-hidden="true">⌄</span></a>
+        <div class="nav-submenu nav-submenu-compact">
+          <a href="{% url 'printing' %}"><strong>Produtos impressos</strong><small>Conheça a área de impressão.</small></a>
+          <a href="{% url 'business-cards' %}"><strong>Cartões de visita</strong><small>Comece pelo produto mais simples.</small></a>
+        </div>
+      </div>
       <a href="{% url 'how-it-works' %}">Como funciona</a>
-      <a href="{% url 'printing' %}">Impressão</a>
       <a href="{% url 'pricing' %}">Preços</a>
-      <a href="{% url 'contact' %}">Contacto</a>
+      <a href="{% url 'contact' %}">Contactos</a>
     </nav>
-    <a class="btn btn-primary nav-cta" href="{% url 'onboarding' %}">Começar</a>
+
+    <div class="desktop-nav-actions">
+      <a class="customer-link" href="{% url 'login' %}">Área de cliente</a>
+      <a class="btn btn-primary nav-cta" href="{% url 'onboarding' %}">Começar</a>
+    </div>
+
+    <details class="mobile-nav">
+      <summary aria-label="Abrir menu de navegação">
+        <span class="mobile-nav-label">Menu</span>
+        <span class="mobile-nav-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+      </summary>
+      <nav class="mobile-nav-panel" aria-label="Navegação móvel">
+        <a href="{% url 'siteexpress-landing' %}">Início</a>
+        <span class="mobile-nav-heading">Sites</span>
+        <a class="mobile-nav-child" href="{% url 'starter-page' %}">Página Express</a>
+        <a class="mobile-nav-child" href="{% url 'website-wordpress' %}">Website WordPress</a>
+        <span class="mobile-nav-heading">Impressão</span>
+        <a class="mobile-nav-child" href="{% url 'printing' %}">Produtos impressos</a>
+        <a class="mobile-nav-child" href="{% url 'business-cards' %}">Cartões de visita</a>
+        <a href="{% url 'how-it-works' %}">Como funciona</a>
+        <a href="{% url 'pricing' %}">Preços</a>
+        <a href="{% url 'contact' %}">Contactos</a>
+        <a href="{% url 'login' %}">Área de cliente</a>
+        <a class="btn btn-primary mobile-nav-cta" href="{% url 'onboarding' %}">Começar</a>
+      </nav>
+    </details>
   </div>
 </header>

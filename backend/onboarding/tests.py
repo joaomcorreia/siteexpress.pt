@@ -208,6 +208,16 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, 'href="/pt/politica-de-privacidade/"', html=False)
         self.assertContains(response, 'href="/pt/termos-e-condicoes/"', html=False)
 
+    def test_public_menu_exposes_products_customer_area_and_mobile_navigation(self):
+        response = self.client.get("/pt/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'href="/pt/pagina-express/"', html=False)
+        self.assertContains(response, 'href="/pt/sites-wordpress/"', html=False)
+        self.assertContains(response, 'href="/pt/impressao/cartoes-de-visita/"', html=False)
+        self.assertContains(response, 'href="/pt/accounts/login/"', html=False)
+        self.assertContains(response, "Área de cliente")
+        self.assertContains(response, 'class="mobile-nav"', html=False)
+
     def test_public_product_pages_load_with_unique_content(self):
         expectations = {
             "website-wordpress": "Um website WordPress claro",
