@@ -277,7 +277,7 @@
             {% endif %}
         </section>
 
-        <section class="card cta-card section-emphasis{% if is_services_template %} services-cta-card{% endif %}" id="quote">
+        <section class="card cta-card section-emphasis{% if is_services_template %} services-cta-card quote-contained{% endif %}" id="quote">
             <h2 class="section-title">{% if is_restaurant_template %}{% trans "Reservas" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Pedido de contacto" %}{% endif %}</h2>
             {% if is_restaurant_template %}
                 {% if demo_images.cta %}

@@ -1551,7 +1551,11 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, 'href="#area"', html=False)
         self.assertContains(response, ">Orçamento<", html=False)
         self.assertContains(response, ">Zona<", html=False)
-        self.assertContains(response, 'id="quote"', html=False)
+        self.assertContains(
+            response,
+            'class="card cta-card section-emphasis services-cta-card quote-contained" id="quote"',
+            html=False,
+        )
         self.assertContains(response, 'id="area"', html=False)
 
     def test_starter_preview_uses_restaurant_anchor_menu_labels(self):
