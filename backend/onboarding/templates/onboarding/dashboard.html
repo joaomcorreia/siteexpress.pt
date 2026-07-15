@@ -666,7 +666,7 @@
                                 <summary>
                                     <span class="accordion-heading">
                                         <strong>Area de preview</strong>
-                                        <span class="muted">{{ industry_preset_label }} · {{ selected_variation }} · {{ selected_motion }}</span>
+                                        <span class="muted">{{ industry_preset_label }} · {{ selected_variation_label }} · {{ selected_motion }}</span>
                                     </span>
                                 </summary>
                                 <div class="accordion-content">
@@ -682,7 +682,7 @@
                                     </div>
                                     <div class="selection-chip">
                                         <strong>Estilo visual</strong>
-                                        <span class="muted">{{ selected_variation }}</span>
+                                        <span class="muted">{{ selected_variation_label }}</span>
                                     </div>
                                     <div class="selection-chip">
                                         <strong>Layout</strong>
@@ -707,8 +707,8 @@
                                     <div class="toolbar-group">
                                         <strong>Estilo visual</strong>
                                         <div class="link-row">
-                                            <a class="style-link{% if selected_variation == 'classic' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.classic }}">Classico</a>
-                                            <a class="style-link{% if selected_variation == 'modern' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.modern }}">Moderno</a>
+                                            <a class="style-link{% if selected_variation == 'classic' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.classic }}">Soft Studio</a>
+                                            <a class="style-link{% if selected_variation == 'modern' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.modern }}">Editorial Full Width</a>
                                         </div>
                                     </div>
                                     <div class="toolbar-group">
