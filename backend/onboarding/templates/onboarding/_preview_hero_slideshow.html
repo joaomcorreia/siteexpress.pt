@@ -4,7 +4,7 @@
         {% for slide in hero_slides %}
             <article class="hero-slide{% if forloop.first %} is-active{% endif %}" data-hero-slide aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}">
                 <div class="hero-slide-media">
-                    <img src="{% static slide.image_path %}" alt="{% blocktrans with business_name=project.business_profile.business_name %}Trabalho de oficina de {{ business_name }}{% endblocktrans %}">
+                    <img src="{% static slide.image_path %}" alt="{% blocktrans with business_name=project.business_profile.business_name %}Trabalho realizado por {{ business_name }}{% endblocktrans %}">
                 </div>
                 <div class="hero-slide-shade"></div>
                 <div class="hero-slide-content">

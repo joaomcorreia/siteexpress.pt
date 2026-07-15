@@ -2126,6 +2126,50 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(starter_response, "Abrir no Google Maps")
         self.assertContains(dashboard_response, "Instrumentos e música")
 
+    def test_construction_business_uses_editorial_template_images_and_portfolio(self):
+        user = get_user_model().objects.create_user(username="construction-preview", password="secret123")
+        project = self.create_project_for_user(
+            user,
+            business_name="Kim Construtor",
+            business_type="Obras e remodelações",
+            city="Santa Maria da Feira",
+            email="kim@example.com",
+        )
+
+        self.client.force_login(user)
+        starter_response = self.client.get(reverse("starter-preview", args=[project.starter_page.slug]))
+        full_response = self.client.get(reverse("upgrade-placeholder"))
+        full_services_response = self.client.get(f"{reverse('upgrade-placeholder')}?page=services")
+
+        self.assertTrue(starter_response.context["is_construction_template"])
+        self.assertEqual(starter_response.context["industry_preset_label"], "Obras e remodelações")
+        self.assertContains(starter_response, "construction-variant")
+        self.assertContains(starter_response, "Obras e remodelações em Santa Maria da Feira e arredores")
+        self.assertEqual(len(starter_response.context["hero_slides"]), 3)
+        self.assertContains(starter_response, "siteexpress/demo/construction/editorial-v1/hero-1.jpg")
+        self.assertContains(starter_response, "siteexpress/demo/construction/editorial-v1/about.jpg")
+        self.assertContains(starter_response, 'data-section="portfolio-v1"', html=False)
+        self.assertContains(starter_response, "Projetos em destaque")
+        self.assertContains(starter_response, "Portefólio")
+        self.assertContains(starter_response, "siteexpress/demo/construction/editorial-v1/featured-1.jpg")
+        self.assertContains(starter_response, "siteexpress/demo/construction/editorial-v1/featured-2.jpg")
+        for number in range(3, 7):
+            self.assertContains(
+                starter_response,
+                f"siteexpress/demo/construction/editorial-v1/service-{number}.jpg",
+            )
+        for number in range(1, 7):
+            self.assertContains(
+                full_services_response,
+                f"siteexpress/demo/construction/editorial-v1/service-{number}.jpg",
+            )
+        for number in range(1, 4):
+            self.assertContains(
+                starter_response,
+                f"siteexpress/demo/construction/editorial-v1/portfolio-{number}.jpg",
+            )
+        self.assertContains(full_response, 'data-section="portfolio-v1"', html=False)
+
     def test_dashboard_separates_project_summary_from_preview_controls(self):
         user = get_user_model().objects.create_user(username="dashboard-separated", password="secret123")
         self.create_project_for_user(

@@ -92,6 +92,7 @@
     ".featured-grid > .service-item",
     ".services-list > .service-item",
     ".services-card-grid > .service-item",
+    ".portfolio-grid > .portfolio-item",
     ".quote-layout > *",
     ".map-layout > *",
     ".cta-actions > *",
@@ -104,7 +105,7 @@
     target.querySelectorAll(childSelector).forEach((child, index) => {
       child.classList.add("se-motion-child");
       child.style.setProperty("--se-child-order", String(Math.min(index, 5)));
-      if (child.matches(".section-media-grid > *, .featured-grid > .service-item, .services-list > .service-item, .services-card-grid > .service-item, .quote-layout > *, .map-layout > *")) {
+      if (child.matches(".section-media-grid > *, .featured-grid > .service-item, .services-list > .service-item, .services-card-grid > .service-item, .portfolio-grid > .portfolio-item, .quote-layout > *, .map-layout > *")) {
         child.classList.add(index % 2 === 0 ? "se-motion-from-left" : "se-motion-from-right");
       }
     });

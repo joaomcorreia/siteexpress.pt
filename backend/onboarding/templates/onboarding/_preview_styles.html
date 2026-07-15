@@ -1103,6 +1103,146 @@
         border-color: #efd3a5;
         color: #8d4e09;
     }
+    .construction-variant.se-variation-modern {
+        --muted: #68717f;
+        --line: #e4e7eb;
+        --font-heading: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+        --footer-bg: linear-gradient(180deg, #101827 0%, #0a101c 100%);
+    }
+    body.construction-variant.se-variation-modern {
+        background: #f6f7f8;
+    }
+    .construction-variant.se-variation-modern h1,
+    .construction-variant.se-variation-modern .section-title {
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+    .construction-variant.se-variation-modern .hero-slide-content h1 {
+        max-width: 820px;
+        letter-spacing: -.055em;
+        line-height: .94;
+    }
+    .construction-variant.se-variation-modern .hero-kicker,
+    .construction-variant.se-variation-modern .eyebrow {
+        color: var(--brand);
+        font-weight: 900;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+    .construction-variant.se-variation-modern .cta-button {
+        border-color: var(--brand);
+        border-radius: 0;
+        color: var(--ink);
+        background: var(--brand);
+    }
+    .construction-variant.se-variation-modern .cta-button.secondary {
+        border-color: rgba(255, 255, 255, .46);
+        color: #ffffff;
+        background: rgba(16, 24, 39, .42);
+    }
+    .construction-variant.se-variation-modern #featured .services-featured-grid {
+        max-width: 980px;
+    }
+    .construction-variant.se-variation-modern #featured .service-item {
+        border-top: 5px solid var(--brand);
+    }
+    .construction-variant.se-variation-modern #featured .tag,
+    .construction-variant.se-variation-modern #services .tag,
+    .construction-variant.se-variation-modern .service-icon {
+        border-color: color-mix(in srgb, var(--brand) 38%, #ffffff);
+        color: color-mix(in srgb, var(--brand) 72%, #5b3a00);
+        background: color-mix(in srgb, var(--brand) 16%, #ffffff);
+    }
+    .construction-variant.se-variation-modern.se-layout-full #about {
+        background: linear-gradient(135deg, #102a2b 0%, #0b2022 100%);
+    }
+    .construction-trust-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 28px;
+    }
+    .construction-trust-grid span {
+        display: grid;
+        gap: 5px;
+        padding-top: 16px;
+        border-top: 3px solid var(--brand);
+        color: rgba(255, 255, 255, .72);
+        font-size: .82rem;
+    }
+    .construction-trust-grid strong {
+        color: var(--brand) !important;
+        font-family: var(--font-heading);
+        font-size: 1.08rem;
+        letter-spacing: .02em;
+        text-transform: uppercase;
+    }
+    .construction-variant.se-variation-modern #services .services-card-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .construction-variant.se-variation-modern #services .service-item:nth-child(4) {
+        color: #101827;
+        background: var(--brand);
+    }
+    .construction-variant.se-variation-modern #services .service-item:nth-child(4) .muted,
+    .construction-variant.se-variation-modern #services .service-item:nth-child(4) strong {
+        color: #101827;
+    }
+    .construction-variant.se-variation-modern #services .service-item:nth-child(4) .tag,
+    .construction-variant.se-variation-modern #services .service-item:nth-child(4) .service-icon {
+        border-color: rgba(16, 24, 39, .18);
+        color: #101827;
+        background: rgba(255, 255, 255, .55);
+    }
+    .construction-portfolio {
+        background: #f6f7f8;
+    }
+    .portfolio-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+        gap: 32px;
+        align-items: end;
+        max-width: 1180px;
+        margin: 0 auto 34px;
+    }
+    .portfolio-heading .section-title {
+        margin: 0;
+    }
+    .portfolio-heading > p {
+        max-width: 42ch;
+        margin: 0 0 4px auto;
+    }
+    .portfolio-grid {
+        display: grid;
+        grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+        grid-template-rows: repeat(2, minmax(210px, 1fr));
+        gap: 12px;
+        max-width: 1180px;
+        min-height: 580px;
+        margin: 0 auto;
+    }
+    .portfolio-item {
+        margin: 0;
+        overflow: hidden;
+        background: #dfe3e8;
+    }
+    .portfolio-item:first-child {
+        grid-row: 1 / 3;
+    }
+    .portfolio-item img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 520ms cubic-bezier(.22, 1, .36, 1), filter 320ms ease;
+    }
+    .portfolio-item:hover img {
+        filter: saturate(1.08) contrast(1.03);
+        transform: scale(1.035);
+    }
+    .construction-variant.se-variation-modern .services-cta-card {
+        background: linear-gradient(135deg, #101827 0%, #070c14 100%);
+    }
     .se-variation-modern.se-layout-full .nav-card {
         position: sticky;
         top: 0;
@@ -1576,6 +1716,9 @@
         .footer-grid.footer-grid-v1 {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+        .construction-variant.se-variation-modern #services .services-card-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
     }
     @media (max-width: 800px) {
         .wrap {
@@ -1646,6 +1789,26 @@
         .footer-bottom {
             flex-direction: column;
             margin-top: 38px;
+        }
+        .construction-trust-grid,
+        .portfolio-heading {
+            grid-template-columns: 1fr;
+        }
+        .portfolio-heading > p {
+            margin-left: 0;
+        }
+        .portfolio-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: none;
+            min-height: 0;
+        }
+        .portfolio-item,
+        .portfolio-item:first-child {
+            grid-row: auto;
+            min-height: 260px;
+        }
+        .construction-variant.se-variation-modern #services .services-card-grid {
+            grid-template-columns: 1fr;
         }
         .hero h1 {
             font-size: clamp(2rem, 9vw, 3rem);

@@ -26,12 +26,14 @@
                         <a href="{{ upgrade_url }}?page=home{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% trans "Início" %}</a>
                         <a href="{{ upgrade_url }}?page=services{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "Ementa" %}{% else %}{% trans "Serviços" %}{% endif %}</a>
                         <a href="{{ upgrade_url }}?page=about{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "História" %}{% else %}{% trans "Sobre" %}{% endif %}</a>
+                        {% if is_construction_template %}<a href="{{ upgrade_url }}?page=home{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}#portfolio">{% trans "Portefólio" %}</a>{% endif %}
                         <a href="{{ upgrade_url }}?page=contact{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}">{% if is_restaurant_template %}{% trans "Reservar" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Contacto" %}{% endif %}</a>
                         <a href="{{ upgrade_url }}?page=home{% if variation_mode == 'modern' %}&amp;variation=modern{% endif %}{% if layout_mode != 'boxed' %}&amp;layout={{ layout_mode }}{% endif %}#location">{% if is_restaurant_template %}{% trans "Visite-nos" %}{% elif is_services_template %}{% trans "Zona de serviço" %}{% else %}{% trans "Localização" %}{% endif %}</a>
                     {% else %}
                         <a href="#home">{% trans "Início" %}</a>
                         <a href="#services">{% if is_restaurant_template %}{% trans "Ementa" %}{% else %}{% trans "Serviços" %}{% endif %}</a>
                         <a href="#about">{% if is_restaurant_template %}{% trans "História" %}{% else %}{% trans "Sobre" %}{% endif %}</a>
+                        {% if is_construction_template %}<a href="#portfolio">{% trans "Portefólio" %}</a>{% endif %}
                         <a href="#quote">{% if is_restaurant_template %}{% trans "Reservar" %}{% elif is_beauty_template %}{% trans "Marcar atendimento" %}{% elif is_services_template %}{% trans "Pedir orçamento" %}{% else %}{% trans "Contacto" %}{% endif %}</a>
                         <a href="#area">{% if is_restaurant_template %}{% trans "Visite-nos" %}{% elif is_services_template %}{% trans "Zona de serviço" %}{% else %}{% trans "Localização" %}{% endif %}</a>
                     {% endif %}
@@ -59,7 +61,11 @@
             <div class="footer-column footer-portfolio">
                 <h3 class="footer-column-title">{% trans "Trabalhos recentes" %}</h3>
                 <div class="footer-gallery">
-                    {% if demo_images.services %}
+                    {% if demo_images.portfolio %}
+                        {% for image_path in demo_images.portfolio|slice:":3" %}
+                            <a href="{% if footer_mode == 'expanded' %}{{ upgrade_url }}?page=home#portfolio{% else %}#portfolio{% endif %}" aria-label="{% trans 'Ver portefólio' %}"><img src="{% static image_path %}" alt="{% trans 'Trabalho recente' %}" loading="lazy"></a>
+                        {% endfor %}
+                    {% elif demo_images.services %}
                         {% for image_path in demo_images.services|slice:":3" %}
                             <a href="{% if footer_mode == 'expanded' %}{{ upgrade_url }}?page=services{% else %}#services{% endif %}" aria-label="{% trans 'Ver portefólio' %}"><img src="{% static image_path %}" alt="{% trans 'Trabalho recente' %}" loading="lazy"></a>
                         {% endfor %}

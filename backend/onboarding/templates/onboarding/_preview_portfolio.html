@@ -1,0 +1,18 @@
+{% load i18n static %}
+<section class="card section construction-portfolio section-ready" id="portfolio" data-section="portfolio-v1">
+    <div class="portfolio-heading">
+        <div>
+            <span class="eyebrow">{% trans "Trabalhos realizados" %}</span>
+            <h2 class="section-title">{% trans "Projetos em destaque" %}</h2>
+        </div>
+        <p class="muted">{% trans "Uma amostra de obras, reparações e melhorias realizadas para clientes locais." %}</p>
+    </div>
+    <div class="portfolio-grid">
+        {% for image_path in demo_images.portfolio %}
+            {% blocktrans with business_name=project.business_profile.business_name number=forloop.counter asvar portfolio_alt %}Projeto {{ number }} realizado por {{ business_name }}{% endblocktrans %}
+            <figure class="portfolio-item portfolio-item-{{ forloop.counter }}">
+                <img src="{% static image_path %}" alt="{{ portfolio_alt }}" loading="lazy">
+            </figure>
+        {% endfor %}
+    </div>
+</section>

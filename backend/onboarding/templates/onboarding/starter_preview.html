@@ -8,8 +8,8 @@
     <meta name="description" content="{{ content.seo_description }}">
     {% include "onboarding/_preview_styles.html" %}
 </head>
-<body class="{% if is_restaurant_template %}restaurant-variant{% elif is_beauty_template %}beauty-variant{% elif is_services_template %}services-variant{% endif %}{% if is_instrument_template %} instrument-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }} se-motion-{{ motion_mode|default:'smooth' }}">
-    <div class="wrap{% if is_restaurant_template %} restaurant-variant{% elif is_beauty_template %} beauty-variant{% elif is_services_template %} services-variant{% endif %}{% if is_instrument_template %} instrument-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }}">
+<body class="{% if is_restaurant_template %}restaurant-variant{% elif is_beauty_template %}beauty-variant{% elif is_services_template %}services-variant{% endif %}{% if is_instrument_template %} instrument-variant{% endif %}{% if is_construction_template %} construction-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }} se-motion-{{ motion_mode|default:'smooth' }}">
+    <div class="wrap{% if is_restaurant_template %} restaurant-variant{% elif is_beauty_template %} beauty-variant{% elif is_services_template %} services-variant{% endif %}{% if is_instrument_template %} instrument-variant{% endif %}{% if is_construction_template %} construction-variant{% endif %}{% if not demo_images %} no-demo-images{% endif %} {% if variation_mode == 'classic' %}se-variation-classic{% elif variation_mode == 'modern' %}se-variation-modern{% endif %} se-layout-{{ layout_mode|default:'full' }}">
         {% if not embed_mode %}
             <a class="back" href="{% url 'dashboard' %}">{% trans "Voltar ao dashboard" %}</a>
         {% endif %}
@@ -39,6 +39,11 @@
                     <a class="nav-link" href="#about">{% trans "Sobre" %}</a>
                     <a class="nav-link" href="#quote">{% trans "Marcar" %}</a>
                     <a class="nav-link" href="#area">{% trans "Localização" %}</a>
+                {% elif is_construction_template %}
+                    <a class="nav-link" href="#services">{% trans "Serviços" %}</a>
+                    <a class="nav-link" href="#about">{% trans "Sobre" %}</a>
+                    <a class="nav-link" href="#portfolio">{% trans "Portefólio" %}</a>
+                    <a class="nav-link" href="#quote">{% trans "Orçamento" %}</a>
                 {% elif is_services_template %}
                     <a class="nav-link" href="#services">{% trans "Serviços" %}</a>
                     <a class="nav-link" href="#about">{% trans "Sobre" %}</a>
@@ -53,7 +58,7 @@
             </div>
         </section>
 
-        {% if is_instrument_template and hero_slides %}
+        {% if hero_slides %}
             {% include "onboarding/_preview_hero_slideshow.html" %}
         {% else %}
         <section class="hero section" id="home">
@@ -193,6 +198,12 @@
                         <p>{% trans "Um serviço prático e fiável, construído com comunicação clara, visitas de confiança e trabalho concluído com cuidado." %}</p>
                         <p class="muted">{% blocktrans with business_type=project.business_profile.business_type city=project.business_profile.city %}Ideal para negócios de {{ business_type }} em {{ city }}, com promessa de pontualidade, trabalho cuidado e acompanhamento simples.{% endblocktrans %}</p>
                         <p><strong>{% trans "Especialidade do serviço:" %}</strong> {{ project.business_profile.business_type }}</p>
+                        {% if is_construction_template %}
+                            <div class="construction-trust-grid">
+                                <span><strong>{% trans "Visita ao local" %}</strong>{% trans "Avaliação antes de começar" %}</span>
+                                <span><strong>{% trans "Orçamento claro" %}</strong>{% trans "Próximos passos combinados" %}</span>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             {% else %}
@@ -276,6 +287,10 @@
                 <p class="muted">{% blocktrans count counter=hidden_services|length %}1 serviço adicional está disponível na versão alargada do website.{% plural %}{{ counter }} serviços adicionais estão disponíveis na versão alargada do website.{% endblocktrans %}</p>
             {% endif %}
         </section>
+
+        {% if is_construction_template and demo_images.portfolio %}
+            {% include "onboarding/_preview_portfolio.html" %}
+        {% endif %}
 
         <section class="card cta-card section-emphasis{% if is_services_template %} services-cta-card quote-section-ready section-ready{% endif %}" id="quote">
             {% if is_services_template %}

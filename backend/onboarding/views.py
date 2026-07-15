@@ -60,6 +60,7 @@ RESTAURANT_CLASSIC_STATIC_PREFIX = "siteexpress/demo/restaurant/classic/"
 BEAUTY_CLASSIC_STATIC_PREFIX = "siteexpress/demo/beauty/classic/"
 SERVICES_CLASSIC_STATIC_PREFIX = "siteexpress/demo/services/classic/"
 INSTRUMENT_CLASSIC_STATIC_PREFIX = "siteexpress/demo/instruments/classic/"
+CONSTRUCTION_EDITORIAL_STATIC_PREFIX = "siteexpress/demo/construction/editorial-v1/"
 FAMILY_DEFAULT_VARIATIONS = {
     "restaurant": "restaurant-classic",
     "beauty": "beauty-classic",
@@ -1190,6 +1191,12 @@ def get_project_brand_context(project):
             "#21150f",
             "#f2e5cb",
         )
+    elif variant_context["is_construction_template"]:
+        default_primary, default_secondary, default_accent = (
+            "#f2a000",
+            "#101827",
+            "#fff0d1",
+        )
     elif variant_context["is_restaurant_template"]:
         default_primary, default_secondary, default_accent = (
             "#9b4937",
@@ -1273,6 +1280,8 @@ def get_project_variant_context(project):
         demo_images = get_beauty_classic_image_map()
     elif template_family == "services" and is_instrument:
         demo_images = get_instrument_classic_image_map()
+    elif template_family == "services" and is_construction:
+        demo_images = get_construction_editorial_image_map()
     elif template_family == "services" and any(
         keyword in business_type for keyword in AUTO_SERVICES_KEYWORDS
     ):
@@ -1319,7 +1328,9 @@ def get_project_variant_context(project):
         industry_preset_label = "Beleza e bem-estar"
     elif is_instrument:
         industry_preset_label = "Instrumentos e música"
-    elif is_carpentry or is_construction:
+    elif is_construction:
+        industry_preset_label = "Obras e remodelações"
+    elif is_carpentry:
         industry_preset_label = "Serviços locais"
     elif is_services:
         industry_preset_label = "Serviços locais"
@@ -1490,10 +1501,40 @@ def get_instrument_classic_image_map():
     }
 
 
+def get_construction_editorial_image_map():
+    return {
+        "hero": f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}hero-1.jpg",
+        "hero_slides": [
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}hero-1.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}hero-2.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}hero-3.jpg",
+        ],
+        "featured": [
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}featured-1.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}featured-2.jpg",
+        ],
+        "services": [
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}service-1.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}service-2.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}service-3.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}service-4.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}service-5.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}service-6.jpg",
+        ],
+        "about": f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}about.jpg",
+        "portfolio": [
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}portfolio-1.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}portfolio-2.jpg",
+            f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}portfolio-3.jpg",
+        ],
+        "cta": f"{CONSTRUCTION_EDITORIAL_STATIC_PREFIX}hero-2.jpg",
+    }
+
+
 def build_preview_extras(project, services, variant_context):
     hero_slides = []
     slide_images = variant_context.get("demo_images", {}).get("hero_slides", [])
-    if variant_context.get("is_instrument_template") and slide_images:
+    if slide_images:
         slide_copy = [
             {
                 "title": variant_context["services_hero_title"],
