@@ -1,45 +1,41 @@
-{% load i18n %}
-<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pedido recebido</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Georgia, serif;
-            background: #f4f6fb;
-            color: #172033;
-        }
-        .card {
-            max-width: 700px;
-            margin: 60px auto;
-            background: #fff;
-            padding: 32px;
-            border-radius: 18px;
-            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
-        }
-        a {
-            color: #8f1f1f;
-            font-weight: 700;
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>Pedido recebido com sucesso</h1>
-        <p>Os dados do onboarding foram guardados e vao ser usados no preview da Página Express e na preparacao do Website Completo.</p>
-        {% if setup_required %}
-            <p>Antes de aceder ao dashboard com <strong>{{ setup_email }}</strong>, precisa de definir uma palavra-passe.</p>
-        {% else %}
-            <p>A conta associada a <strong>{{ setup_email }}</strong> ja existe. Pode iniciar sessao com a palavra-passe atual ou voltar a usar este link, se necessario.</p>
-        {% endif %}
-        {% if debug_mode and setup_link %}
-            <p><strong>Link local para definir a palavra-passe:</strong> <a href="{{ setup_link }}">{{ setup_link }}</a></p>
-        {% endif %}
-        <p>Depois de confirmar a conta e iniciar sessao, o preview da sua Página Express fica disponivel no dashboard.</p>
-        <p><a href="{% url 'login' %}">Ir para o login</a></p>
+{% extends "onboarding/public_base.html" %}
+
+{% block title %}Primeira versão preparada | SiteExpress.pt{% endblock %}
+
+{% block extra_head %}
+<style>
+  .success-page{padding:clamp(60px,10vw,120px) 0;background:radial-gradient(circle at 12% 0,rgba(4,106,56,.15),transparent 30rem),var(--bg)}.success-card{width:min(720px,calc(100% - 28px));margin:auto;padding:clamp(30px,6vw,52px);border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow);text-align:center}.success-mark{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 20px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.55rem;font-weight:950}.success-card h1{font-size:clamp(2.25rem,5vw,4rem)}.success-card p{color:var(--muted);font-size:1.04rem}.success-card .actions{justify-content:center;margin-top:28px}.debug-note{margin-top:24px;padding:15px;border:1px dashed #9dbb98;border-radius:12px;background:var(--surface-2);text-align:left}.debug-note strong{display:block;color:var(--ink)}.debug-note a{color:var(--primary);font-weight:900;word-break:break-all}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="success-page">
+  <div class="success-card">
+    <div class="success-mark">✓</div>
+    <span class="eyebrow">Dados guardados</span>
+    <h1>A sua primeira versão está preparada.</h1>
+    {% if setup_required %}
+      <p>Falta apenas criar uma palavra-passe para <strong>{{ setup_email }}</strong>. Depois entra diretamente no dashboard e pode ver o preview.</p>
+    {% else %}
+      <p>A conta <strong>{{ setup_email }}</strong> já existe. Pode entrar com a palavra-passe atual para ver o projeto.</p>
+    {% endif %}
+
+    {% if debug_mode and setup_link %}
+      <div class="debug-note">
+        <strong>Ambiente local</strong>
+        <span>Use este link individual para continuar:</span><br>
+        <a href="{{ setup_link }}">{{ setup_link }}</a>
+      </div>
+    {% endif %}
+
+    <div class="actions">
+      {% if debug_mode and setup_link and setup_required %}
+        <a class="btn btn-primary" href="{{ setup_link }}">Criar palavra-passe</a>
+      {% else %}
+        <a class="btn btn-primary" href="{% url 'login' %}">Entrar na área de cliente</a>
+      {% endif %}
+      <a class="btn btn-ghost" href="{% url 'siteexpress-landing' %}">Voltar ao início</a>
     </div>
-</body>
-</html>
+  </div>
+</section>
+{% endblock %}
