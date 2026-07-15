@@ -1024,7 +1024,7 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, "device-tablet")
         self.assertContains(
             response,
-            f'src="/pt/onboarding/starter/{project.starter_page.slug}/?variation=classic&amp;layout=boxed&amp;embed=1"',
+            f'src="/pt/onboarding/starter/{project.starter_page.slug}/?variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
 
@@ -1063,17 +1063,17 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, "Guardar servicos")
         self.assertContains(
             response,
-            'src="/pt/onboarding/upgrade/?page=services&amp;variation=classic&amp;layout=boxed&amp;embed=1"',
+            'src="/pt/onboarding/upgrade/?page=services&amp;variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
         self.assertContains(
             response,
-            'href="/pt/onboarding/upgrade/?page=service&amp;service=service-one&amp;variation=classic&amp;layout=boxed"',
+            'href="/pt/onboarding/upgrade/?page=service&amp;service=service-one&amp;variation=modern&amp;layout=full&amp;motion=smooth"',
             html=False,
         )
         self.assertNotContains(
             response,
-            f'/pt/onboarding/starter/{project.starter_page.slug}/?variation=classic&amp;layout=boxed&amp;embed=1',
+            f'/pt/onboarding/starter/{project.starter_page.slug}/?variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1',
             html=False,
         )
 
@@ -1134,7 +1134,7 @@ class OnboardingFlowTests(TestCase):
 
         self.assertRedirects(
             response,
-            f"{reverse('dashboard')}?section=preview&preview=full&variation=modern&layout=wide&device=desktop",
+            f"{reverse('dashboard')}?section=preview&preview=full&variation=modern&layout=wide&motion=smooth&device=desktop",
         )
         project.business_profile.refresh_from_db()
         self.assertEqual(project.business_profile.business_name, "New Name")
@@ -1165,7 +1165,7 @@ class OnboardingFlowTests(TestCase):
 
         self.assertRedirects(
             response,
-            f"{reverse('dashboard')}?section=preview&preview=starter&variation=classic&layout=boxed&device=desktop",
+            f"{reverse('dashboard')}?section=preview&preview=starter&variation=modern&layout=full&motion=smooth&device=desktop",
         )
         project.business_profile.refresh_from_db()
         self.assertEqual(project.business_profile.email, "after@example.com")
@@ -1237,7 +1237,7 @@ class OnboardingFlowTests(TestCase):
 
         self.assertRedirects(
             response,
-            f"{reverse('dashboard')}?section=services&preview=full&variation=modern&layout=full&device=desktop",
+            f"{reverse('dashboard')}?section=services&preview=full&variation=modern&layout=full&motion=smooth&device=desktop",
         )
         project.generated_contents.first().refresh_from_db()
         services_json = project.generated_contents.first().services_json
@@ -1266,12 +1266,12 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            'src="/pt/onboarding/upgrade/?page=services&amp;variation=modern&amp;layout=full&amp;embed=1"',
+            'src="/pt/onboarding/upgrade/?page=services&amp;variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
         self.assertContains(
             response,
-            'href="/pt/onboarding/upgrade/?page=service&amp;service=service-one&amp;variation=modern&amp;layout=full"',
+            'href="/pt/onboarding/upgrade/?page=service&amp;service=service-one&amp;variation=modern&amp;layout=full&amp;motion=smooth"',
             html=False,
         )
         self.assertContains(response, 'name="services-service_1_icon"', html=False)
@@ -1313,7 +1313,7 @@ class OnboardingFlowTests(TestCase):
 
         self.assertRedirects(
             response,
-            f"{reverse('dashboard')}?section=services&preview=starter&variation=modern&layout=full&device=desktop",
+            f"{reverse('dashboard')}?section=services&preview=starter&variation=modern&layout=full&motion=smooth&device=desktop",
         )
         project.generated_contents.first().refresh_from_db()
         self.assertEqual(project.generated_contents.first().services_json[0]["icon"], "spark")
@@ -1335,7 +1335,7 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            f'src="/pt/onboarding/starter/{project.starter_page.slug}/?variation=modern&amp;layout=wide&amp;embed=1"',
+            f'src="/pt/onboarding/starter/{project.starter_page.slug}/?variation=modern&amp;layout=wide&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
 
@@ -1434,12 +1434,12 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.context["selected_preview"], "starter")
         self.assertContains(
             response,
-            f'src="/pt/onboarding/starter/{project.starter_page.slug}/?variation=classic&amp;layout=boxed&amp;embed=1"',
+            f'src="/pt/onboarding/starter/{project.starter_page.slug}/?variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
         self.assertContains(
             response,
-            f'href="/pt/onboarding/starter/{project.starter_page.slug}/?variation=classic&amp;layout=boxed&amp;embed=1"',
+            f'href="/pt/onboarding/starter/{project.starter_page.slug}/?variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
 
@@ -1538,12 +1538,12 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.context["selected_layout"], "full")
         self.assertContains(
             response,
-            'src="/pt/onboarding/upgrade/?variation=modern&amp;layout=full&amp;embed=1"',
+            'src="/pt/onboarding/upgrade/?variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
         self.assertContains(
             response,
-            'href="/pt/onboarding/upgrade/?variation=modern&amp;layout=full&amp;embed=1"',
+            'href="/pt/onboarding/upgrade/?variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1"',
             html=False,
         )
 
@@ -1561,11 +1561,12 @@ class OnboardingFlowTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["selected_preview"], "starter")
-        self.assertEqual(response.context["selected_variation"], "classic")
-        self.assertEqual(response.context["selected_layout"], "boxed")
+        self.assertEqual(response.context["selected_variation"], "modern")
+        self.assertEqual(response.context["selected_layout"], "full")
+        self.assertEqual(response.context["selected_motion"], "smooth")
         self.assertContains(
             response,
-            f'/pt/onboarding/starter/{project.starter_page.slug}/?variation=classic&amp;layout=boxed&amp;embed=1',
+            f'/pt/onboarding/starter/{project.starter_page.slug}/?variation=modern&amp;layout=full&amp;motion=smooth&amp;embed=1',
             html=False,
         )
 
@@ -1585,12 +1586,12 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            'href="/pt/onboarding/dashboard/?section=preview&amp;preview=full&amp;variation=modern&amp;layout=wide&amp;device=tablet"',
+            'href="/pt/onboarding/dashboard/?section=preview&amp;preview=full&amp;variation=modern&amp;layout=wide&amp;motion=smooth&amp;device=tablet"',
             html=False,
         )
         self.assertContains(
             response,
-            'href="/pt/onboarding/dashboard/?section=preview&amp;preview=starter&amp;variation=modern&amp;layout=wide&amp;device=mobile"',
+            'href="/pt/onboarding/dashboard/?section=preview&amp;preview=starter&amp;variation=modern&amp;layout=wide&amp;motion=smooth&amp;device=mobile"',
             html=False,
         )
 
@@ -1709,7 +1710,7 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.context["active_page"], "services")
         self.assertContains(response, "Página de serviços")
         self.assertContains(response, "Navigation Company")
-        self.assertContains(response, "Rodapé")
+        self.assertNotContains(response, "Rodapé")
         self.assertContains(response, "Links alargados")
 
     def test_upgrade_preview_supports_individual_service_detail_pages(self):
@@ -1780,7 +1781,9 @@ class OnboardingFlowTests(TestCase):
         )
 
         self.client.force_login(user)
-        starter_classic = self.client.get(reverse("starter-preview", args=[project.starter_page.slug]))
+        starter_classic = self.client.get(
+            f"{reverse('starter-preview', args=[project.starter_page.slug])}?variation=classic"
+        )
         starter_modern = self.client.get(f"{reverse('starter-preview', args=[project.starter_page.slug])}?variation=modern")
         full_modern = self.client.get(f"{reverse('upgrade-placeholder')}?variation=modern")
 
@@ -1788,7 +1791,7 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(starter_modern, "se-variation-modern")
         self.assertContains(full_modern, "se-variation-modern")
 
-    def test_layout_query_param_defaults_to_boxed_and_invalid_values_fall_back_safely(self):
+    def test_layout_query_param_defaults_to_full_and_invalid_values_fall_back_safely(self):
         user = get_user_model().objects.create_user(username="layout-fallback", password="secret123")
         project = self.create_project_for_user(
             user,
@@ -1804,12 +1807,12 @@ class OnboardingFlowTests(TestCase):
         )
         full_invalid = self.client.get(f"{reverse('upgrade-placeholder')}?layout=invalid")
 
-        self.assertEqual(starter_default.context["layout_mode"], "boxed")
-        self.assertEqual(starter_invalid.context["layout_mode"], "boxed")
-        self.assertEqual(full_invalid.context["layout_mode"], "boxed")
-        self.assertContains(starter_default, "se-layout-boxed")
-        self.assertContains(starter_invalid, "se-layout-boxed")
-        self.assertContains(full_invalid, "se-layout-boxed")
+        self.assertEqual(starter_default.context["layout_mode"], "full")
+        self.assertEqual(starter_invalid.context["layout_mode"], "full")
+        self.assertEqual(full_invalid.context["layout_mode"], "full")
+        self.assertContains(starter_default, "se-layout-full")
+        self.assertContains(starter_invalid, "se-layout-full")
+        self.assertContains(full_invalid, "se-layout-full")
 
     def test_starter_preview_emits_requested_layout_class(self):
         user = get_user_model().objects.create_user(username="starter-layout", password="secret123")
@@ -1826,6 +1829,45 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["layout_mode"], "wide")
         self.assertContains(response, "se-layout-wide")
+
+    def test_preview_motion_defaults_to_smooth_and_accepts_all_motion_levels(self):
+        user = get_user_model().objects.create_user(username="preview-motion", password="secret123")
+        project = self.create_project_for_user(
+            user,
+            business_name="Motion Company",
+            business_type="Carpinteiro",
+            email="motion@example.com",
+        )
+
+        self.client.force_login(user)
+        starter_default = self.client.get(reverse("starter-preview", args=[project.starter_page.slug]))
+        starter_minimal = self.client.get(
+            f"{reverse('starter-preview', args=[project.starter_page.slug])}?motion=minimal"
+        )
+        full_dynamic = self.client.get(f"{reverse('upgrade-placeholder')}?motion=dynamic")
+
+        self.assertEqual(starter_default.context["motion_mode"], "smooth")
+        self.assertContains(starter_default, "se-motion-smooth")
+        self.assertContains(starter_minimal, "se-motion-minimal")
+        self.assertContains(full_dynamic, "se-motion-dynamic")
+        self.assertContains(full_dynamic, "IntersectionObserver")
+
+    def test_dashboard_exposes_motion_controls_and_preserves_selected_motion(self):
+        user = get_user_model().objects.create_user(username="dashboard-motion", password="secret123")
+        self.create_project_for_user(
+            user,
+            business_name="Motion Dashboard",
+            email="dashboardmotion@example.com",
+        )
+
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('dashboard')}?motion=dynamic")
+
+        self.assertEqual(response.context["selected_motion"], "dynamic")
+        self.assertContains(response, "Mínimo")
+        self.assertContains(response, "Suave")
+        self.assertContains(response, "Dinâmico")
+        self.assertContains(response, "motion=dynamic")
 
     def test_full_preview_emits_requested_layout_class_and_preserves_variation(self):
         user = get_user_model().objects.create_user(username="full-layout", password="secret123")
@@ -1915,9 +1957,35 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(starter_response, "siteexpress/demo/services/classic/hero.jpg")
         self.assertContains(full_response, "Zona de serviço")
         self.assertContains(full_response, "siteexpress/demo/services/classic/location.jpg")
-        self.assertContains(starter_response, "Repairs")
-        self.assertContains(starter_response, "Inspection")
+        self.assertContains(starter_response, "Reparações")
+        self.assertContains(starter_response, "Avaliação")
         self.assertNotContains(starter_response, "À medida que o website crescer, podem ser destacados mais serviços aqui.")
+
+    def test_carpenter_uses_trade_content_without_automotive_demo_images(self):
+        user = get_user_model().objects.create_user(username="carpenter-preview", password="secret123")
+        project = self.create_project_for_user(
+            user,
+            business_name="Manel Carpinteiro",
+            business_type="Carpinteiro",
+            email="manel@example.com",
+        )
+
+        self.client.force_login(user)
+        starter_response = self.client.get(reverse("starter-preview", args=[project.starter_page.slug]))
+        full_response = self.client.get(reverse("upgrade-placeholder"))
+
+        self.assertTrue(starter_response.context["is_services_template"])
+        self.assertEqual(starter_response.context["demo_images"], {})
+        self.assertContains(starter_response, "services-variant")
+        self.assertContains(starter_response, "no-demo-images")
+        self.assertContains(starter_response, "Trabalhos de carpintaria em Lisboa e arredores")
+        self.assertContains(starter_response, "Pedir orçamento")
+        self.assertContains(starter_response, "Carpintaria por medida")
+        self.assertContains(starter_response, "Móveis e armários")
+        self.assertContains(full_response, "Avaliação e orçamento")
+        self.assertNotContains(starter_response, "Este é o preview da sua primeira presença online")
+        self.assertNotContains(full_response, "Preview alargado em preparação no SiteExpress")
+        self.assertNotContains(starter_response, "siteexpress/demo/services/classic/")
 
     def test_services_homepage_splits_featured_and_remaining_services(self):
         user = get_user_model().objects.create_user(username="services-home-split", password="secret123")
@@ -2019,8 +2087,8 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(starter_response.status_code, 200)
         self.assertEqual(starter_response.content.decode().count('<div class="service-item services-feature-card">'), 2)
         self.assertEqual(starter_response.content.decode().count("Serviço disponível"), 4)
-        self.assertContains(starter_response, "Repairs")
-        self.assertContains(starter_response, "Service area visits")
+        self.assertContains(starter_response, "Reparações")
+        self.assertContains(starter_response, "Deslocações na zona")
         self.assertNotContains(starter_response, "À medida que o website crescer, podem ser destacados mais serviços aqui.")
 
     def test_full_services_page_still_shows_all_active_services(self):
