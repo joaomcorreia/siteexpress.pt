@@ -63,8 +63,11 @@ FAMILY_DEFAULT_VARIATIONS = {
     "beauty": "beauty-classic",
     "services": "services-classic",
 }
-DEFAULT_LAYOUT_MODE = "boxed"
+DEFAULT_VARIATION_MODE = "modern"
+DEFAULT_LAYOUT_MODE = "full"
 LAYOUT_MODES = {"boxed", "wide", "full"}
+DEFAULT_MOTION_MODE = "smooth"
+MOTION_MODES = {"minimal", "smooth", "dynamic"}
 DEFAULT_DEVICE_MODE = "desktop"
 DEVICE_MODES = {"desktop", "tablet", "mobile"}
 ASSISTANT_MAX_TURNS_PER_CONVERSATION = 40
@@ -150,6 +153,32 @@ SERVICES_KEYWORDS = {
     "roof",
     "solar",
     "air conditioning",
+    "carpenter",
+    "carpentry",
+    "carpinteiro",
+    "carpintaria",
+    "joiner",
+    "marceneiro",
+    "marcenaria",
+    "woodwork",
+    "madeira",
+    "pedreiro",
+    "trolha",
+    "obras",
+    "remodelações",
+    "remodelacoes",
+    "jardim",
+    "jardinagem",
+}
+AUTO_SERVICES_KEYWORDS = {
+    "auto",
+    "automóvel",
+    "automovel",
+    "car repair",
+    "garage",
+    "mechanic",
+    "oficina",
+    "repair services",
 }
 SERVICE_ICON_DEFAULTS = {
     "repairs": "wrench",
@@ -241,42 +270,151 @@ def get_beauty_default_services():
     ]
 
 
-def get_services_default_services():
+def get_services_default_services(project=None):
+    business_type = ""
+    if project and getattr(project, "business_profile", None):
+        business_type = (project.business_profile.business_type or "").casefold()
+
+    if any(
+        keyword in business_type
+        for keyword in (
+            "carpenter",
+            "carpentry",
+            "carpinteiro",
+            "carpintaria",
+            "joiner",
+            "marceneiro",
+            "marcenaria",
+            "woodwork",
+            "madeira",
+        )
+    ):
+        return [
+            {
+                "title": "Carpintaria por medida",
+                "short_description": "Soluções em madeira adaptadas ao espaço, ao estilo e às necessidades de cada cliente.",
+                "full_description": "Planeamento e execução de trabalhos de carpintaria por medida, com atenção ao acabamento e à utilização diária.",
+                "icon": "wrench",
+            },
+            {
+                "title": "Móveis e armários",
+                "short_description": "Móveis, roupeiros e arrumação pensados para aproveitar melhor cada espaço.",
+                "full_description": "Criação e montagem de móveis e armários com medidas, organização e acabamentos definidos para cada projeto.",
+                "icon": "home",
+            },
+            {
+                "title": "Portas e acabamentos",
+                "short_description": "Montagem e afinação de portas, rodapés, painéis e outros acabamentos em madeira.",
+                "full_description": "Trabalhos de instalação e acabamento para melhorar a funcionalidade e o aspeto de divisões interiores.",
+                "icon": "check",
+            },
+            {
+                "title": "Reparações de madeira",
+                "short_description": "Recuperação de peças, móveis e elementos de carpintaria danificados ou desgastados.",
+                "full_description": "Avaliação e reparação de elementos em madeira sempre que seja possível recuperar a peça existente.",
+                "icon": "wrench",
+            },
+            {
+                "title": "Montagem no local",
+                "short_description": "Deslocação e montagem cuidada na casa, loja ou espaço do cliente.",
+                "full_description": "Serviço de montagem no local com preparação, ajuste e verificação final do trabalho realizado.",
+                "icon": "truck",
+            },
+            {
+                "title": "Avaliação e orçamento",
+                "short_description": "Análise do trabalho pretendido e preparação de uma proposta clara antes de começar.",
+                "full_description": "Primeiro contacto para compreender medidas, materiais, prioridades e próximos passos do projeto.",
+                "icon": "shield",
+            },
+        ]
+
+    if any(
+        keyword in business_type
+        for keyword in (
+            "builder",
+            "construction",
+            "construção",
+            "construcao",
+            "pedreiro",
+            "trolha",
+            "obras",
+            "remodel",
+        )
+    ):
+        return [
+            {
+                "title": "Obras e remodelações",
+                "short_description": "Intervenções em casas e espaços comerciais, de pequenos trabalhos a remodelações completas.",
+                "full_description": "Preparação e execução de obras e remodelações com um plano claro para cada fase do trabalho.",
+                "icon": "home",
+            },
+            {
+                "title": "Alvenaria e construção",
+                "short_description": "Trabalhos de construção, paredes, rebocos e correções necessárias no imóvel.",
+                "full_description": "Serviços de alvenaria e construção adaptados às condições e objetivos de cada espaço.",
+                "icon": "wrench",
+            },
+            {
+                "title": "Pinturas interiores e exteriores",
+                "short_description": "Preparação e pintura de casas, quartos, fachadas e outros espaços.",
+                "full_description": "Proteção das áreas, preparação das superfícies e aplicação de pintura com acabamento cuidado.",
+                "icon": "spark",
+            },
+            {
+                "title": "Reparações rápidas",
+                "short_description": "Resolução de pequenos problemas antes que se transformem em obras maiores.",
+                "full_description": "Visita ao local para identificar e executar reparações práticas dentro do âmbito combinado.",
+                "icon": "clock",
+            },
+            {
+                "title": "Jardins e exteriores",
+                "short_description": "Apoio em manutenção de jardins e melhoria das zonas exteriores da propriedade.",
+                "full_description": "Trabalhos exteriores definidos de acordo com o espaço, a época e a manutenção pretendida.",
+                "icon": "check",
+            },
+            {
+                "title": "Visita e orçamento",
+                "short_description": "Avaliação do local e preparação de uma proposta antes do início dos trabalhos.",
+                "full_description": "Primeiro contacto para compreender o serviço, visitar o espaço e combinar os próximos passos.",
+                "icon": "truck",
+            },
+        ]
+
     return [
         {
-            "title": _("Repairs"),
-            "short_description": _("Fast help for common faults, damage, and day-to-day service problems."),
-            "full_description": _("A practical repair service focused on resolving faults quickly, clearly, and with reliable workmanship."),
+            "title": "Reparações",
+            "short_description": "Ajuda prática para avarias, danos e problemas comuns do dia a dia.",
+            "full_description": "Um serviço de reparação orientado para resolver o problema com clareza e trabalho cuidado.",
             "icon": "wrench",
         },
         {
-            "title": _("Maintenance"),
-            "short_description": _("Regular upkeep to keep equipment, property, or systems working well."),
-            "full_description": _("A maintenance service designed to prevent issues, extend lifespan, and keep things running as expected."),
+            "title": "Manutenção",
+            "short_description": "Acompanhamento regular para manter equipamentos, imóveis ou sistemas em boas condições.",
+            "full_description": "Manutenção pensada para prevenir problemas e prolongar a utilização do que já existe.",
             "icon": "check",
         },
         {
-            "title": _("Emergency support"),
-            "short_description": _("Urgent response for time-sensitive problems that need quick attention."),
-            "full_description": _("Emergency support for clients who need a fast response and a dependable service visit."),
+            "title": "Apoio urgente",
+            "short_description": "Resposta a situações que precisam de atenção rápida, mediante disponibilidade.",
+            "full_description": "Apoio para clientes que precisam de uma resposta rápida e de uma visita de serviço fiável.",
             "icon": "clock",
         },
         {
-            "title": _("Installation"),
-            "short_description": _("Professional fitting and setup for new systems, fixtures, or service work."),
-            "full_description": _("An installation service with clear setup, careful execution, and a professional finish."),
+            "title": "Instalação",
+            "short_description": "Montagem e preparação profissional de novos equipamentos ou elementos.",
+            "full_description": "Um serviço de instalação com preparação clara, execução cuidada e verificação final.",
             "icon": "home",
         },
         {
-            "title": _("Inspection"),
-            "short_description": _("Checks and assessments to identify issues before they grow."),
-            "full_description": _("An inspection-focused service that gives clients a clearer view of condition, risks, and next steps."),
+            "title": "Avaliação",
+            "short_description": "Verificação inicial para perceber o problema e definir os próximos passos.",
+            "full_description": "Uma avaliação que ajuda a clarificar o estado atual, o trabalho necessário e as prioridades.",
             "icon": "shield",
         },
         {
-            "title": _("Service area visits"),
-            "short_description": _("Local call-outs across the main service area and nearby locations."),
-            "full_description": _("On-site visits across the service area for clients who need convenient local support and clear scheduling."),
+            "title": "Deslocações na zona",
+            "short_description": "Visitas no local dentro da área principal de serviço e localidades próximas.",
+            "full_description": "Deslocações combinadas para avaliar ou executar o serviço diretamente no local do cliente.",
             "icon": "truck",
         },
     ]
@@ -288,7 +426,15 @@ def should_expand_services_defaults(raw_services, default_services):
     if len(raw_services) >= len(default_services):
         return False
 
-    placeholder_titles = {"main service", "target market", "service one", "service two"}
+    placeholder_titles = {
+        "main service",
+        "target market",
+        "service one",
+        "service two",
+        "serviço principal",
+        "servico principal",
+        "atendimento local",
+    }
     normalized_titles = {
         (service.get("title") or "").strip().lower()
         for service in raw_services
@@ -304,7 +450,7 @@ def get_default_services_for_project(project):
     if variant_context["is_beauty_template"]:
         return get_beauty_default_services()
     if variant_context["is_services_template"]:
-        return get_services_default_services()
+        return get_services_default_services(project)
     return [
         {
             "title": _("Main service"),
@@ -369,7 +515,7 @@ def get_service_icon(title, index):
     return "wrench"
 
 
-def get_service_editor_cards(services, variation, layout):
+def get_service_editor_cards(services, variation, layout, motion=DEFAULT_MOTION_MODE):
     cards = []
     for index, service in enumerate(services[: DashboardServicesForm.service_count], start=1):
         detail_url = ""
@@ -381,6 +527,7 @@ def get_service_editor_cards(services, variation, layout):
                 service=slug,
                 variation=variation,
                 layout=layout,
+                motion=motion,
             )
         cards.append(
             {
@@ -418,14 +565,15 @@ def build_placeholder_content(profile):
 
     return {
         "language": language,
-        "hero_title": _("Professional website for %(business_name)s") % {
+        "hero_title": _("%(business_name)s — serviços em %(city)s") % {
             "business_name": business_name,
+            "city": city,
         },
-        "hero_subtitle": _("A strong digital starting point for your %(business_type)s business.") % {
+        "hero_subtitle": _("%(business_type)s com atendimento local, contacto direto e informação clara.") % {
             "business_type": business_type,
         },
         "intro_text": _(
-            "%(business_name)s serves customers in %(city)s with a clear, trustworthy online presence."
+            "Conheça os serviços de %(business_name)s em %(city)s e peça mais informações sem complicações."
         )
         % {
             "business_name": business_name,
@@ -433,23 +581,24 @@ def build_placeholder_content(profile):
         },
         "services_json": [
             {
-                "title": str(_("Main service")),
-                "description": str(_("Service details will be refined during content generation.")),
+                "title": str(_("Serviço principal")),
+                "description": business_type,
                 "icon": "wrench",
             },
             {
-                "title": str(_("Target market")),
-                "description": profile.target_audience or str(_("Audience details pending.")),
+                "title": str(_("Atendimento local")),
+                "description": profile.target_audience
+                or str(_("Disponível em %(city)s e localidades próximas.") % {"city": city}),
                 "icon": "check",
             },
         ],
         "about_text": _(
-            "%(business_name)s is preparing a starter page now and a full website draft using the same onboarding data."
+            "A %(business_name)s apresenta os seus serviços com proximidade, comunicação simples e atenção ao trabalho realizado."
         )
         % {
             "business_name": business_name,
         },
-        "cta_text": _("Request your full website upgrade"),
+        "cta_text": _("Peça informações sobre o seu projeto"),
         "seo_title": _("%(business_name)s | %(business_type)s in %(city)s")
         % {
             "business_name": business_name,
@@ -457,7 +606,7 @@ def build_placeholder_content(profile):
             "city": city,
         },
         "seo_description": _(
-            "Starter preview and future full website draft for %(business_name)s."
+            "Conheça os serviços de %(business_name)s e peça informações."
         )
         % {
             "business_name": business_name,
@@ -987,6 +1136,12 @@ def get_project_brand_context(project):
 
 def get_project_variant_context(project):
     business_type = (project.business_profile.business_type or "").strip().lower()
+    service_location = (
+        project.business_profile.city
+        or project.business_profile.region
+        or project.business_profile.country
+        or "Portugal"
+    )
     is_restaurant = any(keyword in business_type for keyword in RESTAURANT_KEYWORDS)
     is_beauty = not is_restaurant and any(keyword in business_type for keyword in BEAUTY_KEYWORDS)
     is_services = (
@@ -994,19 +1149,80 @@ def get_project_variant_context(project):
         and not is_beauty
         and any(keyword in business_type for keyword in SERVICES_KEYWORDS)
     )
+    is_carpentry = is_services and any(
+        keyword in business_type
+        for keyword in (
+            "carpenter",
+            "carpentry",
+            "carpinteiro",
+            "carpintaria",
+            "joiner",
+            "marceneiro",
+            "marcenaria",
+            "woodwork",
+            "madeira",
+        )
+    )
+    is_construction = is_services and any(
+        keyword in business_type
+        for keyword in (
+            "builder",
+            "construction",
+            "construção",
+            "construcao",
+            "pedreiro",
+            "trolha",
+            "obras",
+            "remodel",
+        )
+    )
     template_family = "restaurant" if is_restaurant else "beauty" if is_beauty else "services" if is_services else ""
     demo_images = {}
     if template_family == "restaurant":
         demo_images = get_restaurant_classic_image_map()
     elif template_family == "beauty":
         demo_images = get_beauty_classic_image_map()
-    elif template_family == "services":
+    elif template_family == "services" and any(
+        keyword in business_type for keyword in AUTO_SERVICES_KEYWORDS
+    ):
         demo_images = get_services_classic_image_map()
+    services_hero_title = f"Serviços de confiança em {service_location}"
+    services_hero_subtitle = (
+        "Trabalho rápido, claro e profissional para clientes locais que procuram ajuda fiável e comunicação direta."
+    )
+    services_intro_title = "Ajuda clara para trabalhos locais e necessidades de serviço contínuas"
+    services_intro_text = (
+        f"Serviço claro, comunicação fiável e apoio prático para clientes em {service_location}."
+    )
+    if is_carpentry:
+        services_hero_title = f"Trabalhos de carpintaria em {service_location} e arredores"
+        services_hero_subtitle = (
+            "Soluções em madeira, montagem, reparações e trabalhos por medida com atenção a cada acabamento."
+        )
+        services_intro_title = "Carpintaria pensada para o seu espaço"
+        services_intro_text = (
+            "Cada trabalho começa por perceber as medidas, o uso pretendido e o acabamento que melhor se adapta ao cliente."
+        )
+    elif is_construction:
+        services_hero_title = f"Obras e remodelações em {service_location} e arredores"
+        services_hero_subtitle = (
+            "Construção, pinturas, reparações e melhorias exteriores com acompanhamento simples e direto."
+        )
+        services_intro_title = "Do pequeno arranjo à remodelação"
+        services_intro_text = (
+            "O trabalho é avaliado no local para combinar prioridades, materiais e os próximos passos antes de começar."
+        )
     context = {
         "template_family": template_family,
         "is_restaurant_template": is_restaurant,
         "is_beauty_template": is_beauty,
         "is_services_template": is_services,
+        "is_carpentry_template": is_carpentry,
+        "is_construction_template": is_construction,
+        "services_hero_title": services_hero_title,
+        "services_hero_subtitle": services_hero_subtitle,
+        "services_intro_title": services_intro_title,
+        "services_intro_text": services_intro_text,
         "demo_images": demo_images,
     }
     context["restaurant_images"] = demo_images if is_restaurant else {}
@@ -1019,10 +1235,10 @@ def get_preview_variation(request, project):
     base_context = get_project_variant_context(project)
     template_family = base_context["template_family"]
     if not template_family:
-        return "", "classic"
+        return "", get_variation_mode(request)
 
     requested = (request.GET.get("variation") or "").strip().lower()
-    variation_mode = "modern" if requested == "modern" else "classic"
+    variation_mode = requested if requested in {"classic", "modern"} else DEFAULT_VARIATION_MODE
     return f"{template_family}-{variation_mode}", variation_mode
 
 
@@ -1035,7 +1251,12 @@ def get_layout_mode(request):
 
 def get_variation_mode(request):
     requested = (request.GET.get("variation") or "").strip().lower()
-    return "modern" if requested == "modern" else "classic"
+    return requested if requested in {"classic", "modern"} else DEFAULT_VARIATION_MODE
+
+
+def get_motion_mode(request):
+    requested = (request.GET.get("motion") or "").strip().lower()
+    return requested if requested in MOTION_MODES else DEFAULT_MOTION_MODE
 
 
 def get_dashboard_section(request):
@@ -1137,7 +1358,7 @@ def normalize_project_services(project, content):
     is_beauty = get_project_variant_context(project)["is_beauty_template"]
     is_services = get_project_variant_context(project)["is_services_template"]
     beauty_defaults = get_beauty_default_services()
-    services_defaults = get_services_default_services()
+    services_defaults = get_services_default_services(project)
     variant_context = get_project_variant_context(project)
     demo_images = variant_context["demo_images"]
     service_images = demo_images.get("menu", []) if is_restaurant else demo_images.get("services", [])
@@ -1186,6 +1407,9 @@ def normalize_project_services(project, content):
             "target market",
             "service one",
             "service two",
+            "serviço principal",
+            "servico principal",
+            "atendimento local",
         }:
             fallback = services_defaults[index - 1] if index <= len(services_defaults) else services_defaults[-1]
             title = str(fallback["title"])
@@ -1747,6 +1971,7 @@ def dashboard_view(request):
     variant_context = get_project_variant_context(project) if project else {}
     selected_layout = get_layout_mode(request)
     selected_variation = get_variation_mode(request)
+    selected_motion = get_motion_mode(request)
     selected_device = get_device_mode(request)
     active_section = get_dashboard_section(request)
     requested_preview = (request.GET.get("preview") or "").strip().lower()
@@ -1765,6 +1990,7 @@ def dashboard_view(request):
         "preview": selected_preview,
         "variation": selected_variation,
         "layout": selected_layout,
+        "motion": selected_motion,
         "device": selected_device,
     }
     dashboard_return_url = build_url_with_query(reverse("dashboard"), **dashboard_query)
@@ -1780,6 +2006,7 @@ def dashboard_view(request):
             service_seed,
             selected_variation,
             selected_layout,
+            selected_motion,
         )
         if request.method == "POST":
             form_type = (request.POST.get("form_type") or "").strip().lower()
@@ -1866,12 +2093,14 @@ def dashboard_view(request):
             reverse("upgrade-placeholder"),
             variation=selected_variation,
             layout=selected_layout,
+            motion=selected_motion,
         )
         services_page_preview_url = build_url_with_query(
             reverse("upgrade-placeholder"),
             page="services",
             variation=selected_variation,
             layout=selected_layout,
+            motion=selected_motion,
             embed=1,
         )
         if starter_available:
@@ -1879,12 +2108,14 @@ def dashboard_view(request):
                 reverse("starter-preview", args=[project.starter_page.slug]),
                 variation=selected_variation,
                 layout=selected_layout,
+                motion=selected_motion,
                 embed=1,
             )
         full_preview_url = build_url_with_query(
             reverse("upgrade-placeholder"),
             variation=selected_variation,
             layout=selected_layout,
+            motion=selected_motion,
             embed=1,
         )
         if active_section == "services" and not (
@@ -1898,33 +2129,48 @@ def dashboard_view(request):
                 else full_preview_url
             )
 
+    dashboard_base_query = {
+        "section": active_section,
+        "preview": selected_preview,
+        "variation": selected_variation,
+        "layout": selected_layout,
+        "motion": selected_motion,
+        "device": selected_device,
+    }
+
+    def dashboard_control_url(**overrides):
+        return build_url_with_query(
+            reverse("dashboard"),
+            **{**dashboard_base_query, **overrides},
+        )
+
     dashboard_control_urls = {
         "sections": {
-            "preview": build_url_with_query(reverse("dashboard"), section="preview", preview=selected_preview, variation=selected_variation, layout=selected_layout, device=selected_device),
-            "business": build_url_with_query(reverse("dashboard"), section="business", preview=selected_preview, variation=selected_variation, layout=selected_layout, device=selected_device),
-            "services": build_url_with_query(reverse("dashboard"), section="services", preview=selected_preview, variation=selected_variation, layout=selected_layout, device=selected_device),
-            "images": build_url_with_query(reverse("dashboard"), section="images", preview=selected_preview, variation=selected_variation, layout=selected_layout, device=selected_device),
-            "contact": build_url_with_query(reverse("dashboard"), section="contact", preview=selected_preview, variation=selected_variation, layout=selected_layout, device=selected_device),
-            "pages": build_url_with_query(reverse("dashboard"), section="pages", preview=selected_preview, variation=selected_variation, layout=selected_layout, device=selected_device),
-            "upgrade": build_url_with_query(reverse("dashboard"), section="upgrade", preview=selected_preview, variation=selected_variation, layout=selected_layout, device=selected_device),
+            section: dashboard_control_url(section=section)
+            for section in DASHBOARD_SECTIONS
         },
         "preview": {
-            "starter": build_url_with_query(reverse("dashboard"), section=active_section, preview="starter", variation=selected_variation, layout=selected_layout, device=selected_device),
-            "full": build_url_with_query(reverse("dashboard"), section=active_section, preview="full", variation=selected_variation, layout=selected_layout, device=selected_device),
+            "starter": dashboard_control_url(preview="starter"),
+            "full": dashboard_control_url(preview="full"),
         },
         "variation": {
-            "classic": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation="classic", layout=selected_layout, device=selected_device),
-            "modern": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation="modern", layout=selected_layout, device=selected_device),
+            "classic": dashboard_control_url(variation="classic"),
+            "modern": dashboard_control_url(variation="modern"),
         },
         "layout": {
-            "boxed": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation=selected_variation, layout="boxed", device=selected_device),
-            "wide": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation=selected_variation, layout="wide", device=selected_device),
-            "full": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation=selected_variation, layout="full", device=selected_device),
+            "boxed": dashboard_control_url(layout="boxed"),
+            "wide": dashboard_control_url(layout="wide"),
+            "full": dashboard_control_url(layout="full"),
+        },
+        "motion": {
+            "minimal": dashboard_control_url(motion="minimal"),
+            "smooth": dashboard_control_url(motion="smooth"),
+            "dynamic": dashboard_control_url(motion="dynamic"),
         },
         "device": {
-            "desktop": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation=selected_variation, layout=selected_layout, device="desktop"),
-            "tablet": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation=selected_variation, layout=selected_layout, device="tablet"),
-            "mobile": build_url_with_query(reverse("dashboard"), section=active_section, preview=selected_preview, variation=selected_variation, layout=selected_layout, device="mobile"),
+            "desktop": dashboard_control_url(device="desktop"),
+            "tablet": dashboard_control_url(device="tablet"),
+            "mobile": dashboard_control_url(device="mobile"),
         },
     }
     show_product_preview_action = active_section in {"preview", "upgrade"}
@@ -1938,6 +2184,7 @@ def dashboard_view(request):
             "selected_preview": selected_preview,
             "selected_variation": selected_variation,
             "selected_layout": selected_layout,
+            "selected_motion": selected_motion,
             "selected_device": selected_device,
             "starter_preview_url": starter_preview_url,
             "full_preview_url": full_preview_url,
@@ -2047,6 +2294,7 @@ def starter_page_preview_view(request, slug):
             "preview_variation": preview_variation,
             "variation_mode": variation_mode,
             "layout_mode": get_layout_mode(request),
+            "motion_mode": get_motion_mode(request),
             "embed_mode": request.GET.get("embed") == "1",
             **plan_context,
             **variant_context,
@@ -2098,6 +2346,7 @@ def upgrade_placeholder_view(request):
             "preview_variation": preview_variation,
             "variation_mode": variation_mode,
             "layout_mode": get_layout_mode(request),
+            "motion_mode": get_motion_mode(request),
             "embed_mode": request.GET.get("embed") == "1",
             **plan_context,
             **variant_context,
