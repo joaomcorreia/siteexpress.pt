@@ -213,6 +213,35 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(response, 'href="/pt/precos/"', html=False)
         self.assertContains(response, 'href="/pt/politica-de-privacidade/"', html=False)
         self.assertContains(response, 'href="/pt/termos-e-condicoes/"', html=False)
+        self.assertContains(response, 'href="/pt/assistente-ia/"', html=False)
+
+    def test_ai_assistant_service_page_uses_current_public_page_system(self):
+        response = self.client.get("/pt/assistente-ia/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Assistente com inteligência artificial")
+        self.assertContains(response, "Responda aos clientes")
+        self.assertContains(response, "Encaminhamento humano")
+        self.assertContains(response, "Ainda estamos a validar as primeiras implementações")
+        self.assertContains(response, 'href="/pt/contactos/"', html=False)
+
+    def test_ai_assistant_service_is_visible_in_desktop_mobile_and_footer_navigation(self):
+        response = self.client.get("/pt/")
+
+        self.assertGreaterEqual(
+            response.content.decode().count('href="/pt/assistente-ia/"'),
+            3,
+        )
+        self.assertContains(response, "Assistente IA")
+
+    def test_current_legal_pages_cover_ai_assistant_service(self):
+        privacy_response = self.client.get("/pt/politica-de-privacidade/")
+        terms_response = self.client.get("/pt/termos-e-condicoes/")
+
+        self.assertContains(privacy_response, "Assistentes com IA")
+        self.assertContains(privacy_response, "fornecedor de inteligência artificial")
+        self.assertContains(terms_response, "Assistente com IA")
+        self.assertContains(terms_response, "pode cometer erros")
 
     def test_public_menu_exposes_products_customer_area_and_mobile_navigation(self):
         response = self.client.get("/pt/")
