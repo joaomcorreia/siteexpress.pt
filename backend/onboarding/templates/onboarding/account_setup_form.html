@@ -2,6 +2,7 @@
 
 {% block title %}Criar palavra-passe | SiteExpress.pt{% endblock %}
 {% block meta_description %}Crie a palavra-passe para aceder ao seu dashboard e ao preview SiteExpress.{% endblock %}
+{% block analytics %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -19,6 +20,7 @@
     <span class="setup-step">Último passo</span>
     <h1>Crie a sua palavra-passe.</h1>
     <p class="setup-intro">Depois entra automaticamente no dashboard para ver e ajustar o seu preview.</p>
+    <p class="setup-intro"><strong>O seu acesso será feito com:</strong> {{ account_email }}</p>
 
     {% if form.non_field_errors %}
       <div class="setup-errors">{{ form.non_field_errors }}</div>
