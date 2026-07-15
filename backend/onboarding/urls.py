@@ -44,6 +44,12 @@ urlpatterns = [
         name="contact",
     ),
     path(
+        "assistente-ia/",
+        views.public_page_view,
+        {"page_key": "ai-assistant"},
+        name="ai-assistant",
+    ),
+    path(
         "politica-de-privacidade/",
         views.legal_page_view,
         {"page_key": "privacy"},
