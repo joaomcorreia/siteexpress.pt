@@ -8,14 +8,14 @@
     <header class="assistant-panel-header">
       <div>
         <strong>Assistente SiteExpress</strong>
-        <small data-assistant-mode>Modo de demonstração</small>
+        <small data-assistant-mode>Ajuda rápida</small>
       </div>
       <button class="assistant-close" type="button" aria-label="Fechar assistente">×</button>
     </header>
 
     <div class="assistant-messages" aria-live="polite">
       <div class="assistant-message assistant-message-bot">
-        Olá! Posso ajudar com websites, preços, Página Express e cartões de visita.
+        Olá! Sou o assistente da SiteExpress. Em que posso ajudar?
       </div>
     </div>
 
@@ -103,7 +103,7 @@
       if (response.status === 429) clearConversationId();
       if (!response.ok) throw new Error(data.error || "Não foi possível obter uma resposta.");
       saveConversationId(data.conversation_id);
-      modeLabel.textContent = data.mode === "openai" ? `Online · ${data.model}` : "Modo de demonstração";
+      modeLabel.textContent = data.mode === "openai" ? "Online" : "Ajuda rápida";
       addMessage(data.reply, "bot");
     } catch (error) {
       addMessage(error.message || "O assistente está temporariamente indisponível.", "error");
