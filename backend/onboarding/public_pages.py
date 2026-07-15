@@ -6,6 +6,63 @@ catalog gives us one place to review prices, CTAs and claims before a CMS is add
 
 
 PUBLIC_PAGES = {
+    "ai-assistant": {
+        "meta_title": "Assistente com IA para pequenos negócios | SiteExpress.pt",
+        "meta_description": "Assistente com inteligência artificial para responder a perguntas frequentes, recolher pedidos e encaminhar contactos de pequenos negócios em Portugal.",
+        "eyebrow": "Assistente com inteligência artificial",
+        "title": "Responda aos clientes,",
+        "title_emphasis": "mesmo quando está ocupado.",
+        "intro": "Configuramos um assistente com IA com a informação aprovada pelo negócio para responder a perguntas frequentes, recolher pedidos e encaminhar situações que precisam de atendimento humano.",
+        "primary_label": "Pedir demonstração",
+        "primary_route": "contact",
+        "secondary_label": "Ver como funciona",
+        "secondary_route": "how-it-works",
+        "highlights": ["Respostas frequentes", "Recolha de contactos", "Encaminhamento humano", "Utilização acompanhada"],
+        "sections": [
+            {
+                "kicker": "Aplicação prática",
+                "title": "Menos perguntas repetidas. Mais pedidos organizados.",
+                "body": "O assistente pode explicar serviços, horários, zonas atendidas e formas de contacto. Também pode recolher os dados essenciais de um pedido antes de o encaminhar.",
+                "points": [
+                    "Respostas baseadas na informação confirmada pelo negócio",
+                    "Nome, contacto e descrição curta do pedido",
+                    "Indicação clara de que o cliente está a falar com IA",
+                    "Alternativa de contacto humano quando necessário",
+                ],
+            },
+            {
+                "kicker": "Configuração e controlo",
+                "title": "Começamos por um caso de uso simples e seguro.",
+                "body": "Reunimos perguntas reais, definimos os limites das respostas e testamos o assistente antes da ativação. Perguntas sem resposta ajudam a melhorar a informação ao longo do tempo.",
+                "points": [
+                    "Serviços, contactos, horários e perguntas frequentes",
+                    "Testes antes da ativação pública",
+                    "Revisão de utilização e respostas problemáticas",
+                    "Sem confirmação automática de preços ou compromissos",
+                ],
+            },
+            {
+                "kicker": "Uso responsável",
+                "title": "A IA ajuda no primeiro atendimento, não substitui decisões humanas.",
+                "body": "As respostas automáticas podem conter erros. Orçamentos personalizados, marcações, pagamentos, prazos e acordos só ficam confirmados através do processo humano definido pelo negócio.",
+                "points": [
+                    "Sem aconselhamento médico, jurídico ou financeiro",
+                    "Aviso para não enviar palavras-passe ou dados de pagamento",
+                    "Encaminhamento quando não existe resposta segura",
+                    "Informação legal e de privacidade disponível",
+                ],
+            },
+        ],
+        "faqs": [
+            ("O assistente responde a qualquer pergunta?", "Não. É configurado para o contexto aprovado pelo negócio e deve encaminhar perguntas que estejam fora desse âmbito."),
+            ("Pode confirmar preços e marcações?", "Pode apresentar informação previamente aprovada, mas preços personalizados, disponibilidade e compromissos só ficam confirmados pelo processo definido com o negócio."),
+            ("Já existe um preço definitivo?", "Ainda estamos a validar as primeiras implementações. A configuração dependerá dos canais, utilização esperada e quantidade de informação necessária."),
+        ],
+        "cta_title": "Quer perceber se um assistente com IA faz sentido para o seu negócio?",
+        "cta_text": "Explique-nos as perguntas que recebe com mais frequência. Podemos começar por uma demonstração simples antes de definir qualquer plano.",
+        "cta_label": "Falar com a SiteExpress",
+        "cta_route": "contact",
+    },
     "wordpress": {
         "meta_title": "Website WordPress para pequenos negócios | SiteExpress.pt",
         "meta_description": "Website WordPress profissional para pequenos negócios em Portugal, com páginas essenciais, contactos, serviços e estrutura SEO básica.",
@@ -284,7 +341,7 @@ LEGAL_PAGES = {
         "sections": [
             ("Dados recolhidos", "Podemos recolher nome, email, telefone, dados do negócio, conteúdos enviados, informação do projeto e dados técnicos necessários ao funcionamento e segurança do serviço."),
             ("Finalidades", "Os dados são usados para responder a pedidos, preparar pré-visualizações, gerir contas e projetos, prestar suporte, tratar encomendas e cumprir obrigações administrativas ou legais."),
-            ("Assistente digital", "As mensagens enviadas no assistente e a página onde a conversa começou podem ser guardadas para responder, acompanhar utilização e melhorar o serviço. Quando o modo online estiver ativo, o conteúdo necessário à resposta pode ser processado pelo fornecedor de inteligência artificial. Não envie palavras-passe, dados de pagamento ou outros dados sensíveis no chat."),
+            ("Assistentes com IA", "As mensagens enviadas num assistente e a página onde a conversa começou podem ser guardadas para responder, encaminhar pedidos, acompanhar utilização e melhorar o serviço. O conteúdo necessário à resposta pode ser processado pelo fornecedor de inteligência artificial configurado. Não envie palavras-passe, dados de pagamento, informação médica ou outros dados sensíveis no chat."),
             ("Partilha e fornecedores", "Os dados apenas devem ser partilhados com fornecedores necessários à prestação do serviço, como alojamento, email, pagamentos, análise técnica ou produção de materiais, dentro do âmbito necessário."),
             ("Conservação e direitos", "Os dados são mantidos pelo período necessário ao pedido, contrato e obrigações aplicáveis. Pode pedir acesso, correção ou eliminação através de info@siteexpress.pt, quando legalmente aplicável."),
             ("Contacto", "Questões relacionadas com privacidade podem ser enviadas para info@siteexpress.pt."),
@@ -300,6 +357,7 @@ LEGAL_PAGES = {
             ("Revisões e trabalho adicional", "As revisões incluídas devem ser indicadas na proposta. Alterações fora do âmbito, novas páginas, integrações ou reconstruções podem exigir novo orçamento."),
             ("Serviços recorrentes", "Mensalidades, renovação, cancelamento e efeitos sobre alojamento, domínio ou funcionalidades são apresentados antes da ativação do plano."),
             ("Impressão personalizada", "Produção, ficheiros, quantidades, prazos e entrega são confirmados antes de uma encomenda de impressão. Produtos personalizados podem ter condições específicas de cancelamento e devolução."),
+            ("Assistente com IA", "O assistente produz respostas automáticas com base na informação configurada e pode cometer erros. O utilizador deve ser informado de que está a interagir com IA. Orçamentos personalizados, preços, marcações, pagamentos, prazos e compromissos só são válidos depois da confirmação humana ou através de um processo de confirmação expressamente aprovado."),
             ("Contacto", "Dúvidas sobre um pedido ou estes termos podem ser enviadas para info@siteexpress.pt."),
         ],
     },
