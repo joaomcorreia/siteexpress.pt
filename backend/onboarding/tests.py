@@ -989,6 +989,21 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["active_section"], "preview")
         self.assertContains(response, "Area de preview")
+        self.assertContains(
+            response,
+            '<details class="card dashboard-accordion product-card">',
+            html=False,
+        )
+        self.assertContains(
+            response,
+            '<details class="card dashboard-accordion domain-status-card">',
+            html=False,
+        )
+        self.assertContains(
+            response,
+            '<details class="card dashboard-accordion" open>',
+            html=False,
+        )
 
     def test_dashboard_invalid_section_falls_back_to_preview(self):
         user = get_user_model().objects.create_user(username="dashboard-section-invalid", password="secret123")
