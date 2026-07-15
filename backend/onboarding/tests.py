@@ -700,6 +700,7 @@ class OnboardingFlowTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Crie a sua palavra-passe")
+        self.assertContains(response, "cliente@example.com")
         self.assertContains(response, "Guardar e ver o meu preview")
 
     @override_settings(DEBUG=True)
@@ -755,12 +756,29 @@ class OnboardingFlowTests(TestCase):
 
         login_response = self.client.post(
             reverse("login"),
-            data={"username": user.username, "password": "StrongPass123!"},
+            data={"username": user.email, "password": "StrongPass123!"},
         )
         dashboard_response = self.client.get(reverse("dashboard"))
 
         self.assertRedirects(login_response, reverse("dashboard"))
         self.assertEqual(dashboard_response.status_code, 200)
+
+    def test_login_accepts_email_when_internal_username_is_different(self):
+        get_user_model().objects.create_user(
+            username="internal-customer-42",
+            email="customer@example.com",
+            password="StrongPass123!",
+        )
+
+        page_response = self.client.get(reverse("login"))
+        login_response = self.client.post(
+            reverse("login"),
+            data={"username": "customer@example.com", "password": "StrongPass123!"},
+        )
+
+        self.assertContains(page_response, "Use o mesmo email")
+        self.assertContains(page_response, "Email")
+        self.assertRedirects(login_response, reverse("dashboard"))
 
     def test_dashboard_requires_login(self):
         response = self.client.get(reverse("dashboard"))
@@ -2001,6 +2019,31 @@ class OnboardingFlowTests(TestCase):
         self.assertNotContains(starter_response, "Este é o preview da sua primeira presença online")
         self.assertNotContains(full_response, "Preview alargado em preparação no SiteExpress")
         self.assertNotContains(starter_response, "siteexpress/demo/services/classic/")
+
+    def test_guitar_business_uses_instrument_template_preset_and_relevant_services(self):
+        user = get_user_model().objects.create_user(username="guitar-preview", password="secret123")
+        project = self.create_project_for_user(
+            user,
+            business_name="Joe's Guitars",
+            business_type="Reparações de guitarras, customizações, vendas de guitarras e equipamento",
+            city="Gaia",
+            email="joe@example.com",
+        )
+
+        self.client.force_login(user)
+        starter_response = self.client.get(reverse("starter-preview", args=[project.starter_page.slug]))
+        dashboard_response = self.client.get(reverse("dashboard"))
+
+        self.assertTrue(starter_response.context["is_services_template"])
+        self.assertTrue(starter_response.context["is_instrument_template"])
+        self.assertEqual(starter_response.context["industry_preset_label"], "Instrumentos e música")
+        self.assertContains(starter_response, "instrument-variant")
+        self.assertContains(starter_response, "Reparação e personalização de guitarras em Gaia")
+        self.assertContains(starter_response, "Reparação e afinação")
+        self.assertContains(starter_response, "Eletrónica e componentes")
+        self.assertContains(starter_response, "Guitarras e equipamento")
+        self.assertNotContains(starter_response, "siteexpress/demo/services/classic/")
+        self.assertContains(dashboard_response, "Instrumentos e música")
 
     def test_services_homepage_splits_featured_and_remaining_services(self):
         user = get_user_model().objects.create_user(username="services-home-split", password="secret123")
