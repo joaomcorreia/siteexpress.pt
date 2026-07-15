@@ -191,7 +191,7 @@
         .stack { display: grid; gap: 20px; }
         .selection-list {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
             margin-top: 16px;
         }
@@ -460,6 +460,7 @@
             <div>
                 <h1 class="page-title">Dashboard do projeto</h1>
                 <p class="muted">Acompanhe o projeto, atualize os dados principais e reveja o preview do site.</p>
+                <p class="muted">Sessão: {{ request.user.email|default:request.user.username }}</p>
             </div>
             <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
@@ -665,18 +666,22 @@
                                 <summary>
                                     <span class="accordion-heading">
                                         <strong>Area de preview</strong>
-                                        <span class="muted">{{ selected_preview }} · {{ selected_variation }} · {{ selected_motion }}</span>
+                                        <span class="muted">{{ industry_preset_label }} · {{ selected_variation }} · {{ selected_motion }}</span>
                                     </span>
                                 </summary>
                                 <div class="accordion-content">
                                 <p class="muted">Use estes controlos para mudar o tipo de preview, o estilo, o layout e o movimento sem sair do dashboard.</p>
                                 <div class="selection-list">
                                     <div class="selection-chip">
+                                        <strong>Template</strong>
+                                        <span class="muted">{{ industry_preset_label }}</span>
+                                    </div>
+                                    <div class="selection-chip">
                                         <strong>Tipo de preview</strong>
                                         <span class="muted">{{ selected_preview }}</span>
                                     </div>
                                     <div class="selection-chip">
-                                        <strong>Variacao</strong>
+                                        <strong>Estilo visual</strong>
                                         <span class="muted">{{ selected_variation }}</span>
                                     </div>
                                     <div class="selection-chip">
@@ -700,7 +705,7 @@
                                         </div>
                                     </div>
                                     <div class="toolbar-group">
-                                        <strong>Variacao</strong>
+                                        <strong>Estilo visual</strong>
                                         <div class="link-row">
                                             <a class="style-link{% if selected_variation == 'classic' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.classic }}">Classico</a>
                                             <a class="style-link{% if selected_variation == 'modern' %} active-control{% endif %}" href="{{ dashboard_control_urls.variation.modern }}">Moderno</a>
