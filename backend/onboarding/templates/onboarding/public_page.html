@@ -1,0 +1,64 @@
+{% extends "onboarding/public_base.html" %}
+
+{% block title %}{{ page.meta_title }}{% endblock %}
+{% block meta_description %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap page-hero-inner">
+    <span class="eyebrow">{{ page.eyebrow }}</span>
+    <h1>{{ page.title }} <span class="accent">{{ page.title_emphasis }}</span></h1>
+    <p class="lead">{{ page.intro }}</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="{{ page.primary_url }}">{{ page.primary_label }}</a>
+      {% if page.secondary_label %}<a class="btn btn-ghost" href="{{ page.secondary_url }}">{{ page.secondary_label }}</a>{% endif %}
+    </div>
+  </div>
+</section>
+
+{% if page.highlights %}
+<div class="highlight-band">
+  <div class="wrap highlight-row">
+    {% for item in page.highlights %}<span>✓ {{ item }}</span>{% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% for section in page.sections %}
+<section class="content-band{% if forloop.counter|divisibleby:2 %} content-band-soft{% endif %}">
+  <div class="wrap content-row">
+    <div class="content-copy">
+      <span class="kicker">{{ section.kicker }}</span>
+      <h2>{{ section.title }}</h2>
+      <p>{{ section.body }}</p>
+    </div>
+    <ul class="open-list">
+      {% for point in section.points %}<li>{{ point }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endfor %}
+
+{% if page.faqs %}
+<section class="faq-section">
+  <div class="wrap">
+    <div class="section-heading">
+      <span class="kicker">Perguntas frequentes</span>
+      <h2>Antes de avançar</h2>
+    </div>
+    <div class="faq-grid">
+      {% for question, answer in page.faqs %}
+      <article class="faq"><h3>{{ question }}</h3><p>{{ answer }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="closing-section">
+  <div class="wrap closing-row">
+    <div><span class="kicker">Próximo passo</span><h2>{{ page.cta_title }}</h2><p>{{ page.cta_text }}</p></div>
+    <a class="btn btn-primary" href="{{ page.cta_url }}">{{ page.cta_label }}</a>
+  </div>
+</section>
+{% endblock %}

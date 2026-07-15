@@ -81,7 +81,7 @@ class OnboardingFlowTests(TestCase):
             user=user,
             business_profile=profile,
             product_type=overrides.get("product_type", WebsiteProject.ProductType.STARTER_PAGE_MONTHLY),
-            price_snapshot=overrides.get("price_snapshot", "9.95"),
+            price_snapshot=overrides.get("price_snapshot", "19.95"),
             currency=overrides.get("currency", "EUR"),
             billing_type=overrides.get("billing_type", WebsiteProject.BillingType.MONTHLY),
             product_status=overrides.get("product_status", WebsiteProject.ProductStatus.PREVIEW_READY),
@@ -182,29 +182,68 @@ class OnboardingFlowTests(TestCase):
     def test_portuguese_public_landing_route_loads(self):
         response = self.client.get("/pt/")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Cria a tua presença online em poucos passos")
+        self.assertContains(response, "O seu negócio online")
         self.assertContains(response, "Página Express")
-        self.assertContains(response, "Website Completo")
+        self.assertContains(response, "Website Profissional")
 
     def test_portuguese_public_landing_alias_loads(self):
         response = self.client.get("/pt/siteexpress/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "SiteExpress")
-        self.assertContains(response, "Começar agora")
+        self.assertContains(response, "Ver preços")
 
     def test_public_landing_main_ctas_point_to_onboarding(self):
         response = self.client.get("/pt/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'href="/pt/onboarding/"', html=False)
-        self.assertContains(response, "Criar Página Express")
-        self.assertContains(response, "Pedir Website Completo")
+        self.assertContains(response, "Começar")
+        self.assertContains(response, 'href="/pt/sites-wordpress/"', html=False)
+        self.assertContains(response, 'href="/pt/pagina-express/"', html=False)
 
-    def test_public_landing_language_selector_renders_placeholders(self):
+    def test_public_landing_links_to_real_public_and_legal_pages(self):
         response = self.client.get("/pt/")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '>PT<', html=False)
-        self.assertContains(response, 'href="/es/"', html=False)
-        self.assertContains(response, 'href="/en/"', html=False)
+        self.assertContains(response, 'href="/pt/impressao/"', html=False)
+        self.assertContains(response, 'href="/pt/precos/"', html=False)
+        self.assertContains(response, 'href="/pt/politica-de-privacidade/"', html=False)
+        self.assertContains(response, 'href="/pt/termos-e-condicoes/"', html=False)
+
+    def test_public_product_pages_load_with_unique_content(self):
+        expectations = {
+            "website-wordpress": "Um website WordPress claro",
+            "starter-page": "Comece com uma página útil",
+            "how-it-works": "Do negócio ao website",
+            "printing": "Materiais físicos que levam clientes",
+            "business-cards": "Um cartão simples que continua a trabalhar",
+            "contact": "Diga-nos o que o negócio precisa",
+        }
+
+        for route_name, expected_copy in expectations.items():
+            with self.subTest(route_name=route_name):
+                response = self.client.get(reverse(route_name))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, expected_copy)
+                self.assertContains(response, "https://www.clarity.ms/tag/", html=False)
+
+    def test_pricing_page_uses_current_portuguese_prices(self):
+        response = self.client.get(reverse("pricing"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "€19,95")
+        self.assertContains(response, "€225")
+        self.assertContains(response, "€29,95")
+
+    def test_public_legal_pages_load(self):
+        expectations = {
+            "privacy-policy": "Política de Privacidade",
+            "terms": "Termos e Condições",
+            "cookie-policy": "Política de Cookies",
+        }
+
+        for route_name, heading in expectations.items():
+            with self.subTest(route_name=route_name):
+                response = self.client.get(reverse(route_name))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, heading)
 
     def test_non_portuguese_public_routes_show_coming_soon_placeholder(self):
         en_response = self.client.get("/en/")
@@ -341,7 +380,7 @@ class OnboardingFlowTests(TestCase):
         project = WebsiteProject.objects.get()
         self.assertEqual(project.product_type, WebsiteProject.ProductType.STARTER_PAGE_MONTHLY)
         self.assertEqual(project.billing_type, WebsiteProject.BillingType.MONTHLY)
-        self.assertEqual(str(project.price_snapshot), "9.95")
+        self.assertEqual(str(project.price_snapshot), "19.95")
         self.assertEqual(project.product_status, WebsiteProject.ProductStatus.PREVIEW_READY)
         self.assertEqual(project.upgrade_status, WebsiteProject.UpgradeStatus.AVAILABLE)
         self.assertTrue(hasattr(project, "starter_page"))
@@ -359,7 +398,7 @@ class OnboardingFlowTests(TestCase):
         project = WebsiteProject.objects.get()
         self.assertEqual(project.product_type, WebsiteProject.ProductType.FULL_WEBSITE_ONETIME)
         self.assertEqual(project.billing_type, WebsiteProject.BillingType.ONE_TIME)
-        self.assertEqual(str(project.price_snapshot), "235.00")
+        self.assertEqual(str(project.price_snapshot), "225.00")
         self.assertEqual(project.product_status, WebsiteProject.ProductStatus.PREVIEW_READY)
         self.assertEqual(project.upgrade_status, WebsiteProject.UpgradeStatus.NOT_APPLICABLE)
         self.assertEqual(project.status, WebsiteProject.Status.WORDPRESS_DRAFT_READY)

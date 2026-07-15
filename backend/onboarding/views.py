@@ -1,4 +1,5 @@
 import logging
+from copy import deepcopy
 from datetime import timedelta
 from decimal import Decimal
 from urllib.parse import urlencode
@@ -38,6 +39,7 @@ from .models import (
     WebsiteProject,
     WordPressSiteDraft,
 )
+from .public_pages import LEGAL_PAGES, PRICING_PAGE, PUBLIC_PAGES
 
 logger = logging.getLogger(__name__)
 
@@ -593,7 +595,7 @@ def configure_project_product(project):
     if project.product_type == WebsiteProject.ProductType.FULL_WEBSITE_ONETIME:
         project.plan_interest = WebsiteProject.PlanInterest.STANDARD_FULL_WEBSITE
         project.billing_type = WebsiteProject.BillingType.ONE_TIME
-        project.price_snapshot = Decimal("235.00")
+        project.price_snapshot = Decimal("225.00")
         project.currency = "EUR"
         project.product_status = WebsiteProject.ProductStatus.PREVIEW_READY
         project.upgrade_status = WebsiteProject.UpgradeStatus.NOT_APPLICABLE
@@ -603,7 +605,7 @@ def configure_project_product(project):
     else:
         project.plan_interest = WebsiteProject.PlanInterest.STARTER_MONTHLY
         project.billing_type = WebsiteProject.BillingType.MONTHLY
-        project.price_snapshot = Decimal("9.95")
+        project.price_snapshot = Decimal("19.95")
         project.currency = "EUR"
         project.product_status = WebsiteProject.ProductStatus.PREVIEW_READY
         project.upgrade_status = WebsiteProject.UpgradeStatus.AVAILABLE
@@ -752,7 +754,7 @@ def build_product_summary(project):
         return {
             "title_pt": "Website Completo",
             "description_pt": "Um website WordPress completo, com mais paginas, melhor estrutura e preparado para crescer.",
-            "price_pt": "€235 + IVA",
+            "price_pt": "€225 + IVA",
             "status_pt": status_labels.get(project.product_status, project.get_product_status_display()),
             "review_note_pt": "A area de revisao do cliente fica preparada enquanto a ponte WordPress real nao estiver ligada.",
             "show_upgrade_card": False,
@@ -763,7 +765,7 @@ def build_product_summary(project):
     return {
         "title_pt": "Página Express",
         "description_pt": "Uma pagina rapida para comecar, ideal para ter presenca online e partilhar com clientes.",
-        "price_pt": "€9,95/mês + IVA",
+        "price_pt": "€19,95/mês + IVA",
         "status_pt": status_labels.get(project.product_status, project.get_product_status_display()),
         "review_note_pt": "A pagina express ja usa o fluxo atual de Starter Page e pode evoluir para um website completo.",
         "show_upgrade_card": True,
@@ -1292,6 +1294,81 @@ def siteexpress_landing_view(request):
         request,
         "onboarding/siteexpress_landing.html",
         {
+            "language_code": language_code,
+            "language_links": language_links,
+        },
+    )
+
+
+def _siteexpress_public_language_context():
+    language_code = (translation.get_language() or settings.LANGUAGE_CODE or "pt")[:2]
+    return language_code, [
+        {"code": "pt", "label": "PT", "url": "/pt/", "active": language_code == "pt"},
+        {"code": "es", "label": "ES", "url": "/es/", "active": language_code == "es"},
+        {"code": "en", "label": "EN", "url": "/en/", "active": language_code == "en"},
+    ]
+
+
+def _resolve_public_page_routes(page):
+    page = deepcopy(page)
+    for prefix in ("primary", "secondary", "cta"):
+        route = page.get(f"{prefix}_route")
+        if route:
+            page[f"{prefix}_url"] = reverse(route)
+    for offer in page.get("offers", []):
+        if offer.get("route"):
+            offer["url"] = reverse(offer["route"])
+    return page
+
+
+def public_page_view(request, page_key):
+    language_code, language_links = _siteexpress_public_language_context()
+    if language_code != "pt":
+        return render(
+            request,
+            "onboarding/siteexpress_language_placeholder.html",
+            {"language_code": language_code, "language_links": language_links},
+        )
+
+    page = _resolve_public_page_routes(PUBLIC_PAGES[page_key])
+    return render(
+        request,
+        "onboarding/public_page.html",
+        {"page": page, "language_code": language_code, "language_links": language_links},
+    )
+
+
+def pricing_view(request):
+    language_code, language_links = _siteexpress_public_language_context()
+    if language_code != "pt":
+        return render(
+            request,
+            "onboarding/siteexpress_language_placeholder.html",
+            {"language_code": language_code, "language_links": language_links},
+        )
+
+    page = _resolve_public_page_routes(PRICING_PAGE)
+    return render(
+        request,
+        "onboarding/public_pricing.html",
+        {"page": page, "language_code": language_code, "language_links": language_links},
+    )
+
+
+def legal_page_view(request, page_key):
+    language_code, language_links = _siteexpress_public_language_context()
+    if language_code != "pt":
+        return render(
+            request,
+            "onboarding/siteexpress_language_placeholder.html",
+            {"language_code": language_code, "language_links": language_links},
+        )
+
+    return render(
+        request,
+        "onboarding/public_legal.html",
+        {
+            "page": LEGAL_PAGES[page_key],
             "language_code": language_code,
             "language_links": language_links,
         },

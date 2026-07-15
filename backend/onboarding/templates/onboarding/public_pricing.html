@@ -1,0 +1,37 @@
+{% extends "onboarding/public_base.html" %}
+
+{% block title %}{{ page.meta_title }}{% endblock %}
+{% block meta_description %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-compact">
+  <div class="wrap page-hero-inner">
+    <span class="eyebrow">{{ page.eyebrow }}</span>
+    <h1>{{ page.title }} <span class="accent">{{ page.title_emphasis }}</span></h1>
+    <p class="lead">{{ page.intro }}</p>
+  </div>
+</section>
+
+<section class="pricing-section">
+  <div class="wrap pricing-grid">
+    {% for offer in page.offers %}
+    <article class="price-plan{% if offer.featured %} price-plan-featured{% endif %}">
+      {% if offer.featured %}<span class="plan-label">Mais completo</span>{% endif %}
+      <h2>{{ offer.name }}</h2>
+      <div class="price-value">{{ offer.price }} <small>{{ offer.suffix }}</small></div>
+      <p>{{ offer.description }}</p>
+      <ul>{% for feature in offer.features %}<li>{{ feature }}</li>{% endfor %}</ul>
+      <a class="btn {% if offer.featured %}btn-primary{% else %}btn-ghost{% endif %}" href="{{ offer.url }}">{{ offer.label }}</a>
+    </article>
+    {% endfor %}
+  </div>
+  <div class="wrap pricing-note">{{ page.note }}</div>
+</section>
+
+<section class="closing-section">
+  <div class="wrap closing-row">
+    <div><span class="kicker">Ainda não sabe qual escolher?</span><h2>Comece pela informação do negócio.</h2><p>A pré-visualização ajuda a perceber se uma página chega ou se o projeto precisa de uma estrutura completa.</p></div>
+    <a class="btn btn-primary" href="{% url 'onboarding' %}">Começar agora</a>
+  </div>
+</section>
+{% endblock %}

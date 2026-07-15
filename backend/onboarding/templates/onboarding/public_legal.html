@@ -1,0 +1,22 @@
+{% extends "onboarding/public_base.html" %}
+
+{% block title %}{{ page.meta_title }}{% endblock %}
+{% block meta_description %}{{ page.intro }}{% endblock %}
+
+{% block content %}
+<section class="legal-hero">
+  <div class="wrap legal-wrap">
+    <span class="eyebrow">Informação</span>
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.intro }}</p>
+    <p class="updated">Última atualização: 14 de julho de 2026</p>
+  </div>
+</section>
+<section class="legal-content">
+  <div class="wrap legal-wrap">
+    {% for heading, body in page.sections %}
+    <section class="legal-section"><h2>{{ heading }}</h2><p>{{ body }}</p></section>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% load static %}
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
+        <p>Websites rápidos, Páginas Express e apoio simples para pequenos negócios em Portugal.</p>
+        <div class="footer-contact"><a href="mailto:info@siteexpress.pt">info@siteexpress.pt</a></div>
+        <div class="footer-note">Uma presença online preparada para crescer.</div>
+      </div>
+
+      <nav class="footer-col" aria-label="Websites">
+        <h3>Websites</h3>
+        <ul>
+          <li><a href="{% url 'starter-page' %}">Página Express</a></li>
+          <li><a href="{% url 'website-wordpress' %}">Website WordPress</a></li>
+          <li><a href="{% url 'how-it-works' %}">Como funciona</a></li>
+          <li><a href="{% url 'pricing' %}">Preços</a></li>
+          <li><a href="{% url 'onboarding' %}">Começar</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Impressão e serviços">
+        <h3>Impressão / Serviços</h3>
+        <ul>
+          <li><a href="{% url 'printing' %}">Impressão</a></li>
+          <li><a href="{% url 'business-cards' %}">Cartões de visita</a></li>
+          <li><a href="{% url 'contact' %}">Pedir outro produto</a></li>
+          <li><a href="{% url 'contact' %}">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Informação legal">
+        <h3>Informação</h3>
+        <ul>
+          <li><a href="{% url 'privacy-policy' %}">Política de Privacidade</a></li>
+          <li><a href="{% url 'terms' %}">Termos e Condições</a></li>
+          <li><a href="{% url 'cookie-policy' %}">Política de Cookies</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 SiteExpress.pt. Todos os direitos reservados.</div>
+      <div class="footer-platform">SiteExpress.pt é uma plataforma Just Code Works.</div>
+    </div>
+  </div>
+</footer>

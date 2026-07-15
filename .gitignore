@@ -12,4 +12,5 @@ backend/.tmp*.log
 .agents/
 venv/
 .venv/
+.test-deps/
 backend/media/uploads/

@@ -1,0 +1,18 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SiteExpress.pt{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Websites e apoio digital para pequenos negócios em Portugal.{% endblock %}">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="{% static 'core/css/siteexpress-public.css' %}">
+  {% include "onboarding/_siteexpress_clarity.html" %}
+</head>
+<body>
+  {% include "onboarding/_public_header.html" %}
+  <main>{% block content %}{% endblock %}</main>
+  {% include "onboarding/_public_footer.html" %}
+</body>
+</html>

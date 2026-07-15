@@ -131,15 +131,7 @@
   {% include "onboarding/_siteexpress_clarity.html" %}
 </head>
 <body>
-  <header class="topbar">
-    <div class="wrap nav">
-      <a class="brand" href="#top" aria-label="SiteExpress.pt">
-        <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
-      </a>
-      <nav class="links" aria-label="Navegação principal"><a href="#servicos">Serviços</a><a href="#visibilidade">Visibilidade</a><a href="#impressao">Impressão</a><a href="#pacotes">Pacotes</a><a href="#contacto">Contacto</a></nav>
-      <a class="btn btn-primary" href="#contacto">Pedir proposta</a>
-    </div>
-  </header>
+  {% include "onboarding/_public_header.html" %}
 
   <main id="top">
     <section class="hero">
@@ -148,7 +140,7 @@
           <div class="eyebrow">Websites rápidos para negócios locais</div>
           <h1>O seu negócio online, <span class="accent">sem perder semanas.</span></h1>
           <p class="lead">SiteExpress cria páginas starter e websites WordPress para negócios locais. Comece simples, mostre os serviços certos, receba contactos e evolua para catálogo, loja, línguas ou promoção quando fizer sentido.</p>
-          <div class="actions"><a class="btn btn-primary" href="#pacotes">Ver pacotes</a><a class="btn btn-ghost" href="#visibilidade">Ver extras de visibilidade</a></div>
+          <div class="actions"><a class="btn btn-primary" href="{% url 'pricing' %}">Ver preços</a><a class="btn btn-ghost" href="{% url 'how-it-works' %}">Como funciona</a></div>
           <div class="pills"><span class="pill">✓ WordPress</span><span class="pill">✓ SEO local básico</span><span class="pill">✓ WhatsApp e formulário</span><span class="pill">✓ Preparado para crescer</span></div>
         </div>
         <div class="hero-preview" aria-label="Pré-visualização de website">
@@ -162,8 +154,8 @@
       <div class="wrap">
         <div class="head"><span class="kicker">O que fazemos</span><h2>Uma base digital limpa para empresas pequenas que precisam aparecer e receber pedidos.</h2><p>Primeiro colocamos a presença online a funcionar. Depois adicionamos páginas, conteúdos e ferramentas quando isso trouxer valor real.</p></div>
         <div class="cards">
-          <article class="card"><span class="num">01</span><h3>Página Starter</h3><p>Uma página rápida para apresentar o negócio, serviços principais, contacto, WhatsApp, localização e chamada para ação.</p></article>
-          <article class="card"><span class="num">02</span><h3>Website WordPress</h3><p>Website profissional com páginas essenciais, serviços detalhados, galeria ou portfólio, formulário e estrutura SEO básica.</p></article>
+          <article class="card"><span class="num">01</span><h3><a href="{% url 'starter-page' %}">Página Express</a></h3><p>Uma página rápida para apresentar o negócio, serviços principais, contacto, WhatsApp, localização e chamada para ação.</p></article>
+          <article class="card"><span class="num">02</span><h3><a href="{% url 'website-wordpress' %}">Website WordPress</a></h3><p>Website profissional com páginas essenciais, serviços detalhados, galeria ou portfólio, formulário e estrutura SEO básica.</p></article>
           <article class="card"><span class="num">03</span><h3>Catálogo ou loja</h3><p>Quando o negócio estiver pronto, podemos adicionar produtos, pedidos, catálogo, pagamentos ou funcionalidades mais específicas.</p></article>
         </div>
       </div>
@@ -190,7 +182,7 @@
       <div class="wrap">
         <div class="head"><span class="kicker">Impressão e presença local</span><h2>Materiais simples para ligar o mundo físico ao website.</h2><p>Cartões, flyers, QR codes e outros materiais gráficos ajudam clientes a encontrar o seu website, guardar contactos e pedir informações com menos atrito.</p></div>
         <div class="print-grid" aria-label="Produtos de impressão SiteExpress">
-          <article class="print-card tall"><span class="tag">Principal</span><img class="print-card-media" src="{% static 'core/img/siteexpress/cartoes-de-visita.jpg' %}" alt="Cartões de visita"><b>Cartões de visita</b><p>Cartões com website, telefone, email, WhatsApp e QR code para entregar a clientes, parceiros e contactos locais.</p></article>
+          <a class="print-card tall" href="{% url 'business-cards' %}"><span class="tag">Principal</span><img class="print-card-media" src="{% static 'core/img/siteexpress/cartoes-de-visita.jpg' %}" alt="Cartões de visita"><b>Cartões de visita</b><p>Cartões com website, telefone, email, WhatsApp e QR code para entregar a clientes, parceiros e contactos locais.</p></a>
           <article class="print-card"><span class="tag">Divulgação</span><b>Flyers</b><p>Para divulgar serviços, promoções locais, inaugurações ou campanhas porta a porta.</p></article>
           <article class="print-card"><span class="tag">QR</span><b>Autocolantes QR</b><p>Para montras, balcões, embalagens, recibos ou viaturas apontarem para o site.</p></article>
           <article class="print-card"><span class="tag">Restauração</span><b>Menus e brochuras</b><p>Uma ponte simples para cafés, restaurantes, estética, oficinas e serviços locais.</p></article>
@@ -217,9 +209,9 @@
       <div class="wrap">
         <div class="head"><span class="kicker">Pacotes iniciais</span><h2>Começar pequeno, crescer com estrutura.</h2><p>Opções simples para começar online com uma presença profissional e preparada para crescer.</p></div>
         <div class="plans">
-          <article class="plan"><h3>Página Starter</h3><div class="amount">€19,95 <small>/ mês</small></div><p>Para negócios que precisam estar online sem construir um site completo logo de início.</p><ul><li>Uma página de apresentação</li><li>Serviços principais e contacto</li><li>WhatsApp e formulário simples</li><li>Boa opção para lançamento rápido</li></ul><a class="btn btn-ghost" href="#contacto">Quero começar</a></article>
-          <article class="plan featured"><h3>Website Profissional</h3><div class="amount">€225 <small>+ IVA</small></div><p>Base completa para negócios locais que querem uma presença mais séria.</p><ul><li>Website WordPress profissional</li><li>Páginas essenciais e serviços</li><li>SEO básico e estrutura local</li><li>Preparado para suporte e extras</li></ul><a class="btn btn-primary" href="#contacto">Pedir website</a></article>
-          <article class="plan"><h3>Manutenção</h3><div class="amount">€29,95 <small>/ mês</small></div><p>Para quem quer ajuda contínua sem mexer em áreas técnicas do website.</p><ul><li>Manutenção básica</li><li>Pequenas alterações combinadas</li><li>Ajuda com conteúdo e páginas</li><li>Extras pagos quando necessário</li></ul><a class="btn btn-ghost" href="#contacto">Falar connosco</a></article>
+          <article class="plan"><h3>Página Express</h3><div class="amount">€19,95 <small>/ mês</small></div><p>Para negócios que precisam estar online sem construir um site completo logo de início.</p><ul><li>Uma página de apresentação</li><li>Serviços principais e contacto</li><li>WhatsApp e formulário simples</li><li>Boa opção para lançamento rápido</li></ul><a class="btn btn-ghost" href="{% url 'starter-page' %}">Ver Página Express</a></article>
+          <article class="plan featured"><h3>Website Profissional</h3><div class="amount">€225 <small>+ IVA</small></div><p>Base completa para negócios locais que querem uma presença mais séria.</p><ul><li>Website WordPress profissional</li><li>Páginas essenciais e serviços</li><li>SEO básico e estrutura local</li><li>Preparado para suporte e extras</li></ul><a class="btn btn-primary" href="{% url 'website-wordpress' %}">Ver website</a></article>
+          <article class="plan"><h3>Manutenção</h3><div class="amount">€29,95 <small>/ mês</small></div><p>Para quem quer ajuda contínua sem mexer em áreas técnicas do website.</p><ul><li>Manutenção básica</li><li>Pequenas alterações combinadas</li><li>Ajuda com conteúdo e páginas</li><li>Extras pagos quando necessário</li></ul><a class="btn btn-ghost" href="{% url 'contact' %}">Falar connosco</a></article>
         </div>
         <div class="addons" aria-label="Extras SiteExpress">
           <div class="addon"><b>Facebook Posts</b><p>Posts prontos para publicar. Ideal para lançar o website e manter a página ativa.</p></div>
@@ -244,62 +236,11 @@
 
     <section id="contacto">
       <div class="wrap">
-        <div class="cta"><div><span class="kicker">Contacto</span><h2>Tem um negócio local? Vamos pôr uma base online decente a funcionar.</h2><p>Envie o nome do negócio, localidade, tipo de serviço e diga se precisa de página starter, website completo, Facebook posts ou materiais gráficos como cartões, flyers ou QR codes.</p></div><a class="btn btn-primary" href="mailto:info@siteexpress.pt?subject=Pedido%20SiteExpress.pt">Enviar pedido</a></div>
+        <div class="cta"><div><span class="kicker">Contacto</span><h2>Tem um negócio local? Vamos pôr uma base online decente a funcionar.</h2><p>Envie o nome do negócio, localidade, tipo de serviço e diga se precisa de Página Express, website completo, Facebook posts ou materiais gráficos como cartões, flyers ou QR codes.</p></div><a class="btn btn-primary" href="{% url 'contact' %}">Enviar pedido</a></div>
       </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="wrap">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
-          <p>Websites rápidos, páginas starter e apoio simples para negócios locais que querem começar online com uma presença profissional.</p>
-          <div class="footer-contact">
-            <a href="mailto:info@siteexpress.pt">info@siteexpress.pt</a>
-          </div>
-          <div class="footer-note">Criado para pequenos negócios em Portugal.</div>
-        </div>
-
-        <nav class="footer-col" aria-label="Produto">
-          <h3>Produto</h3>
-          <ul>
-            <li><a href="#pacotes">Página Starter</a></li>
-            <li><a href="#servicos">Websites</a></li>
-            <li><a href="#servicos">Serviços</a></li>
-            <li><a href="#pacotes">Preços</a></li>
-            <li><a href="#contacto">Pedir proposta</a></li>
-          </ul>
-        </nav>
-
-        <nav class="footer-col" aria-label="Planos e serviços">
-          <h3>Planos / Serviços</h3>
-          <ul>
-            <li><a href="#pacotes">Página Starter</a></li>
-            <li><a href="#servicos">Website profissional</a></li>
-            <li><a href="#visibilidade">Google, Bing e visibilidade</a></li>
-            <li><a href="#visibilidade">Facebook Posts</a></li>
-            <li><a href="#pacotes">Catálogo / Loja online</a></li>
-          </ul>
-        </nav>
-
-        <nav class="footer-col" aria-label="Empresa e legal">
-          <h3>Empresa / Legal</h3>
-          <ul>
-            <li><a href="#contacto">Contacto</a></li>
-            <li><a href="#contacto">Parceiros</a></li>
-            <li><span class="disabled-link" aria-disabled="true">Política de Privacidade</span></li>
-            <li><span class="disabled-link" aria-disabled="true">Termos</span></li>
-            <li><span class="disabled-link" aria-disabled="true">Política de Cookies</span></li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="footer-bottom">
-        <div>© 2026 SiteExpress.pt. Todos os direitos reservados.</div>
-        <div class="footer-platform">SiteExpress.pt é uma plataforma Just Code Works.</div>
-      </div>
-    </div>
-  </footer>
+  {% include "onboarding/_public_footer.html" %}
 </body>
 </html>

@@ -1,0 +1,16 @@
+{% load static %}
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="{% url 'siteexpress-landing' %}" aria-label="SiteExpress.pt — início">
+      <img class="brand-logo" src="{% static 'core/img/siteexpress/logo.png' %}" alt="Site Express">
+    </a>
+    <nav class="links" aria-label="Navegação principal">
+      <a href="{% url 'website-wordpress' %}">Websites</a>
+      <a href="{% url 'how-it-works' %}">Como funciona</a>
+      <a href="{% url 'printing' %}">Impressão</a>
+      <a href="{% url 'pricing' %}">Preços</a>
+      <a href="{% url 'contact' %}">Contacto</a>
+    </nav>
+    <a class="btn btn-primary nav-cta" href="{% url 'onboarding' %}">Começar</a>
+  </div>
+</header>
