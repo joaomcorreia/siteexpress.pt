@@ -26,7 +26,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 
-from .assistant import generate_assistant_reply
+from .assistant import generate_assistant_reply, generate_demo_reply
 from .forms import (
     BusinessProfileForm,
     DashboardBusinessInfoForm,
@@ -1465,10 +1465,7 @@ def assistant_chat_view(request):
         result = generate_assistant_reply(history)
     except Exception:
         logger.exception("SiteExpress assistant request failed")
-        return JsonResponse(
-            {"error": "O assistente está temporariamente indisponível. Tente novamente ou use a página Contactos."},
-            status=503,
-        )
+        result = generate_demo_reply(message, model="siteexpress-demo-fallback")
 
     reply = (result.get("text") or "").strip()
     if not reply:
