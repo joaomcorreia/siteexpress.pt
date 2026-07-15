@@ -142,7 +142,7 @@
         .stack { display: grid; gap: 20px; }
         .selection-list {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 12px;
             margin-top: 16px;
         }
@@ -602,7 +602,7 @@
                         {% if active_section == 'preview' %}
                             <section class="card">
                                 <h2>Area de preview</h2>
-                                <p class="muted">Use estes controlos para mudar o tipo de preview, a variacao e o layout sem sair do dashboard.</p>
+                                <p class="muted">Use estes controlos para mudar o tipo de preview, o estilo, o layout e o movimento sem sair do dashboard.</p>
                                 <div class="selection-list">
                                     <div class="selection-chip">
                                         <strong>Tipo de preview</strong>
@@ -615,6 +615,10 @@
                                     <div class="selection-chip">
                                         <strong>Layout</strong>
                                         <span class="muted">{{ selected_layout }}</span>
+                                    </div>
+                                    <div class="selection-chip">
+                                        <strong>Movimento</strong>
+                                        <span class="muted">{{ selected_motion }}</span>
                                     </div>
                                 </div>
 
@@ -641,6 +645,14 @@
                                             <a class="style-link{% if selected_layout == 'boxed' %} active-control{% endif %}" href="{{ dashboard_control_urls.layout.boxed }}">Em caixa</a>
                                             <a class="style-link{% if selected_layout == 'wide' %} active-control{% endif %}" href="{{ dashboard_control_urls.layout.wide }}">Largo</a>
                                             <a class="style-link{% if selected_layout == 'full' %} active-control{% endif %}" href="{{ dashboard_control_urls.layout.full }}">Completo</a>
+                                        </div>
+                                    </div>
+                                    <div class="toolbar-group">
+                                        <strong>Movimento</strong>
+                                        <div class="link-row">
+                                            <a class="style-link{% if selected_motion == 'minimal' %} active-control{% endif %}" href="{{ dashboard_control_urls.motion.minimal }}">Mínimo</a>
+                                            <a class="style-link{% if selected_motion == 'smooth' %} active-control{% endif %}" href="{{ dashboard_control_urls.motion.smooth }}">Suave</a>
+                                            <a class="style-link{% if selected_motion == 'dynamic' %} active-control{% endif %}" href="{{ dashboard_control_urls.motion.dynamic }}">Dinâmico</a>
                                         </div>
                                     </div>
                                     <div class="toolbar-group">
