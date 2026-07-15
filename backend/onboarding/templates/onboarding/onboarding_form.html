@@ -1,317 +1,151 @@
-{% load i18n %}
-<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:'pt' }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Onboarding SiteExpress</title>
-    <style>
-        :root {
-            --ink: #172033;
-            --muted: #5f6c84;
-            --line: #d8e0eb;
-            --paper: #f5f7fb;
-            --card: #ffffff;
-            --brand: #b42318;
-            --brand-dark: #7a1f19;
-        }
-        body {
-            margin: 0;
-            font-family: Georgia, serif;
-            background: linear-gradient(180deg, #fbfcfe 0%, #eef3f8 100%);
-            color: var(--ink);
-        }
-        .wrap {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 32px 20px 64px;
-        }
-        .card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 28px;
-            box-shadow: 0 18px 45px rgba(22, 32, 51, 0.08);
-        }
-        h1, h2 {
-            margin-top: 0;
-        }
-        .intro {
-            margin-bottom: 24px;
-        }
-        .grid {
-            display: grid;
-            gap: 18px;
-        }
-        .grid.two {
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        }
-        .section {
-            padding-top: 8px;
-            border-top: 1px solid var(--line);
-        }
-        .banner {
-            margin-bottom: 18px;
-            padding: 14px 16px;
-            border-radius: 14px;
-            border: 1px solid #d8e4c3;
-            background: #f6fbef;
-        }
-        .banner strong {
-            display: block;
-            margin-bottom: 4px;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 700;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #c7d2e2;
-            border-radius: 10px;
-            box-sizing: border-box;
-            font: inherit;
-            background: #fff;
-        }
-        .helptext {
-            display: block;
-            margin-top: 6px;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-        .errors {
-            margin: 8px 0 0;
-            color: #a61b1b;
-            font-size: 0.95rem;
-        }
-        .actions {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-            margin-top: 24px;
-        }
-        button {
-            border: 0;
-            border-radius: 999px;
-            padding: 14px 24px;
-            font: inherit;
-            font-weight: 700;
-            color: #fff;
-            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
-            cursor: pointer;
-        }
-        .hint {
-            color: var(--muted);
-        }
-        .hidden {
-            display: none;
-        }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
-            margin-top: 18px;
-        }
-        .product-option {
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 18px;
-            background: #fbfcfe;
-        }
-        .product-option label {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            margin: 0;
-            cursor: pointer;
-        }
-        .product-option input[type="radio"] {
-            width: auto;
-            margin-top: 3px;
-        }
-        @media (max-width: 720px) {
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="wrap">
-        <div class="card">
-            <div class="intro">
-                <h1>Criar projeto SiteExpress</h1>
-                <p>Os dados deste onboarding vao ser usados no preview da Página Express e na preparacao do Website Completo.</p>
-            </div>
-            {% if partner_banner %}
-                <div class="banner">
-                    <strong>{{ partner_banner }}</strong>
-                    <div class="hint">O codigo do parceiro ja foi aplicado a este pedido.</div>
-                    {% if locked_partner %}
-                        <div class="hint">{{ locked_partner.company_name }} - {{ locked_partner.partner_code }}</div>
-                    {% endif %}
-                </div>
-            {% endif %}
+{% extends "onboarding/public_base.html" %}
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+{% block title %}Começar o meu website | SiteExpress.pt{% endblock %}
+{% block meta_description %}Diga-nos o essencial sobre o seu negócio para prepararmos o primeiro preview.{% endblock %}
 
-                {% if profile_form.non_field_errors or project_form.non_field_errors %}
-                    <div class="errors">
-                        {{ profile_form.non_field_errors }}
-                        {{ project_form.non_field_errors }}
-                    </div>
-                {% endif %}
+{% block extra_head %}
+<style>
+  .flow-page{padding:clamp(42px,7vw,84px) 0 90px;background:radial-gradient(circle at 8% 0,rgba(4,106,56,.13),transparent 32rem),var(--bg)}
+  .flow-shell{width:min(880px,calc(100% - 28px));margin:auto}
+  .flow-heading{max-width:720px;margin:0 auto 28px;text-align:center}.flow-heading h1{font-size:clamp(2.25rem,5vw,4rem);letter-spacing:-.06em}.flow-heading p{color:var(--muted);font-size:1.08rem}
+  .flow-card{padding:clamp(24px,5vw,44px);border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow)}
+  .step-label{display:inline-flex;margin-bottom:12px;color:var(--primary);font-size:.78rem;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
+  .flow-section{padding:0 0 30px;margin-bottom:30px;border-bottom:1px solid var(--line)}.flow-section h2{font-size:1.55rem;letter-spacing:-.035em;margin:0 0 5px}.section-note{margin:0 0 20px;color:var(--muted)}
+  .flow-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.flow-field-wide{grid-column:1/-1}
+  .flow-field label{display:block;margin-bottom:6px;font-weight:900}.flow-field input,.flow-field textarea,.flow-field select{width:100%;min-height:50px;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}.flow-field input:focus,.flow-field textarea:focus,.flow-field select:focus{outline:3px solid rgba(4,106,56,.12);border-color:var(--primary)}
+  .helptext{display:block;margin-top:6px;color:var(--muted);font-size:.86rem}.errors,.errorlist{margin:7px 0 0;padding:0;list-style:none;color:#a12a22;font-size:.9rem;font-weight:750}.form-errors{margin-bottom:22px;padding:13px 15px;border:1px solid #e5b7b2;border-radius:10px;background:#fff0ee}
+  .product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.product-option{position:relative}.product-option input{position:absolute;opacity:0;pointer-events:none}.product-option label{display:block;height:100%;padding:20px;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;transition:.15s ease}.product-option label:hover{border-color:#9ec1a4}.product-option input:checked+label{border-color:var(--primary);background:#f1f8ee;box-shadow:0 0 0 3px rgba(4,106,56,.08)}.product-option strong{display:block;font-size:1.12rem}.product-option p{margin:7px 0;color:var(--muted)}.product-price{color:var(--primary);font-weight:950}
+  .optional{margin-top:22px;border:1px solid var(--line);border-radius:13px;background:#fff}.optional summary{padding:15px 17px;cursor:pointer;font-weight:900}.optional-content{padding:2px 17px 18px}
+  .partner-banner{margin-bottom:24px;padding:14px 16px;border:1px solid #bcd6b7;border-radius:12px;background:#f1f8ee}.partner-banner strong{display:block}.partner-banner span{color:var(--muted)}
+  .flow-actions{display:flex;align-items:center;gap:16px}.flow-actions .btn{border:0;cursor:pointer;font:inherit}.flow-actions small{color:var(--muted)}
+  @media(max-width:680px){.flow-grid,.product-grid{grid-template-columns:1fr}.flow-field-wide{grid-column:auto}.flow-actions{display:grid}.flow-actions .btn{width:100%}}
+</style>
+{% endblock %}
 
-                <div class="section">
-                    <h2>Dados do negocio</h2>
-                    <div class="grid two">
-                        {% for field in profile_form %}
-                            {% if field.name == "target_country" or field.name == "target_city" or field.name == "target_region" or field.name == "target_audience" or field.name == "target_language" %}
-                            {% else %}
-                                <div>
-                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                    {{ field }}
-                                    {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
-                                    {% if field.errors %}<div class="errors">{{ field.errors }}</div>{% endif %}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
+{% block content %}
+<section class="flow-page">
+  <div class="flow-shell">
+    <header class="flow-heading">
+      <span class="eyebrow">Começar é simples</span>
+      <h1>Conte-nos o essencial sobre o seu negócio.</h1>
+      <p>Com estes dados preparamos uma primeira versão. Pode completar e alterar tudo mais tarde no dashboard.</p>
+    </header>
 
-                <div class="section">
-                    <h2>Mercado-alvo</h2>
-                    <div class="grid two">
-                        {% for field in profile_form %}
-                            {% if field.name == "target_country" or field.name == "target_city" or field.name == "target_region" or field.name == "target_audience" or field.name == "target_language" %}
-                                <div>
-                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                    {{ field }}
-                                    {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
-                                    {% if field.errors %}<div class="errors">{{ field.errors }}</div>{% endif %}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Escolha o produto</h2>
-                    {% if project_form.product_type.errors %}<div class="errors">{{ project_form.product_type.errors }}</div>{% endif %}
-                    <div class="product-grid">
-                        <div class="product-option">
-                            <label for="id_product_type_0">
-                                <input
-                                    type="radio"
-                                    name="product_type"
-                                    value="starter_page_monthly"
-                                    id="id_product_type_0"
-                                    {% if project_form.product_type.value == "starter_page_monthly" or not project_form.product_type.value %}checked{% endif %}
-                                >
-                                <span>
-                                    <strong>Página Express</strong><br>
-                                    Uma pagina rapida para comecar, ideal para ter presenca online e partilhar com clientes.<br>
-                                    <span class="hint">€19,95/mês + IVA</span>
-                                </span>
-                            </label>
-                        </div>
-                        <div class="product-option">
-                            <label for="id_product_type_1">
-                                <input
-                                    type="radio"
-                                    name="product_type"
-                                    value="full_website_onetime"
-                                    id="id_product_type_1"
-                                    {% if project_form.product_type.value == "full_website_onetime" %}checked{% endif %}
-                                >
-                                <span>
-                                    <strong>Website Completo</strong><br>
-                                    Um website WordPress completo, com mais paginas, melhor estrutura e preparado para crescer.<br>
-                                    <span class="hint">€225 + IVA</span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Parceiro SiteExpress ou recomendacao</h2>
-                    <div class="grid two">
-                        <div>
-                            <label for="{{ project_form.partner_code.id_for_label }}">{{ project_form.partner_code.label }}</label>
-                            {{ project_form.partner_code }}
-                            {% if project_form.partner_code.help_text %}<span class="helptext">{{ project_form.partner_code.help_text }}</span>{% endif %}
-                            <span class="helptext">Se nao recebeu nenhum codigo, deixe este campo em branco.</span>
-                            {% if project_form.partner_code.errors %}<div class="errors">{{ project_form.partner_code.errors }}</div>{% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Configuração do domínio</h2>
-                    <div class="grid two">
-                        <div>
-                            <label for="{{ project_form.domain_choice.id_for_label }}">Opção de domínio</label>
-                            {{ project_form.domain_choice }}
-                            {% if project_form.domain_choice.errors %}<div class="errors">{{ project_form.domain_choice.errors }}</div>{% endif %}
-                        </div>
-                        <div id="existing-domain-group">
-                            <label for="{{ project_form.existing_domain.id_for_label }}">Domínio atual</label>
-                            {{ project_form.existing_domain }}
-                            {% if project_form.existing_domain.errors %}<div class="errors">{{ project_form.existing_domain.errors }}</div>{% endif %}
-                        </div>
-                        <div id="preferred-domain-group">
-                            <label for="{{ project_form.preferred_domain.id_for_label }}">Domínio pretendido</label>
-                            {{ project_form.preferred_domain }}
-                            {% if project_form.preferred_domain.errors %}<div class="errors">{{ project_form.preferred_domain.errors }}</div>{% endif %}
-                        </div>
-                        <div id="alternative-domain-1-group">
-                            <label for="{{ project_form.alternative_domain_1.id_for_label }}">Domínio alternativo 1</label>
-                            {{ project_form.alternative_domain_1 }}
-                            {% if project_form.alternative_domain_1.errors %}<div class="errors">{{ project_form.alternative_domain_1.errors }}</div>{% endif %}
-                        </div>
-                        <div id="alternative-domain-2-group">
-                            <label for="{{ project_form.alternative_domain_2.id_for_label }}">Domínio alternativo 2</label>
-                            {{ project_form.alternative_domain_2 }}
-                            {% if project_form.alternative_domain_2.errors %}<div class="errors">{{ project_form.alternative_domain_2.errors }}</div>{% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button type="submit">Criar projeto</button>
-                    <span class="hint">O preview da Página Express e criado primeiro. O Website Completo fica preparado para o passo seguinte.</span>
-                </div>
-            </form>
+    <div class="flow-card">
+      {% if partner_banner %}
+        <div class="partner-banner">
+          <strong>{{ partner_banner }}</strong>
+          <span>{% if locked_partner %}{{ locked_partner.company_name }} · {{ locked_partner.partner_code }}{% else %}O código já foi aplicado.{% endif %}</span>
         </div>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if profile_form.non_field_errors or project_form.non_field_errors %}
+          <div class="form-errors">
+            {{ profile_form.non_field_errors }}
+            {{ project_form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <section class="flow-section">
+          <span class="step-label">Passo 1 de 2</span>
+          <h2>O seu negócio</h2>
+          <p class="section-note">Só precisamos do necessário para criar a conta e orientar o primeiro preview.</p>
+          <div class="flow-grid">
+            <div class="flow-field">
+              <label for="{{ profile_form.business_name.id_for_label }}">{{ profile_form.business_name.label }}</label>
+              {{ profile_form.business_name }}
+              {{ profile_form.business_name.errors }}
+            </div>
+            <div class="flow-field">
+              <label for="{{ profile_form.business_type.id_for_label }}">{{ profile_form.business_type.label }}</label>
+              {{ profile_form.business_type }}
+              <span class="helptext">Pode indicar vários serviços separados por vírgulas.</span>
+              {{ profile_form.business_type.errors }}
+            </div>
+            <div class="flow-field">
+              <label for="{{ profile_form.city.id_for_label }}">{{ profile_form.city.label }}</label>
+              {{ profile_form.city }}
+              <span class="helptext">A zona onde pretende encontrar clientes.</span>
+              {{ profile_form.city.errors }}
+            </div>
+            <div class="flow-field">
+              <label for="{{ profile_form.email.id_for_label }}">{{ profile_form.email.label }}</label>
+              {{ profile_form.email }}
+              <span class="helptext">Será usado para criar o acesso ao dashboard.</span>
+              {{ profile_form.email.errors }}
+            </div>
+            <div class="flow-field">
+              <label for="{{ profile_form.phone.id_for_label }}">{{ profile_form.phone.label }} <span class="helptext" style="display:inline">(opcional)</span></label>
+              {{ profile_form.phone }}
+              {{ profile_form.phone.errors }}
+            </div>
+          </div>
+
+          <details class="optional">
+            <summary>Adicionar detalhes opcionais</summary>
+            <div class="optional-content flow-grid">
+              <div class="flow-field">
+                <label for="{{ profile_form.whatsapp.id_for_label }}">{{ profile_form.whatsapp.label }}</label>
+                {{ profile_form.whatsapp }}
+                {{ profile_form.whatsapp.errors }}
+              </div>
+              <div class="flow-field">
+                <label for="{{ profile_form.logo.id_for_label }}">{{ profile_form.logo.label }}</label>
+                {{ profile_form.logo }}
+                {{ profile_form.logo.errors }}
+              </div>
+              <div class="flow-field">
+                <label for="{{ profile_form.preferred_colors.id_for_label }}">Cores preferidas</label>
+                {{ profile_form.preferred_colors }}
+                <span class="helptext">Ex.: verde e branco. Pode deixar em branco.</span>
+                {{ profile_form.preferred_colors.errors }}
+              </div>
+              {% if not locked_partner %}
+                <div class="flow-field">
+                  <label for="{{ project_form.partner_code.id_for_label }}">Código de parceiro</label>
+                  {{ project_form.partner_code }}
+                  <span class="helptext">Apenas se recebeu um código.</span>
+                  {{ project_form.partner_code.errors }}
+                </div>
+              {% endif %}
+            </div>
+          </details>
+        </section>
+
+        <section class="flow-section">
+          <span class="step-label">Passo 2 de 2</span>
+          <h2>Que tipo de presença precisa?</h2>
+          <p class="section-note">Se ainda tiver dúvidas, pode escolher agora e alterar depois de ver o preview.</p>
+          {{ project_form.product_type.errors }}
+          <div class="product-grid">
+            <div class="product-option">
+              <input type="radio" name="product_type" value="starter_page_monthly" id="id_product_type_0" {% if project_form.product_type.value == "starter_page_monthly" or not project_form.product_type.value %}checked{% endif %}>
+              <label for="id_product_type_0">
+                <strong>Página simples</strong>
+                <p>Uma página rápida com o essencial: negócio, serviços e contactos.</p>
+                <span class="product-price">€19,95/mês + IVA</span>
+              </label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product_type" value="full_website_onetime" id="id_product_type_1" {% if project_form.product_type.value == "full_website_onetime" %}checked{% endif %}>
+              <label for="id_product_type_1">
+                <strong>Website completo</strong>
+                <p>Várias páginas para explicar melhor a empresa e cada serviço importante.</p>
+                <span class="product-price">€225 + IVA</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <div class="flow-actions">
+          <button class="btn btn-primary" type="submit">Criar a minha primeira versão</button>
+          <small>Não precisa de escolher domínio nem pagar nesta etapa.</small>
+        </div>
+      </form>
     </div>
-    <script>
-        (function () {
-            var choiceField = document.getElementById("{{ project_form.domain_choice.id_for_label }}");
-            var existingGroup = document.getElementById("existing-domain-group");
-            var preferredGroup = document.getElementById("preferred-domain-group");
-            var altOneGroup = document.getElementById("alternative-domain-1-group");
-            var altTwoGroup = document.getElementById("alternative-domain-2-group");
-
-            function syncDomainFields() {
-                var value = choiceField ? choiceField.value : "";
-                var showExisting = value === "already_have_domain";
-                var showRequested = value === "need_help";
-
-                existingGroup.classList.toggle("hidden", !showExisting);
-                preferredGroup.classList.toggle("hidden", !showRequested);
-                altOneGroup.classList.toggle("hidden", !showRequested);
-                altTwoGroup.classList.toggle("hidden", !showRequested);
-            }
-
-            if (choiceField) {
-                choiceField.addEventListener("change", syncDomainFields);
-                syncDomainFields();
-            }
-        }());
-    </script>
-</body>
-</html>
+  </div>
+</section>
+{% endblock %}
