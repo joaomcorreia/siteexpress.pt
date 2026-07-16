@@ -12,6 +12,7 @@
   .build-steps{list-style:none;padding:0;margin:0;display:grid;gap:13px}.build-steps li{color:#7f99a8;display:flex;gap:10px;align-items:center}.build-steps li::before{content:"";width:10px;height:10px;border:2px solid currentColor;border-radius:50%}.build-steps li.is-active{color:#fff}.build-steps li.is-done{color:#efb06c}.build-steps li.is-done::before{background:currentColor}
   .build-preview{background:#fff;box-shadow:0 18px 55px rgba(15,35,49,.14);min-height:760px}.build-preview iframe{display:block;width:100%;height:calc(100vh - 90px);min-height:760px;border:0;background:#fff}
   .build-complete{margin-top:22px;padding-top:18px;border-top:1px solid #31505f}.build-complete[hidden]{display:none}.build-complete a{display:inline-block;background:#ef8f2f;color:#10202b;padding:11px 15px;text-decoration:none;font-weight:800}
+  .build-feedback{display:grid;gap:10px;margin-top:18px}.build-feedback textarea{width:100%;min-height:92px;padding:11px;border:1px solid #55717f;background:#fff;color:#10202b;resize:vertical}.build-feedback button{border:0;background:#ef8f2f;color:#10202b;padding:11px 15px;font-weight:800;cursor:pointer}.build-feedback button:disabled{opacity:.65}.build-feedback-reply{font-size:.9rem;color:#fff!important;margin:2px 0 0}
   @media(max-width:850px){.build-shell{grid-template-columns:1fr}.build-status{position:static}.build-preview iframe{height:720px;min-height:720px}}
 </style>
 <main class="build-experience">
@@ -26,7 +27,13 @@
       </ol>
       <div class="build-complete" data-build-complete hidden>
         <strong>A primeira versão está pronta 😊</strong>
-        <p>Já pode explorar a página. A seguir poderá alterar textos, imagens, cores e secções.</p>
+        <p>É esta a ideia que procurava? Se quiser mudar alguma coisa, explique o que pretende e altero apenas essa parte.</p>
+        <form class="build-feedback" data-build-feedback>
+          {% csrf_token %}
+          <textarea maxlength="1200" placeholder="Ex.: Gosto da página, mas quero um título mais simples." required></textarea>
+          <button type="submit">Aplicar alteração</button>
+          <p class="build-feedback-reply" data-build-feedback-reply hidden></p>
+        </form>
         <a href="{% url 'onboarding' %}">Guardar e continuar</a>
       </div>
     </aside>
@@ -41,6 +48,8 @@
   const progress=document.querySelector('[data-build-progress]');
   const steps=[...document.querySelectorAll('[data-build-steps] li')];
   const complete=document.querySelector('[data-build-complete]');
+  const feedback=document.querySelector('[data-build-feedback]');
+  const feedbackReply=document.querySelector('[data-build-feedback-reply]');
   const base="{{ preview_url|escapejs }}";
   let stage=0;
   const advance=()=>{
@@ -52,6 +61,23 @@
   };
   steps[0]?.classList.add('is-active');
   window.setTimeout(advance,650);
+  feedback.addEventListener('submit',async(event)=>{
+    event.preventDefault();
+    const textarea=feedback.querySelector('textarea');
+    const button=feedback.querySelector('button');
+    const message=textarea.value.trim();
+    if(!message)return;
+    button.disabled=true;button.textContent='A alterar…';feedbackReply.hidden=true;
+    try{
+      const response=await fetch('{% url "assistant-site-build-revision" build.public_id %}',{
+        method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRFToken':feedback.querySelector('[name=csrfmiddlewaretoken]').value},body:JSON.stringify({message})
+      });
+      const data=await response.json();
+      if(!response.ok)throw new Error(data.error||'Não foi possível aplicar a alteração.');
+      frame.src=data.preview_url;feedbackReply.textContent=data.reply;feedbackReply.hidden=false;textarea.value='';
+    }catch(error){feedbackReply.textContent=error.message;feedbackReply.hidden=false;}
+    finally{button.disabled=false;button.textContent='Aplicar alteração';}
+  });
 })();
 </script>
 {% endblock %}

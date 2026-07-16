@@ -16,8 +16,8 @@ Informação confirmada:
 - Manutenção opcional: €29,95 por mês + IVA.
 - A SiteExpress também prepara materiais impressos; nesta primeira fase destacamos cartões de visita.
 - O processo e a automação de impressão ainda estão em desenvolvimento.
-- Depois do onboarding no botão Começar, os dados fornecidos são usados para gerar um preview
-  visual da Página Express e preparar o preview do website completo no dashboard.
+- Quando já souber a atividade e pelo menos um serviço concreto, pode propor uma pré-visualização
+  visual criada diretamente a partir da conversa. O sistema pede confirmação antes de a abrir.
 
 Regras de conversa:
 - Se a mensagem for apenas uma saudação ou conversa casual, responda naturalmente numa frase,
@@ -37,9 +37,8 @@ Regras de conversa:
   perceber a oferta e cria conteúdo mais relevante para pesquisas locais, sem garantir posições no Google.
 - Se a pessoa mostrar receio de tecnologia, tempo ou dificuldade, tranquilize-a: basta explicar o negócio
   e o que quer mostrar; a SiteExpress e o assistente ajudam a organizar a estrutura e a preparar os textos.
-- Com base no que já foi dito na conversa, pode oferecer-se para preparar imediatamente, dentro do chat,
-  uma primeira proposta de páginas, serviços e textos. Para criar o preview visual real, encaminhe depois
-  para o botão Começar e explique que será necessário confirmar os dados no onboarding.
+- Quando a pessoa pedir um exemplo ou uma pré-visualização e já tiver explicado o negócio, diga que pode
+  preparar uma proposta visual agora. Nunca diga que o preview só está disponível no botão Começar.
 - Nunca diga que já criou, publicou ou mostrou um preview visual quando isso ainda não aconteceu.
 - Encaminhe novos visitantes para o botão Começar ou para /pt/onboarding/. Nunca os envie diretamente
   para /pt/onboarding/account-setup/: essa página exige um link privado criado depois do onboarding.
@@ -49,6 +48,8 @@ Regras de conversa:
   pedir contacto, ou quando a informação necessária não estiver disponível.
 - Evite listas e formatação Markdown quando uma frase simples for suficiente.
 - Faça no máximo uma pergunta de cada vez, e apenas quando ajudar a conversa a avançar.
+- Não repita apenas a saudação. Se a pessoa voltar a cumprimentar ou enviar apenas "?", ajude a conversa
+  a avançar com uma pergunta concreta e curta sobre o negócio ou sobre a página que pretende criar.
 
 Exemplo de abordagem para uma pessoa não técnica com vários serviços:
 "Temos duas opções: uma página rápida com a informação essencial e um site mais completo, com várias
@@ -270,3 +271,45 @@ def analyze_assistant_build(history):
     if raw.startswith("```"):
         raw = raw.strip("`").removeprefix("json").strip()
     return _clean_build_analysis(json.loads(raw))
+
+
+BUILD_REVISION_INSTRUCTIONS = """
+Atualize uma pré-visualização de Página Express segundo o pedido do cliente. Responda APENAS com
+JSON válido e mantenha exatamente os campos e serviços que o cliente não pediu para alterar.
+Não invente preços, garantias, experiência, contactos, qualificações ou localizações.
+
+Formato:
+{
+  "business_name": "",
+  "business_type": "",
+  "location": "",
+  "headline": "",
+  "intro": "",
+  "services": [{"title": "", "description": ""}],
+  "about": "",
+  "cta": ""
+}
+Use português europeu e texto curto, natural e próprio para uma página comercial.
+""".strip()
+
+
+def revise_assistant_build(build_data, request_text):
+    if not settings.OPENAI_API_KEY or settings.SITEEXPRESS_ASSISTANT_MODE == "demo":
+        raise RuntimeError("AI site revision is not available.")
+    from openai import OpenAI
+
+    response = OpenAI(api_key=settings.OPENAI_API_KEY).responses.create(
+        model=settings.SITEEXPRESS_ASSISTANT_MODEL,
+        instructions=BUILD_REVISION_INSTRUCTIONS,
+        input=(
+            "VERSÃO ATUAL:\n"
+            f"{json.dumps(build_data, ensure_ascii=False)}\n\n"
+            f"ALTERAÇÃO PEDIDA:\n{request_text}"
+        ),
+        max_output_tokens=900,
+        store=False,
+    )
+    raw = (response.output_text or "").strip()
+    if raw.startswith("```"):
+        raw = raw.strip("`").removeprefix("json").strip()
+    return _clean_build_analysis({"ready": True, "category": "local_service", **json.loads(raw)})
