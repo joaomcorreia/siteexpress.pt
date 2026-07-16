@@ -2113,6 +2113,20 @@ def assistant_site_build_revision_view(request, public_id):
     message = " ".join(str(payload.get("message") or "").split())
     if not message:
         return JsonResponse({"error": "Explique o que gostaria de alterar."}, status=400)
+    normalized_message = message.casefold()
+    expanded_content_terms = (
+        "mais conteúdo", "mais conteudo", "mais informação", "mais informacao",
+        "mais detalhes", "mais texto", "dizer mais", "falar mais", "explicar mais",
+    )
+    if any(term in normalized_message for term in expanded_content_terms):
+        return JsonResponse({
+            "reply": (
+                "Esta é uma primeira pré-visualização, por isso mantive o conteúdo mais curto. "
+                "Depois da ativação, o seu assistente poderá ajudar a desenvolver essa parte e "
+                "adicionar mais conteúdo consigo."
+            ),
+            "preview_url": "",
+        })
     current = {
         "business_name": build.business_name,
         "business_type": build.business_type,
