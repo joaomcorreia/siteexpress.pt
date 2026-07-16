@@ -472,7 +472,9 @@ class OnboardingFlowTests(TestCase):
             {"stage": 3},
         )
         self.assertEqual(build_page.status_code, 200)
-        self.assertContains(build_page, "A construir a sua página")
+        self.assertContains(build_page, "Assistente SiteExpress")
+        self.assertContains(build_page, "A construir consigo")
+        self.assertContains(build_page, "data-build-feedback", html=False)
         self.assertContains(preview, "Pintura de interiores")
         self.assertContains(preview, "Pedir orçamento")
 
@@ -504,6 +506,27 @@ class OnboardingFlowTests(TestCase):
         build.refresh_from_db()
         self.assertEqual(build.content["headline"], "Uma casa com novas cores")
         self.assertContains(self.client.get(response.json()["preview_url"]), "Uma casa com novas cores")
+
+    def test_assistant_explains_extended_content_after_activation(self):
+        conversation = AssistantConversation.objects.create()
+        build = AssistantSiteBuild.objects.create(
+            conversation=conversation,
+            business_type="Pintura",
+            content={"headline": "Pintura cuidada", "services": [{"title": "Interiores", "description": "Paredes."}]},
+        )
+        session = self.client.session
+        session["assistant_site_builds"] = [str(build.public_id)]
+        session.save()
+
+        response = self.client.post(
+            reverse("assistant-site-build-revision", args=[build.public_id]),
+            data=json.dumps({"message": "Acho que devia dizer mais sobre este serviço"}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("primeira pré-visualização", response.json()["reply"])
+        self.assertIn("Depois da ativação", response.json()["reply"])
+        self.assertEqual(response.json()["preview_url"], "")
 
     def test_assistant_visual_build_is_not_available_to_another_session(self):
         conversation = AssistantConversation.objects.create()
