@@ -1,83 +1,118 @@
-{% extends "onboarding/public_base.html" %}
-
-{% block title %}A construir a sua Página Express | SiteExpress{% endblock %}
-
-{% block content %}
-<style>
-  .build-experience{min-height:calc(100vh - 150px);background:#eef3f7;padding:28px 18px 44px}
-  .build-shell{width:min(1440px,100%);margin:auto;display:grid;grid-template-columns:280px minmax(0,1fr);gap:22px}
-  .build-status{background:#102c3c;color:#fff;padding:26px;align-self:start;position:sticky;top:20px}
-  .build-status h1{font-size:1.55rem;margin:0 0 10px}.build-status p{color:#cbdbe4;line-height:1.55}
-  .build-progress{height:7px;background:#284859;margin:24px 0 20px;overflow:hidden}.build-progress span{display:block;height:100%;width:0;background:#ef8f2f;transition:width .45s ease}
-  .build-steps{list-style:none;padding:0;margin:0;display:grid;gap:13px}.build-steps li{color:#7f99a8;display:flex;gap:10px;align-items:center}.build-steps li::before{content:"";width:10px;height:10px;border:2px solid currentColor;border-radius:50%}.build-steps li.is-active{color:#fff}.build-steps li.is-done{color:#efb06c}.build-steps li.is-done::before{background:currentColor}
-  .build-preview{background:#fff;box-shadow:0 18px 55px rgba(15,35,49,.14);min-height:760px}.build-preview iframe{display:block;width:100%;height:calc(100vh - 90px);min-height:760px;border:0;background:#fff}
-  .build-complete{margin-top:22px;padding-top:18px;border-top:1px solid #31505f}.build-complete[hidden]{display:none}.build-complete a{display:inline-block;background:#ef8f2f;color:#10202b;padding:11px 15px;text-decoration:none;font-weight:800}
-  .build-feedback{display:grid;gap:10px;margin-top:18px}.build-feedback textarea{width:100%;min-height:92px;padding:11px;border:1px solid #55717f;background:#fff;color:#10202b;resize:vertical}.build-feedback button{border:0;background:#ef8f2f;color:#10202b;padding:11px 15px;font-weight:800;cursor:pointer}.build-feedback button:disabled{opacity:.65}.build-feedback-reply{font-size:.9rem;color:#fff!important;margin:2px 0 0}
-  @media(max-width:850px){.build-shell{grid-template-columns:1fr}.build-status{position:static}.build-preview iframe{height:720px;min-height:720px}}
-</style>
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>A construir a sua Página Express | SiteExpress</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:#e9eef2;color:#13242e}
+    .build-experience{min-height:100vh;padding:16px}
+    .build-shell{width:100%;display:grid;grid-template-columns:380px minmax(0,1fr);gap:16px;align-items:start}
+    .assistant-workspace{position:sticky;top:16px;height:calc(100vh - 32px);display:flex;flex-direction:column;background:#102c3c;color:#fff;box-shadow:0 16px 42px rgba(15,35,49,.18);overflow:hidden}
+    .assistant-header{display:flex;justify-content:space-between;gap:18px;align-items:center;padding:20px 22px;background:#0b2230;border-bottom:1px solid #294858}
+    .assistant-identity{display:flex;gap:12px;align-items:center}.assistant-mark{display:grid;place-items:center;width:42px;height:42px;background:#ef8f2f;color:#10202b;font-weight:900}.assistant-header strong{display:block}.assistant-header small{display:block;margin-top:3px;color:#9fc0d1}.assistant-live{display:flex;align-items:center;gap:7px;color:#a9c6d5;font-size:.76rem}.assistant-live::before{content:"";width:8px;height:8px;border-radius:50%;background:#54d18b}
+    .assistant-conversation{flex:1;overflow:auto;padding:20px 18px;display:flex;flex-direction:column;gap:12px}.assistant-message{max-width:92%;padding:12px 14px;line-height:1.5;font-size:.93rem}.assistant-message-bot{align-self:flex-start;background:#1d4153;color:#eef8fc}.assistant-message-user{align-self:flex-end;background:#ef8f2f;color:#172630}.assistant-message-error{align-self:flex-start;background:#71393d;color:#fff}.assistant-message[hidden]{display:none}
+    .build-state{margin:2px 0 5px;padding:15px;background:#0c2532;border:1px solid #315566}.build-state-label{display:flex;justify-content:space-between;gap:15px;font-size:.78rem;color:#b3cad6}.build-progress{height:6px;background:#284859;margin:12px 0 15px;overflow:hidden}.build-progress span{display:block;height:100%;width:0;background:#ef8f2f;transition:width .45s ease}.build-steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px}.build-steps li{color:#7895a4;font-size:.78rem;display:flex;gap:7px;align-items:center}.build-steps li::before{content:"";width:7px;height:7px;border:1px solid currentColor;border-radius:50%}.build-steps li.is-active{color:#fff}.build-steps li.is-done{color:#efb06c}.build-steps li.is-done::before{background:currentColor}
+    .assistant-form{padding:15px 18px 18px;border-top:1px solid #294858;background:#0b2230}.assistant-form textarea{display:block;width:100%;min-height:82px;padding:12px;border:1px solid #426273;background:#fff;color:#10202b;resize:vertical;font:inherit}.assistant-form button{width:100%;margin-top:9px;border:0;background:#ef8f2f;color:#10202b;padding:12px 15px;font-weight:900;cursor:pointer}.assistant-form button:disabled,.assistant-form textarea:disabled{opacity:.58;cursor:not-allowed}.assistant-form small{display:block;margin-top:8px;color:#7f9dac;line-height:1.4}
+    .build-actions{display:flex;gap:8px;padding:0 18px 16px;background:#0b2230}.build-actions a{flex:1;text-align:center;padding:10px;text-decoration:none;font-weight:800;font-size:.85rem}.build-actions .continue{background:#fff;color:#10202b}.build-actions .back{border:1px solid #496877;color:#d8e7ee}
+    .build-preview{width:100%;min-height:100vh;background:#fff;box-shadow:0 16px 42px rgba(15,35,49,.14);overflow:hidden}.build-preview iframe{display:block;width:100%;height:100vh;min-height:100vh;border:0;background:#fff;overflow:hidden}
+    @media(max-width:1050px){.build-shell{grid-template-columns:330px minmax(0,1fr)}}
+    @media(max-width:800px){.build-experience{padding:0}.build-shell{grid-template-columns:1fr}.assistant-workspace{position:relative;top:0;height:auto;min-height:620px}.assistant-conversation{max-height:460px}.build-preview iframe{min-height:760px}.build-actions{padding-bottom:18px}}
+  </style>
+</head>
+<body>
 <main class="build-experience">
   <div class="build-shell">
-    <aside class="build-status">
-      <p class="eyebrow">SiteExpress em ação</p>
-      <h1>A construir a sua página</h1>
-      <p>Estamos a transformar a conversa numa primeira proposta visual. Pode acompanhar cada parte a aparecer.</p>
-      <div class="build-progress" aria-hidden="true"><span data-build-progress></span></div>
-      <ol class="build-steps" data-build-steps>
-        <li>Estrutura da página</li><li>Apresentação principal</li><li>Serviços</li><li>Sobre o negócio</li><li>Contactos</li><li>Acabamentos finais</li>
-      </ol>
-      <div class="build-complete" data-build-complete hidden>
-        <strong>A primeira versão está pronta 😊</strong>
-        <p>É esta a ideia que procurava? Se quiser mudar alguma coisa, explique o que pretende e altero apenas essa parte.</p>
-        <form class="build-feedback" data-build-feedback>
-          {% csrf_token %}
-          <textarea maxlength="1200" placeholder="Ex.: Gosto da página, mas quero um título mais simples." required></textarea>
-          <button type="submit">Aplicar alteração</button>
-          <p class="build-feedback-reply" data-build-feedback-reply hidden></p>
-        </form>
-        <a href="{% url 'onboarding' %}">Guardar e continuar</a>
+    <aside class="assistant-workspace" aria-label="Assistente SiteExpress">
+      <header class="assistant-header">
+        <div class="assistant-identity"><span class="assistant-mark">SE</span><div><strong>Assistente SiteExpress</strong><small>A construir consigo</small></div></div>
+        <span class="assistant-live">Online</span>
+      </header>
+      <div class="assistant-conversation" data-build-conversation aria-live="polite">
+        <div class="assistant-message assistant-message-bot">Já comecei a transformar a nossa conversa numa primeira proposta visual. Pode acompanhar a página a aparecer aqui ao lado.</div>
+        <div class="build-state">
+          <div class="build-state-label"><strong data-build-state-text>A preparar estrutura</strong><span data-build-percent>0%</span></div>
+          <div class="build-progress" aria-hidden="true"><span data-build-progress></span></div>
+          <ol class="build-steps" data-build-steps>
+            <li>Estrutura</li><li>Apresentação</li><li>Serviços</li><li>Sobre</li><li>Contactos</li><li>Acabamentos</li>
+          </ol>
+        </div>
+        <div class="assistant-message assistant-message-bot" data-build-ready-message hidden>A primeira versão está pronta 😊 É esta a ideia que procurava? Diga-me o que gostaria de manter ou alterar.</div>
+      </div>
+      <form class="assistant-form" data-build-feedback>
+        {% csrf_token %}
+        <textarea maxlength="1200" placeholder="Ex.: Gosto da página, mas quero um título mais simples." disabled required></textarea>
+        <button type="submit" disabled>Aguardar pela página…</button>
+        <small>Esta é uma primeira proposta. Pode pedir alterações sem recomeçar.</small>
+      </form>
+      <div class="build-actions">
+        <a class="back" href="{% url 'siteexpress-landing' %}">Voltar</a>
+        <a class="continue" href="{% url 'onboarding' %}">Guardar e continuar</a>
       </div>
     </aside>
     <section class="build-preview" aria-label="Pré-visualização em construção">
-      <iframe data-build-frame src="{{ preview_url }}?stage=0" title="A sua Página Express"></iframe>
+      <iframe data-build-frame src="{{ preview_url }}?stage=0" title="A sua Página Express" scrolling="no"></iframe>
     </section>
   </div>
 </main>
 <script>
 (() => {
   const frame=document.querySelector('[data-build-frame]');
+  const preview=document.querySelector('.build-preview');
   const progress=document.querySelector('[data-build-progress]');
+  const percent=document.querySelector('[data-build-percent]');
+  const stateText=document.querySelector('[data-build-state-text]');
   const steps=[...document.querySelectorAll('[data-build-steps] li')];
-  const complete=document.querySelector('[data-build-complete]');
+  const readyMessage=document.querySelector('[data-build-ready-message]');
+  const conversation=document.querySelector('[data-build-conversation]');
   const feedback=document.querySelector('[data-build-feedback]');
-  const feedbackReply=document.querySelector('[data-build-feedback-reply]');
+  const textarea=feedback.querySelector('textarea');
+  const button=feedback.querySelector('button');
   const base="{{ preview_url|escapejs }}";
+  const labels=['A preparar estrutura','A criar apresentação','A organizar serviços','A preparar a história','A adicionar contactos','A terminar acabamentos','Página pronta'];
   let stage=0;
-  const advance=()=>{
-    stage+=1;
-    frame.src=`${base}?stage=${stage}`;
-    progress.style.width=`${Math.round(stage/6*100)}%`;
-    steps.forEach((item,index)=>{item.classList.toggle('is-done',index<stage);item.classList.toggle('is-active',index===stage);});
-    if(stage<6){window.setTimeout(advance,900);}else{complete.hidden=false;}
+
+  const resizePreview=()=>{
+    try{
+      const doc=frame.contentDocument;
+      const height=Math.max(doc.documentElement.scrollHeight,doc.body.scrollHeight,window.innerHeight);
+      frame.style.height=`${height}px`;
+      preview.style.minHeight=`${height}px`;
+    }catch(error){frame.style.height='100vh';}
   };
-  steps[0]?.classList.add('is-active');
-  window.setTimeout(advance,650);
+  frame.addEventListener('load',()=>{window.setTimeout(resizePreview,80);window.setTimeout(resizePreview,450);});
+  window.addEventListener('resize',resizePreview);
+
+  const finish=()=>{
+    readyMessage.hidden=false;
+    textarea.disabled=false;button.disabled=false;button.textContent='Enviar ao assistente';
+    conversation.scrollTop=conversation.scrollHeight;
+    textarea.focus();
+  };
+  const advance=()=>{
+    stage+=1;frame.src=`${base}?stage=${stage}`;
+    const value=Math.round(stage/6*100);progress.style.width=`${value}%`;percent.textContent=`${value}%`;stateText.textContent=labels[stage];
+    steps.forEach((item,index)=>{item.classList.toggle('is-done',index<stage);item.classList.toggle('is-active',index===stage);});
+    if(stage<6)window.setTimeout(advance,900);else finish();
+  };
+  steps[0]?.classList.add('is-active');window.setTimeout(advance,650);
+
+  const addMessage=(content,role)=>{
+    const item=document.createElement('div');item.className=`assistant-message assistant-message-${role}`;item.textContent=content;conversation.appendChild(item);conversation.scrollTop=conversation.scrollHeight;return item;
+  };
   feedback.addEventListener('submit',async(event)=>{
-    event.preventDefault();
-    const textarea=feedback.querySelector('textarea');
-    const button=feedback.querySelector('button');
-    const message=textarea.value.trim();
-    if(!message)return;
-    button.disabled=true;button.textContent='A alterar…';feedbackReply.hidden=true;
+    event.preventDefault();const message=textarea.value.trim();if(!message)return;
+    addMessage(message,'user');textarea.value='';textarea.disabled=true;button.disabled=true;button.textContent='A analisar…';
     try{
       const response=await fetch('{% url "assistant-site-build-revision" build.public_id %}',{
         method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRFToken':feedback.querySelector('[name=csrfmiddlewaretoken]').value},body:JSON.stringify({message})
       });
-      const data=await response.json();
-      if(!response.ok)throw new Error(data.error||'Não foi possível aplicar a alteração.');
-      frame.src=data.preview_url;feedbackReply.textContent=data.reply;feedbackReply.hidden=false;textarea.value='';
-    }catch(error){feedbackReply.textContent=error.message;feedbackReply.hidden=false;}
-    finally{button.disabled=false;button.textContent='Aplicar alteração';}
+      const data=await response.json();if(!response.ok)throw new Error(data.error||'Não foi possível responder.');
+      addMessage(data.reply,'bot');if(data.preview_url)frame.src=data.preview_url;
+    }catch(error){addMessage(error.message,'error');}
+    finally{textarea.disabled=false;button.disabled=false;button.textContent='Enviar ao assistente';textarea.focus();}
   });
 })();
 </script>
-{% endblock %}
+</body>
+</html>
