@@ -68,6 +68,8 @@ urlpatterns = [
         name="cookie-policy",
     ),
     path("assistant/chat/", views.assistant_chat_view, name="assistant-chat"),
+    path("assistant/construir/<uuid:public_id>/", views.assistant_site_build_view, name="assistant-site-build"),
+    path("assistant/construir/<uuid:public_id>/preview/", views.assistant_site_build_preview_view, name="assistant-site-build-preview"),
     path("assistant/usage/", views.assistant_usage_view, name="assistant-usage"),
     path("onboarding/", views.onboarding_view, name="onboarding"),
     path("onboarding/parceiro/<str:partner_code>/", views.onboarding_view, name="partner-onboarding"),

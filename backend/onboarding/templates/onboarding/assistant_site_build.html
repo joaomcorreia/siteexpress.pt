@@ -1,0 +1,57 @@
+{% extends "onboarding/public_base.html" %}
+
+{% block title %}A construir a sua Página Express | SiteExpress{% endblock %}
+
+{% block content %}
+<style>
+  .build-experience{min-height:calc(100vh - 150px);background:#eef3f7;padding:28px 18px 44px}
+  .build-shell{width:min(1440px,100%);margin:auto;display:grid;grid-template-columns:280px minmax(0,1fr);gap:22px}
+  .build-status{background:#102c3c;color:#fff;padding:26px;align-self:start;position:sticky;top:20px}
+  .build-status h1{font-size:1.55rem;margin:0 0 10px}.build-status p{color:#cbdbe4;line-height:1.55}
+  .build-progress{height:7px;background:#284859;margin:24px 0 20px;overflow:hidden}.build-progress span{display:block;height:100%;width:0;background:#ef8f2f;transition:width .45s ease}
+  .build-steps{list-style:none;padding:0;margin:0;display:grid;gap:13px}.build-steps li{color:#7f99a8;display:flex;gap:10px;align-items:center}.build-steps li::before{content:"";width:10px;height:10px;border:2px solid currentColor;border-radius:50%}.build-steps li.is-active{color:#fff}.build-steps li.is-done{color:#efb06c}.build-steps li.is-done::before{background:currentColor}
+  .build-preview{background:#fff;box-shadow:0 18px 55px rgba(15,35,49,.14);min-height:760px}.build-preview iframe{display:block;width:100%;height:calc(100vh - 90px);min-height:760px;border:0;background:#fff}
+  .build-complete{margin-top:22px;padding-top:18px;border-top:1px solid #31505f}.build-complete[hidden]{display:none}.build-complete a{display:inline-block;background:#ef8f2f;color:#10202b;padding:11px 15px;text-decoration:none;font-weight:800}
+  @media(max-width:850px){.build-shell{grid-template-columns:1fr}.build-status{position:static}.build-preview iframe{height:720px;min-height:720px}}
+</style>
+<main class="build-experience">
+  <div class="build-shell">
+    <aside class="build-status">
+      <p class="eyebrow">SiteExpress em ação</p>
+      <h1>A construir a sua página</h1>
+      <p>Estamos a transformar a conversa numa primeira proposta visual. Pode acompanhar cada parte a aparecer.</p>
+      <div class="build-progress" aria-hidden="true"><span data-build-progress></span></div>
+      <ol class="build-steps" data-build-steps>
+        <li>Estrutura da página</li><li>Apresentação principal</li><li>Serviços</li><li>Sobre o negócio</li><li>Contactos</li><li>Acabamentos finais</li>
+      </ol>
+      <div class="build-complete" data-build-complete hidden>
+        <strong>A primeira versão está pronta 😊</strong>
+        <p>Já pode explorar a página. A seguir poderá alterar textos, imagens, cores e secções.</p>
+        <a href="{% url 'onboarding' %}">Guardar e continuar</a>
+      </div>
+    </aside>
+    <section class="build-preview" aria-label="Pré-visualização em construção">
+      <iframe data-build-frame src="{{ preview_url }}?stage=0" title="A sua Página Express"></iframe>
+    </section>
+  </div>
+</main>
+<script>
+(() => {
+  const frame=document.querySelector('[data-build-frame]');
+  const progress=document.querySelector('[data-build-progress]');
+  const steps=[...document.querySelectorAll('[data-build-steps] li')];
+  const complete=document.querySelector('[data-build-complete]');
+  const base="{{ preview_url|escapejs }}";
+  let stage=0;
+  const advance=()=>{
+    stage+=1;
+    frame.src=`${base}?stage=${stage}`;
+    progress.style.width=`${Math.round(stage/6*100)}%`;
+    steps.forEach((item,index)=>{item.classList.toggle('is-done',index<stage);item.classList.toggle('is-active',index===stage);});
+    if(stage<6){window.setTimeout(advance,900);}else{complete.hidden=false;}
+  };
+  steps[0]?.classList.add('is-active');
+  window.setTimeout(advance,650);
+})();
+</script>
+{% endblock %}

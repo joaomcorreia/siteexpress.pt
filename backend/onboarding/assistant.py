@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 
 
@@ -190,3 +192,81 @@ def generate_assistant_reply(history):
         "cached_input_tokens": _usage_value(input_details, "cached_tokens"),
         "output_tokens": _usage_value(usage, "output_tokens"),
     }
+
+
+BUILD_ANALYSIS_INSTRUCTIONS = """
+Analise a conversa para decidir se já existe informação suficiente para criar uma primeira
+pré-visualização de uma Página Express. Responda APENAS com JSON válido.
+
+Está pronta quando conhece uma atividade profissional concreta e pelo menos um serviço real.
+Não exija nome, email, telefone, morada ou pagamento. A pré-visualização pode usar um nome provisório.
+
+Formato:
+{
+  "ready": true,
+  "business_name": "",
+  "business_type": "",
+  "category": "construction|beauty|automotive|craft|professional|local_service",
+  "location": "",
+  "headline": "",
+  "intro": "",
+  "services": [{"title": "", "description": ""}],
+  "about": "",
+  "cta": "Pedir orçamento"
+}
+
+Use português europeu. Produza 3 ou 4 serviços curtos, sem inventar qualificações, experiência,
+preços, garantias, nomes de pessoas ou localizações. Se não estiver pronta, use {"ready": false}.
+""".strip()
+
+
+def _clean_build_analysis(data):
+    if not isinstance(data, dict) or not data.get("ready"):
+        return {"ready": False}
+    business_type = " ".join(str(data.get("business_type") or "").split())[:160]
+    services = []
+    for item in data.get("services") or []:
+        if not isinstance(item, dict):
+            continue
+        title = " ".join(str(item.get("title") or "").split())[:90]
+        description = " ".join(str(item.get("description") or "").split())[:220]
+        if title:
+            services.append({"title": title, "description": description})
+        if len(services) >= 4:
+            break
+    if not business_type or not services:
+        return {"ready": False}
+    allowed = {"construction", "beauty", "automotive", "craft", "professional", "local_service"}
+    category = str(data.get("category") or "local_service").strip().lower()
+    if category not in allowed:
+        category = "local_service"
+    return {
+        "ready": True,
+        "business_name": " ".join(str(data.get("business_name") or "").split())[:255],
+        "business_type": business_type,
+        "category": category,
+        "location": " ".join(str(data.get("location") or "").split())[:160],
+        "headline": " ".join(str(data.get("headline") or "").split())[:255],
+        "intro": " ".join(str(data.get("intro") or "").split())[:500],
+        "services": services,
+        "about": " ".join(str(data.get("about") or "").split())[:700],
+        "cta": " ".join(str(data.get("cta") or "Pedir orçamento").split())[:80],
+    }
+
+
+def analyze_assistant_build(history):
+    if not settings.OPENAI_API_KEY or settings.SITEEXPRESS_ASSISTANT_MODE == "demo":
+        return {"ready": False}
+    from openai import OpenAI
+
+    response = OpenAI(api_key=settings.OPENAI_API_KEY).responses.create(
+        model=settings.SITEEXPRESS_ASSISTANT_MODEL,
+        instructions=BUILD_ANALYSIS_INSTRUCTIONS,
+        input=history,
+        max_output_tokens=700,
+        store=False,
+    )
+    raw = (response.output_text or "").strip()
+    if raw.startswith("```"):
+        raw = raw.strip("`").removeprefix("json").strip()
+    return _clean_build_analysis(json.loads(raw))

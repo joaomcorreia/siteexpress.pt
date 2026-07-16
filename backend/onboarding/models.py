@@ -582,3 +582,31 @@ class AssistantMessage(models.Model):
 
     def __str__(self):
         return f"{self.get_role_display()}: {self.content[:60]}"
+
+
+class AssistantSiteBuild(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = "draft", _("Draft")
+        READY = "ready", _("Ready")
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    conversation = models.OneToOneField(
+        AssistantConversation,
+        on_delete=models.CASCADE,
+        related_name="site_build",
+        verbose_name=_("Assistant conversation"),
+    )
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.READY)
+    category = models.CharField(max_length=80, blank=True)
+    business_name = models.CharField(max_length=255, blank=True)
+    business_type = models.CharField(max_length=160)
+    location = models.CharField(max_length=160, blank=True)
+    content = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.business_name or self.business_type or str(self.public_id)

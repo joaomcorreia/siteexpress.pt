@@ -105,6 +105,10 @@
       saveConversationId(data.conversation_id);
       modeLabel.textContent = data.mode === "openai" ? "Online" : "Ajuda rápida";
       addMessage(data.reply, "bot");
+      if (data.site_build && data.site_build.url) {
+        addMessage("Já tenho informação suficiente. Vou começar a construir a sua Página Express agora 😊", "bot");
+        window.setTimeout(() => { window.location.href = data.site_build.url; }, 900);
+      }
     } catch (error) {
       addMessage(error.message || "O assistente está temporariamente indisponível.", "error");
     } finally {
