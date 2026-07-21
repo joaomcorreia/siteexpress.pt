@@ -29,6 +29,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from .assistant import (
     analyze_assistant_build,
+    extract_color_revision,
     generate_assistant_reply,
     generate_demo_reply,
     revise_assistant_build,
@@ -2097,7 +2098,12 @@ def assistant_site_build_preview_view(request, public_id):
     return render(
         request,
         "onboarding/assistant_site_build_preview.html",
-        {"build": build, "content": build.content or {}, "stage": stage},
+        {
+            "build": build,
+            "content": build.content or {},
+            "design": (build.content or {}).get("design", {}),
+            "stage": stage,
+        },
     )
 
 
@@ -2127,6 +2133,18 @@ def assistant_site_build_revision_view(request, public_id):
             ),
             "preview_url": "",
         })
+    color_revision = extract_color_revision(message)
+    if color_revision:
+        content = deepcopy(build.content or {})
+        design = deepcopy(content.get("design") or {})
+        design.update(color_revision)
+        content["design"] = design
+        build.content = content
+        build.save(update_fields=["content", "updated_at"])
+        return JsonResponse({
+            "reply": "Mudei a cor principal sem alterar o conteúdo. Está mais próxima do que imaginava?",
+            "preview_url": f"{reverse('assistant-site-build-preview', args=[build.public_id])}?stage=6",
+        })
     current = {
         "business_name": build.business_name,
         "business_type": build.business_type,
@@ -2141,10 +2159,13 @@ def assistant_site_build_revision_view(request, public_id):
     build.business_name = revised["business_name"]
     build.business_type = revised["business_type"]
     build.location = revised["location"]
+    existing_design = (build.content or {}).get("design")
     build.content = {
         "headline": revised["headline"], "intro": revised["intro"],
         "services": revised["services"], "about": revised["about"], "cta": revised["cta"],
     }
+    if existing_design:
+        build.content["design"] = existing_design
     build.save(update_fields=["business_name", "business_type", "location", "content", "updated_at"])
     return JsonResponse({
         "reply": "Alterei apenas o que pediu. Veja agora a nova versão — está mais próxima da sua ideia?",

@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.conf import settings
 
@@ -313,3 +314,35 @@ def revise_assistant_build(build_data, request_text):
     if raw.startswith("```"):
         raw = raw.strip("`").removeprefix("json").strip()
     return _clean_build_analysis({"ready": True, "category": "local_service", **json.loads(raw)})
+
+
+COLOR_NAMES = {
+    "amarelo": "#f5a623",
+    "azul": "#1769aa",
+    "azul escuro": "#12324a",
+    "verde": "#287a47",
+    "vermelho": "#b7221a",
+    "laranja": "#e87524",
+    "roxo": "#7047a8",
+    "rosa": "#c94f7c",
+    "preto": "#15191c",
+    "cinzento": "#66727a",
+    "branco": "#ffffff",
+}
+
+
+def extract_color_revision(request_text):
+    """Return a safe palette update for an explicit colour request."""
+    normalized = " ".join(str(request_text or "").casefold().split())
+    has_colour_language = any(term in normalized for term in ("cor", "cores", "tom", "paleta", "em vez de"))
+    has_direct_choice = any(term in normalized for term in ("quero", "prefiro", "mudar para", "trocar para"))
+    if not (has_colour_language or has_direct_choice):
+        return None
+    target_text = normalized.split("em vez de", 1)[0]
+    hex_match = re.search(r"#[0-9a-f]{6}\b", target_text)
+    if hex_match:
+        return {"accent": hex_match.group(0)}
+    for name in sorted(COLOR_NAMES, key=len, reverse=True):
+        if re.search(rf"\b{re.escape(name)}\b", target_text):
+            return {"accent": COLOR_NAMES[name]}
+    return None

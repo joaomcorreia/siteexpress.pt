@@ -507,6 +507,67 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(build.content["headline"], "Uma casa com novas cores")
         self.assertContains(self.client.get(response.json()["preview_url"]), "Uma casa com novas cores")
 
+    def test_assistant_changes_only_preview_accent_colour(self):
+        conversation = AssistantConversation.objects.create()
+        original_content = {
+            "headline": "Pintura cuidada",
+            "intro": "Pintura para casas.",
+            "about": "Trabalho de pintura cuidado.",
+            "cta": "Pedir orçamento",
+            "services": [{"title": "Interiores", "description": "Paredes."}],
+        }
+        build = AssistantSiteBuild.objects.create(
+            conversation=conversation,
+            business_type="Pintura",
+            content=original_content,
+        )
+        session = self.client.session
+        session["assistant_site_builds"] = [str(build.public_id)]
+        session.save()
+
+        response = self.client.post(
+            reverse("assistant-site-build-revision", args=[build.public_id]),
+            data=json.dumps({"message": "Quero azul em vez de amarelo"}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        build.refresh_from_db()
+        self.assertEqual(build.content["design"]["accent"], "#1769aa")
+        self.assertEqual(build.content["headline"], original_content["headline"])
+        self.assertEqual(build.content["services"], original_content["services"])
+        preview = self.client.get(response.json()["preview_url"])
+        self.assertContains(preview, "--accent:#1769aa")
+
+    @override_settings(SITEEXPRESS_ASSISTANT_MODE="openai", OPENAI_API_KEY="test-key")
+    @patch("onboarding.views.revise_assistant_build")
+    def test_text_revision_preserves_existing_visual_design(self, mock_revision):
+        conversation = AssistantConversation.objects.create()
+        build = AssistantSiteBuild.objects.create(
+            conversation=conversation,
+            business_type="Pintura",
+            content={"headline": "Original", "design": {"accent": "#1769aa"}},
+        )
+        session = self.client.session
+        session["assistant_site_builds"] = [str(build.public_id)]
+        session.save()
+        mock_revision.return_value = {
+            "ready": True, "category": "construction", "business_name": "", "business_type": "Pintura",
+            "location": "", "headline": "Novo título", "intro": "Pintura.", "services": [],
+            "about": "Pintura cuidada.", "cta": "Pedir orçamento",
+        }
+
+        response = self.client.post(
+            reverse("assistant-site-build-revision", args=[build.public_id]),
+            data=json.dumps({"message": "Mude apenas o título"}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        build.refresh_from_db()
+        self.assertEqual(build.content["headline"], "Novo título")
+        self.assertEqual(build.content["design"], {"accent": "#1769aa"})
+
     def test_assistant_explains_extended_content_after_activation(self):
         conversation = AssistantConversation.objects.create()
         build = AssistantSiteBuild.objects.create(
