@@ -73,14 +73,14 @@
     .head p{color:var(--muted);font-size:1.08rem}
     .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
     .card{border:1px solid var(--line);background:rgba(255,253,248,.82);border-radius:var(--radius);padding:24px;min-width:0;box-shadow:0 10px 28px rgba(4,106,56,.05)}
-    .card .num{display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:#f0f8ee;color:var(--primary);font-weight:950;margin-bottom:17px}
+    .card .num{display:grid;place-items:center;border: 2px solid #a00909;width:102px;height:102px;border-radius:50px;background:#f0f8ee;color:var(--primary);font-weight:950;font-size:1.8rem;margin-bottom:17px}
     .card p,.plan p,.plan li,.step span,.addon p,.faq p{color:var(--muted)}
     .split{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:22px;align-items:stretch}
-    .panel{border:1px solid var(--line);background:linear-gradient(135deg,#fff,#f3f8f0);border-radius:18px;padding:clamp(24px,4vw,38px);box-shadow:var(--shadow)}
+    .panel{border:1px solid var(--line);background:#b7221a;color:#fff;border-radius:18px;padding:clamp(24px,4vw,38px);box-shadow:var(--shadow)}
     .panel h3{font-size:clamp(1.65rem,3vw,2.4rem);line-height:1.04;margin-bottom:14px}
     .feature-list{display:grid;gap:12px;margin-top:22px}
-    .feature{display:grid;grid-template-columns:42px 1fr;gap:14px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff}
-    .icon{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;background:#f0f8ee;color:var(--primary);font-weight:950}
+    .feature{display:grid;grid-template-columns:42px 1fr;gap:14px;padding:26px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+    .icon{width:52px;height:52px;border: 2px solid #046a38;border-radius:50px;display:grid;place-items:center;background:#f0f8ee;color:var(--primary);font-weight:950;margin-right:20px;}
     .steps{counter-reset:step;display:grid;gap:12px}
     .step{counter-increment:step;display:grid;grid-template-columns:auto 1fr;gap:14px;padding:18px;border-radius:12px;background:#fff;border:1px solid var(--line)}
     .step:before{content:counter(step);width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#eaf7f2;color:var(--green);font-weight:950}.step b{display:block}
@@ -94,6 +94,7 @@
     .print-section .head{max-width:860px}
     .print-section .kicker{color:#ffb7b0}
     .print-section .head p{color:#d4ddd1}
+    .print-section {background-color:#0f1510;}
     .print-grid{display:grid;grid-template-columns:1.18fr .82fr 1fr 1fr;grid-auto-rows:minmax(132px,auto);gap:14px;align-items:stretch}
     .print-card{position:relative;overflow:hidden;background:#fffaf4;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:20px;box-shadow:0 18px 44px rgba(0,0,0,.18);color:var(--ink)}
     .print-card:after{content:"";position:absolute;right:-34px;bottom:-44px;width:120px;height:120px;border-radius:28px;background:rgba(23,32,24,.08);transform:rotate(18deg)}
@@ -129,6 +130,74 @@
     @media(max-width:980px){.links{display:none}.hero-grid,.split,.cta{grid-template-columns:1fr}.cards,.plans{grid-template-columns:1fr}.addons{grid-template-columns:repeat(2,minmax(0,1fr))}.print-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto}.print-card.tall,.print-card.wide{grid-column:auto;grid-row:auto}.faq-grid{grid-template-columns:1fr}.plan.featured{transform:none}.price{position:static;width:auto;margin-top:14px}.footer-grid{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1/-1}}
     @media(max-width:620px){.wrap{width:min(var(--max),calc(100% - 22px))}.nav{min-height:68px}.brand-logo{height:40px;max-width:230px}.actions,.pills{display:grid}.btn{width:100%}.mini-grid,.addons,.print-grid,.footer-grid{grid-template-columns:1fr}.mock{padding:18px}.footer-bottom{display:grid}}
   </style>
+
+<style>
+
+.homepage-social-icon {
+  width: 45px;
+}
+blockquote {
+  margin: 2rem 0 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #046a38;
+  background: #f3f3f3;
+  color: #67372f;
+  font-size: 1.2rem;
+  line-height: 1.7;
+}
+.section-label {
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  color: #145c3c;
+}
+
+.section-intro {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.08;
+}
+
+.section-description {
+  max-width: 680px;
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.section-note {
+  font-size: 1.7rem;
+  margin-bottom: 70px;
+}
+.emoji-class {
+  font-size: 26px;
+}
+.steps-img-right {
+  width: 550px;
+  height: 320px;
+  background-color: #67372f;
+  float: right;
+}
+.steps-img-left {
+  width: 550px;
+  height: 320px;
+  background-color: #1a3af0;
+  float: left;
+}
+.feature-description {
+  padding-left: 25px;
+}
+
+.page-hero-compact {
+    padding-bottom: 70px;
+    background: #333 !important;
+}
+
+</style>
+
   {% include "onboarding/_siteexpress_clarity.html" %}
 </head>
 <body>
@@ -155,26 +224,70 @@
       <div class="wrap">
         <div class="head"><span class="kicker">O que fazemos</span><h2>Uma base digital limpa para empresas pequenas que precisam aparecer e receber pedidos.</h2><p>Primeiro colocamos a presença online a funcionar. Depois adicionamos páginas, conteúdos e ferramentas quando isso trouxer valor real.</p></div>
         <div class="cards">
-          <article class="card"><span class="num">01</span><h3><a href="{% url 'starter-page' %}">Página Express</a></h3><p>Uma página rápida para apresentar o negócio, serviços principais, contacto, WhatsApp, localização e chamada para ação.</p></article>
-          <article class="card"><span class="num">02</span><h3><a href="{% url 'website-wordpress' %}">Website WordPress</a></h3><p>Website profissional com páginas essenciais, serviços detalhados, galeria ou portfólio, formulário e estrutura SEO básica.</p></article>
-          <article class="card"><span class="num">03</span><h3>Catálogo ou loja</h3><p>Quando o negócio estiver pronto, podemos adicionar produtos, pedidos, catálogo, pagamentos ou funcionalidades mais específicas.</p></article>
+          <article class="card"><span class="num">01</span><h3><a href="{% url 'starter-page' %}"><span class="emoji-class">📃</span> Página Express</a></h3><p>Uma página rápida para apresentar o negócio, serviços principais, contacto, WhatsApp, localização e chamada para ação.</p></article>
+          <article class="card"><span class="num">02</span><h3><a href="{% url 'website-wordpress' %}"><span class="emoji-class">🔷</span> Website WordPress</a></h3><p>Website profissional com páginas essenciais, serviços detalhados, galeria ou portfólio, formulário e estrutura SEO básica.</p></article>
+          <article class="card"><span class="num">03</span><h3><span class="emoji-class">📇</span> Catálogo ou loja</h3><p>Quando o negócio estiver pronto, podemos adicionar produtos, pedidos, catálogo, pagamentos ou funcionalidades mais específicas.</p></article>
         </div>
       </div>
     </section>
 
     <section id="visibilidade">
+
+      <div class="wrap">
+        <div class="section-intro">
+          <p class="section-label">O SEU WEBSITE ESTÁ ONLINE, E AGORA?</p>
+          <h2>Tudo o que precisa para continuar a fazer crescer o seu negócio</h2>
+          <p class="section-description">
+            Depois de publicar o website, terá acesso a ferramentas para criar conteúdos, divulgar a sua empresa, e manter o seu website ativo, através de atualizações regulares, redes sociais e novas estratégias para chegar a mais clientes.  
+          </p>
+          <p class="section-note">
+            Um website não é um folheto digital. É uma ferramenta de negócio que deve evoluir com a sua empresa.
+          </p>
+        </div>
+      </div>
+
       <div class="wrap split">
         <article class="panel">
-          <span class="kicker">Depois do website</span>
-          <h3>Publicar o site é só abrir a porta. Agora é preciso mandar pessoas para lá.</h3>
-          <p>Por isso, SiteExpress pode incluir ou preparar extras simples de promoção local: posts para Facebook, botões de WhatsApp, QR codes, SEO básico e estrutura para Google e Bing encontrarem o website.</p>
-          <div class="notice">Sem promessas exageradas: começamos por ações simples e úteis para ajudar mais pessoas a encontrar e contactar o seu negócio.</div>
+          <span class="kicker">Mais do que um website</span>
+          <h3>As ferramentas e o conhecimento para promover o seu negócio.</h3>
+          <p>No SiteExpress, o seu website não fica sozinho na internet. Na plataforma encontra ferramentas para criar conteúdos, planear publicidade e aumentar a visibilidaded do seu negócio.</p>
+          <p>Também terá acesso a guias, videos e formação prática para aprender a utilizar cada ferramenta e gerir a sua presença online ao seu próprio ritmo.</p>
+          <blockquote>Um website acessível, ferramentas úteis e conhecimento prático, tudo na mesma plataforma.</blockquote>
         </article>
         <div class="feature-list">
-          <div class="feature"><span class="icon">FB</span><div><b>Facebook Posts</b><span>Posts prontos para copiar, adaptar e publicar. Bom para lançar o website, anunciar serviços e manter a página ativa.</span></div></div>
-          <div class="feature"><span class="icon">SEO</span><div><b>Google e Bing</b><span>Títulos, descrições, páginas de serviço, sitemap e bases para indexação. Não é promessa de primeiro lugar, é fundação limpa.</span></div></div>
-          <div class="feature"><span class="icon">QR</span><div><b>QR codes e links rápidos</b><span>QR para cartões, montra, carrinha, recibos ou Facebook. Um detalhe pequeno que pode mandar tráfego para o site.</span></div></div>
-          <div class="feature"><span class="icon">PT</span><div><b>Preparado para línguas</b><span>Português primeiro. Depois, inglês, francês, neerlandês ou outras línguas quando o negócio precisar alcançar mais clientes.</span></div></div>
+          <div class="feature">
+            <span class="icon">
+              04
+            </span>
+            <div class="feature-description"><b>Criar Conteúdos</b>
+              <p>Crie publicações para redes sociais, adapte os textos ao seu negócio e mantenha a sua empresa ativa online sem começar do zero.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="icon">
+              05
+            </span>
+            <div class="feature-description"><b>Publicidade Online</b>
+              <p>Planeie campanhas para promover o seu website e descubra quanto poderá investir antes de começar a anunciar.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="icon">
+              06
+            </span>
+            <div class="feature-description"><b>Ser encontrado</b>
+              <p>Melhore a visibilidade do seu website com ferramentas de SEO, Google, Bing e boas práticas para ajudar potenciais clientes a encontra-lo</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="icon">
+              07
+            </span>
+            <div class="feature-description">
+              <b>Aprender e evoluir</b>
+              <p>Guias, videos e exemplos práticos para aprender a utilizar cada ferramenta e desenvolver a presença online do seu negócio ao seu próprio ritmo.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -183,13 +296,13 @@
       <div class="wrap">
         <div class="head"><span class="kicker">Impressão e presença local</span><h2>Materiais simples para ligar o mundo físico ao website.</h2><p>Cartões, flyers, QR codes e outros materiais gráficos ajudam clientes a encontrar o seu website, guardar contactos e pedir informações com menos atrito.</p></div>
         <div class="print-grid" aria-label="Produtos de impressão SiteExpress">
-          <a class="print-card tall" href="{% url 'business-cards' %}"><span class="tag">Principal</span><img class="print-card-media" src="{% static 'core/img/siteexpress/cartoes-de-visita.jpg' %}" alt="Cartões de visita"><b>Cartões de visita</b><p>Cartões com website, telefone, email, WhatsApp e QR code para entregar a clientes, parceiros e contactos locais.</p></a>
-          <article class="print-card"><span class="tag">Divulgação</span><b>Flyers</b><p>Para divulgar serviços, promoções locais, inaugurações ou campanhas porta a porta.</p></article>
-          <article class="print-card"><span class="tag">QR</span><b>Autocolantes QR</b><p>Para montras, balcões, embalagens, recibos ou viaturas apontarem para o site.</p></article>
-          <article class="print-card"><span class="tag">Restauração</span><b>Menus e brochuras</b><p>Uma ponte simples para cafés, restaurantes, estética, oficinas e serviços locais.</p></article>
-          <article class="print-card wide"><span class="tag">Fidelização</span><b>Cartões de cliente</b><p>Cartões de marcação, fidelização ou lembretes com QR para contactos, avaliações e páginas de serviço.</p></article>
-          <article class="print-card"><span class="tag">Local</span><b>Placas e reclamos</b><p>Materiais para montras, balcões, viaturas ou espaços comerciais, pensados para ligar o mundo físico ao website.</p></article>
-          <article class="print-card"><span class="tag">Promoção</span><b>Lonas e banners</b><p>Material simples para feiras, oficinas, obras, eventos e campanhas de rua.</p></article>
+          <a class="print-card tall" href="{% url 'business-cards' %}"><span class="tag">Promover</span><img class="print-card-media" src="{% static 'core/img/siteexpress/cartoes-de-visita.jpg' %}" alt="Cartões de visita"><b>Cartões de visita</b><p>Transforme cada encontro num novo contacto.</p></a>
+          <article class="print-card"><span class="tag">Atrair</span><b>Flyers</b><p>Leve a sua empresa até à rua.</p></article>
+          <article class="print-card"><span class="tag">Fidelizar</span><b>Autocolantes QR</b><p>Ligue montras, embalagens e viaturas ao website.</p></article>
+          <article class="print-card"><span class="tag">Sinalizar</span><b>Menus e brochuras</b><p>Apresente serviços e preços de forma simples.</p></article>
+          <article class="print-card wide"><span class="tag">Identificar</span><b>Cartões de cliente</b><p>Dê aos seus clientes uma razão para voltar.</p></article>
+          <article class="print-card wide"><span class="tag">Informar</span><b>Placas e Reclamos</b><p>Ajude novos clientes a encontra-lo.</p></article>
+          <article class="print-card"><span class="tag">Destacar</span><b>Lonas e Banners</b><p>Chame a atenção mesmo à distância.</p></article>
         </div>
       </div>
     </section>
@@ -198,8 +311,14 @@
       <div class="wrap">
         <div class="head"><span class="kicker">Como funciona</span><h2>Um processo simples, sem labirinto administrativo.</h2><p>O cliente envia a informação principal, nós montamos a estrutura, revemos e publicamos. A partir daí pode pedir suporte ou extras.</p></div>
         <div class="steps">
-          <div class="step"><div><b>Escolhe o ponto de partida</b><span>Página starter, website profissional ou projeto com extras.</span></div></div>
-          <div class="step"><div><b>Envia dados e serviços</b><span>Nome do negócio, contactos, zona de trabalho, serviços, fotos e preferências.</span></div></div>
+          <div class="step"><div><b>Escolhe o ponto de partida</b><span>Página starter, website profissional ou projeto com extras.</span>
+          
+          <div class="steps-img-right"></div>
+
+          </div></div>
+          <div class="step"><div><b>Envia dados e serviços</b><span>Nome do negócio, contactos, zona de trabalho, serviços, fotos e preferências.</span>
+          <div class="steps-img-left"></div>
+          </div></div>
           <div class="step"><div><b>Recebe uma pré-visualização</b><span>A estrutura fica pronta para revisão antes da publicação final.</span></div></div>
           <div class="step"><div><b>Publicamos e melhoramos</b><span>Website online, links sociais, SEO básico e próximos passos de visibilidade.</span></div></div>
         </div>
