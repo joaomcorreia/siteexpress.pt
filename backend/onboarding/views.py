@@ -1938,17 +1938,73 @@ def assistant_chat_view(request):
         term in normalized_message for term in preview_terms
     )
 
+    build_analysis = None
+    new_build = None
+
     if pending_build and confirmed_preview:
+        color_revision = extract_color_revision(message)
+        if color_revision:
+            pending_content = deepcopy(pending_build.content or {})
+            pending_content["design"] = {
+                **(pending_content.get("design") or {}),
+                **color_revision,
+            }
+            pending_build.content = pending_content
         pending_build.status = AssistantSiteBuild.Status.READY
-        pending_build.save(update_fields=["status", "updated_at"])
+        pending_build.save(update_fields=["status", "content", "updated_at"])
         result = generate_demo_reply(message, model="siteexpress-preview")
         result["text"] = "Sim. Vou abrir a proposta e construí-la consigo agora 😊"
     else:
-        try:
-            result = generate_assistant_reply(history)
-        except Exception:
-            logger.exception("SiteExpress assistant request failed")
-            result = generate_demo_reply(message, model="siteexpress-demo-fallback")
+        if not AssistantSiteBuild.objects.filter(conversation=conversation).exists():
+            try:
+                build_analysis = analyze_assistant_build(history)
+            except Exception:
+                logger.exception("SiteExpress assistant build analysis failed")
+                build_analysis = {"ready": False}
+
+        if build_analysis and build_analysis.get("ready"):
+            all_user_text = " ".join(
+                item["content"] for item in history if item.get("role") == AssistantMessage.Role.USER
+            )
+            new_build = AssistantSiteBuild.objects.create(
+                conversation=conversation,
+                status=(
+                    AssistantSiteBuild.Status.READY
+                    if confirmed_preview
+                    else AssistantSiteBuild.Status.DRAFT
+                ),
+                category=build_analysis["category"],
+                business_name=build_analysis["business_name"],
+                business_type=build_analysis["business_type"],
+                location=build_analysis["location"],
+                content={
+                    "headline": build_analysis["headline"],
+                    "intro": build_analysis["intro"],
+                    "services": build_analysis["services"],
+                    "about": build_analysis["about"],
+                    "cta": build_analysis["cta"],
+                    **(
+                        {"design": extract_color_revision(all_user_text)}
+                        if extract_color_revision(all_user_text)
+                        else {}
+                    ),
+                },
+            )
+            result = generate_demo_reply(message, model="siteexpress-preview")
+            result["text"] = (
+                "Sim. Vou abrir a proposta e construí-la consigo agora 😊"
+                if confirmed_preview
+                else (
+                    "Já tenho informação suficiente para preparar uma primeira proposta visual da sua "
+                    "Página Express. Quer vê-la a ser construída agora?"
+                )
+            )
+        else:
+            try:
+                result = generate_assistant_reply(history)
+            except Exception:
+                logger.exception("SiteExpress assistant request failed")
+                result = generate_demo_reply(message, model="siteexpress-demo-fallback")
 
     reply = (result.get("text") or "").strip()
     if not reply:
@@ -1996,59 +2052,16 @@ def assistant_chat_view(request):
             "url": reverse("assistant-site-build", args=[pending_build.public_id]),
             "auto_start": True,
         }
-    elif not AssistantSiteBuild.objects.filter(conversation=conversation).exists():
-        try:
-            build_analysis = analyze_assistant_build(
-                [*history, {"role": "assistant", "content": reply}]
-            )
-        except Exception:
-            logger.exception("SiteExpress assistant build analysis failed")
-            build_analysis = {"ready": False}
-        if build_analysis.get("ready"):
-            build = AssistantSiteBuild.objects.create(
-                conversation=conversation,
-                status=(
-                    AssistantSiteBuild.Status.READY
-                    if confirmed_preview
-                    else AssistantSiteBuild.Status.DRAFT
-                ),
-                category=build_analysis["category"],
-                business_name=build_analysis["business_name"],
-                business_type=build_analysis["business_type"],
-                location=build_analysis["location"],
-                content={
-                    "headline": build_analysis["headline"],
-                    "intro": build_analysis["intro"],
-                    "services": build_analysis["services"],
-                    "about": build_analysis["about"],
-                    "cta": build_analysis["cta"],
-                    **(
-                        {"design": extract_color_revision(message)}
-                        if extract_color_revision(message)
-                        else {}
-                    ),
-                },
-            )
-            if confirmed_preview:
-                allowed_builds = request.session.get("assistant_site_builds", [])
-                request.session["assistant_site_builds"] = [*allowed_builds[-4:], str(build.public_id)]
-                reply = "Sim. Vou abrir a proposta e construí-la consigo agora 😊"
-                last_reply = AssistantMessage.objects.filter(conversation=conversation).order_by("-id").first()
-                last_reply.content = reply
-                last_reply.save(update_fields=["content"])
-                build_payload = {
-                    "url": reverse("assistant-site-build", args=[build.public_id]),
-                    "auto_start": True,
-                }
-            else:
-                reply = (
-                    "Já tenho informação suficiente para preparar uma primeira proposta visual da sua "
-                    "Página Express. Quer vê-la a ser construída agora?"
-                )
-                last_reply = AssistantMessage.objects.filter(conversation=conversation).order_by("-id").first()
-                last_reply.content = reply
-                last_reply.save(update_fields=["content"])
-                build_payload = {"offered": True, "auto_start": False}
+    elif new_build:
+        if confirmed_preview:
+            allowed_builds = request.session.get("assistant_site_builds", [])
+            request.session["assistant_site_builds"] = [*allowed_builds[-4:], str(new_build.public_id)]
+            build_payload = {
+                "url": reverse("assistant-site-build", args=[new_build.public_id]),
+                "auto_start": True,
+            }
+        else:
+            build_payload = {"offered": True, "auto_start": False}
 
     return JsonResponse(
         {

@@ -448,6 +448,7 @@ class OnboardingFlowTests(TestCase):
         self.assertFalse(payload["site_build"]["auto_start"])
         self.assertTrue(payload["site_build"]["offered"])
         self.assertIn("Quer vê-la", payload["reply"])
+        mock_reply.assert_not_called()
         build = AssistantSiteBuild.objects.get()
         self.assertEqual(build.category, "construction")
         self.assertEqual(build.status, AssistantSiteBuild.Status.DRAFT)
@@ -477,6 +478,50 @@ class OnboardingFlowTests(TestCase):
         self.assertContains(build_page, "data-build-feedback", html=False)
         self.assertContains(preview, "Pintura de interiores")
         self.assertContains(preview, "Pedir orçamento")
+
+    @override_settings(SITEEXPRESS_ASSISTANT_MODE="openai", OPENAI_API_KEY="test-key")
+    @patch("onboarding.views.analyze_assistant_build")
+    def test_preview_confirmation_opens_saved_draft_and_applies_colours(self, mock_analysis):
+        mock_analysis.return_value = {
+            "ready": True,
+            "business_name": "",
+            "business_type": "Pichelaria",
+            "category": "construction",
+            "location": "",
+            "headline": "Serviços de pichelaria",
+            "intro": "Serviços para casas e empresas.",
+            "services": [{"title": "Pichelaria", "description": "Serviços de pichelaria."}],
+            "about": "Atendimento com deslocação em carrinha.",
+            "cta": "Pedir orçamento",
+        }
+        offered = self.client.post(
+            reverse("assistant-chat"),
+            data=json.dumps({"message": "Sou picheleiro e trabalho com a minha carrinha."}),
+            content_type="application/json",
+        ).json()
+
+        confirmation = self.client.post(
+            reverse("assistant-chat"),
+            data=json.dumps({
+                "message": "Sim, quero azul e amarelo",
+                "conversation_id": offered["conversation_id"],
+            }),
+            content_type="application/json",
+        )
+
+        self.assertEqual(confirmation.status_code, 200)
+        payload = confirmation.json()
+        self.assertTrue(payload["site_build"]["auto_start"])
+        build = AssistantSiteBuild.objects.get()
+        self.assertEqual(
+            payload["site_build"]["url"],
+            reverse("assistant-site-build", args=[build.public_id]),
+        )
+        self.assertEqual(build.status, AssistantSiteBuild.Status.READY)
+        self.assertEqual(
+            build.content["design"],
+            {"accent": "#1769aa", "secondary": "#f5a623"},
+        )
 
     @override_settings(SITEEXPRESS_ASSISTANT_MODE="openai", OPENAI_API_KEY="test-key")
     @patch("onboarding.views.revise_assistant_build")
