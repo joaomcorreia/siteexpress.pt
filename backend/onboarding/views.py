@@ -2022,6 +2022,11 @@ def assistant_chat_view(request):
                     "services": build_analysis["services"],
                     "about": build_analysis["about"],
                     "cta": build_analysis["cta"],
+                    **(
+                        {"design": extract_color_revision(message)}
+                        if extract_color_revision(message)
+                        else {}
+                    ),
                 },
             )
             if confirmed_preview:

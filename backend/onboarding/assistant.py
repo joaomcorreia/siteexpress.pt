@@ -201,6 +201,10 @@ Analise a conversa para decidir se já existe informação suficiente para criar
 pré-visualização de uma Página Express. Responda APENAS com JSON válido.
 
 Está pronta quando conhece uma atividade profissional concreta e pelo menos um serviço real.
+Uma descrição geral mas inequívoca do trabalho também conta como serviço: por exemplo,
+"sou picheleiro e faço serviços de pichelaria", "sou pintor e faço pinturas" ou
+"tenho um salão e faço cabeleireiro". Nesse caso, use o serviço geral indicado pela pessoa;
+não devolva ready=false apenas porque ela ainda não enumerou trabalhos específicos.
 Não exija nome, email, telefone, morada ou pagamento. A pré-visualização pode usar um nome provisório.
 
 Formato:
@@ -342,7 +346,14 @@ def extract_color_revision(request_text):
     hex_match = re.search(r"#[0-9a-f]{6}\b", target_text)
     if hex_match:
         return {"accent": hex_match.group(0)}
+    matches = []
     for name in sorted(COLOR_NAMES, key=len, reverse=True):
-        if re.search(rf"\b{re.escape(name)}\b", target_text):
-            return {"accent": COLOR_NAMES[name]}
+        match = re.search(rf"\b{re.escape(name)}\b", target_text)
+        if match:
+            matches.append((match.start(), COLOR_NAMES[name]))
+    choices = [value for _, value in sorted(matches)]
+    if len(choices) >= 2:
+        return {"accent": choices[0], "secondary": choices[1]}
+    if choices:
+        return {"accent": choices[0]}
     return None

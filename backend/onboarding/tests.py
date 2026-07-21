@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils import timezone
 from django.utils.translation import override
 
-from .assistant import ASSISTANT_INSTRUCTIONS
+from .assistant import ASSISTANT_INSTRUCTIONS, extract_color_revision
 from .models import (
     AssistantConversation,
     AssistantMessage,
@@ -538,6 +538,12 @@ class OnboardingFlowTests(TestCase):
         self.assertEqual(build.content["services"], original_content["services"])
         preview = self.client.get(response.json()["preview_url"])
         self.assertContains(preview, "--accent:#1769aa")
+
+    def test_assistant_understands_two_colour_palette(self):
+        self.assertEqual(
+            extract_color_revision("Sim, quero azul e amarelo"),
+            {"accent": "#1769aa", "secondary": "#f5a623"},
+        )
 
     @override_settings(SITEEXPRESS_ASSISTANT_MODE="openai", OPENAI_API_KEY="test-key")
     @patch("onboarding.views.revise_assistant_build")
