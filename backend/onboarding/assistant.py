@@ -207,6 +207,12 @@ Uma descrição geral mas inequívoca do trabalho também conta como serviço: p
 "sou picheleiro e faço serviços de pichelaria", "sou pintor e faço pinturas" ou
 "tenho um salão e faço cabeleireiro". Nesse caso, use o serviço geral indicado pela pessoa;
 não devolva ready=false apenas porque ela ainda não enumerou trabalhos específicos.
+Resolva respostas curtas pelo contexto da conversa. Se o assistente acabou de enumerar serviços
+e a pessoa responder "faço tudo isso", "todos", "pode incluir tudo" ou equivalente, esses serviços
+ficam confirmados e devem ser copiados para a proposta. Não trate essas respostas como informação
+insuficiente só porque, isoladamente, não repetem os nomes dos serviços.
+Se a última resposta confirmar que a pessoa presta os serviços já mencionados, devolva ready=true
+assim que a atividade estiver clara; não espere por um "sim" adicional.
 Não exija nome, email, telefone, morada ou pagamento. A pré-visualização pode usar um nome provisório.
 
 Formato:
