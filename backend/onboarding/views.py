@@ -2100,6 +2100,7 @@ def assistant_site_build_view(request, public_id):
         {
             "build": build,
             "preview_url": reverse("assistant-site-build-preview", args=[build.public_id]),
+            "conversation_messages": build.conversation.messages.order_by("created_at", "id"),
         },
     )
 

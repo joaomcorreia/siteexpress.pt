@@ -29,6 +29,9 @@
         <span class="assistant-live">Online</span>
       </header>
       <div class="assistant-conversation" data-build-conversation aria-live="polite">
+        {% for message in conversation_messages %}
+          <div class="assistant-message assistant-message-{% if message.role == 'user' %}user{% else %}bot{% endif %}">{{ message.content }}</div>
+        {% endfor %}
         <div class="assistant-message assistant-message-bot">Já comecei a transformar a nossa conversa numa primeira proposta visual. Pode acompanhar a página a aparecer aqui ao lado.</div>
         <div class="build-state">
           <div class="build-state-label"><strong data-build-state-text>A preparar estrutura</strong><span data-build-percent>0%</span></div>

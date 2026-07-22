@@ -590,6 +590,12 @@ class OnboardingFlowTests(TestCase):
             {"accent": "#1769aa", "secondary": "#f5a623"},
         )
 
+    def test_assistant_understands_fc_porto_blue_inside_natural_feedback(self):
+        self.assertEqual(
+            extract_color_revision("Este azul parece verde, queria um Porto blue como o clube"),
+            {"accent": "#0046ad", "secondary": "#f4c300"},
+        )
+
     @override_settings(SITEEXPRESS_ASSISTANT_MODE="openai", OPENAI_API_KEY="test-key")
     @patch("onboarding.views.revise_assistant_build")
     def test_text_revision_preserves_existing_visual_design(self, mock_revision):

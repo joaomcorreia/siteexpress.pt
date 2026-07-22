@@ -336,6 +336,16 @@ COLOR_NAMES = {
     "branco": "#ffffff",
 }
 
+BRAND_COLOR_PHRASES = {
+    "azul do futebol clube do porto": "#0046ad",
+    "azul futebol clube do porto": "#0046ad",
+    "azul do fc porto": "#0046ad",
+    "azul fc porto": "#0046ad",
+    "azul do porto": "#0046ad",
+    "azul porto": "#0046ad",
+    "porto blue": "#0046ad",
+}
+
 
 def extract_color_revision(request_text):
     """Return a safe palette update for an explicit colour request."""
@@ -344,6 +354,12 @@ def extract_color_revision(request_text):
     has_direct_choice = any(term in normalized for term in ("quero", "prefiro", "mudar para", "trocar para"))
     if not (has_colour_language or has_direct_choice):
         return None
+    # Specific named colours take priority over incidental colour words in
+    # feedback such as "este azul parece verde".
+    for phrase, value in BRAND_COLOR_PHRASES.items():
+        if phrase in normalized:
+            return {"accent": value, "secondary": "#f4c300"}
+
     target_text = normalized.split("em vez de", 1)[0]
     hex_match = re.search(r"#[0-9a-f]{6}\b", target_text)
     if hex_match:
